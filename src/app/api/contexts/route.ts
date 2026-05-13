@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { prisma } from "@/lib/prisma"
+import { getPrismaClient } from "@/lib/prisma"
 import { slugify, randomSuffix } from "@/lib/utils"
 import { randomBytes } from "crypto"
 
@@ -11,10 +11,10 @@ const bodySchema = z.object({
   tags: z.array(z.string()).optional(),
 })
 
-async function findUniqueSlug(base: string): Promise<string> {
+async function findUniqueSlug(db: any, base: string): Promise<string> {
   for (let i = 0; i < 5; i++) {
     const candidate = `${slugify(base)}-${randomSuffix()}`
-    const existing = await prisma.context.findUnique({ where: { slug: candidate } })
+    const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
   return `${slugify(base)}-${randomBytes(4).toString("hex")}`
@@ -33,12 +33,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 })
   }
 
+  const db = await getPrismaClient()
+  if (!db) {
+    return NextResponse.json({ error: "Database unavailable — preview mode" }, { status: 503 })
+  }
+
   const { title, summary, content, tags } = parsed.data
-  const slug = await findUniqueSlug(title)
+  const slug = await findUniqueSlug(db, title)
   const claimToken = randomBytes(16).toString("hex")
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://contxt.to"
 
-  await prisma.context.create({
+  await db.context.create({
     data: {
       title,
       slug,

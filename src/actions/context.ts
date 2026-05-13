@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { prisma } from "@/lib/prisma"
+import { getPrismaClient } from "@/lib/prisma"
 import { slugify, randomSuffix } from "@/lib/utils"
 import { randomBytes } from "crypto"
 
@@ -18,10 +18,10 @@ type CreateContextResult =
   | { success: true; slug: string; claimToken: string }
   | { success: false; error: string }
 
-async function findUniqueSlug(base: string): Promise<string> {
+async function findUniqueSlug(db: any, base: string): Promise<string> {
   for (let i = 0; i < 5; i++) {
     const candidate = `${slugify(base)}-${randomSuffix()}`
-    const existing = await prisma.context.findUnique({ where: { slug: candidate } })
+    const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
   return `${slugify(base)}-${randomBytes(4).toString("hex")}`
@@ -38,12 +38,17 @@ export async function createContext(data: ContextFormData): Promise<CreateContex
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid data" }
   }
 
+  const db = await getPrismaClient()
+  if (!db) {
+    return { success: false, error: "Database unavailable — preview mode" }
+  }
+
   const { title, summary, content, tags } = parsed.data
-  const slug = await findUniqueSlug(title)
+  const slug = await findUniqueSlug(db, title)
   const claimToken = randomBytes(16).toString("hex")
 
   try {
-    await prisma.context.create({
+    await db.context.create({
       data: {
         title,
         slug,
@@ -62,7 +67,10 @@ export async function createContext(data: ContextFormData): Promise<CreateContex
 }
 
 export async function getContext(slug: string) {
-  const raw = await prisma.context.findUnique({ where: { slug } })
+  const db = await getPrismaClient()
+  if (!db) return null
+
+  const raw = await db.context.findUnique({ where: { slug } })
   if (!raw) return null
   return {
     ...raw,
