@@ -926,6 +926,261 @@ footer .links {
   .hero-card-main { padding: 22px; }
   .step, .use-item { padding: 24px; }
 }
+
+/* ══ Dashboard Concept Mockup ══ */
+.dash-mockup {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  margin-top: 48px;
+  overflow: hidden;
+  min-height: 520px;
+}
+
+.dash-sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: #16163D;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dash-logo-icon {
+  font-size: 22px;
+  color: var(--accent);
+}
+
+.dash-nav {
+  flex: 1;
+  padding: 16px 0;
+}
+
+.dash-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.dash-nav-item:hover { color: #fff; background: rgba(255,255,255,0.04); }
+.dash-nav-item.active { color: #fff; background: rgba(255,255,255,0.06); border-left-color: var(--accent); }
+
+.dash-nav-icon { font-size: 16px; }
+
+.dash-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+.dash-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.dash-user-info { display: flex; flex-direction: column; line-height: 1.3; }
+.dash-user-name { color: #fff; font-size: 13px; font-weight: 600; }
+.dash-user-plan { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+.dash-main {
+  flex: 1;
+  padding: 28px 32px;
+  overflow: hidden;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.dash-header-title { font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--text); }
+.dash-header-sub { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+.dash-create-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-xs);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: default;
+  font-family: var(--font-body);
+  transition: 0.2s;
+}
+
+.dash-create-btn:hover { background: var(--accent-hover); }
+
+/* Stats */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.dash-stat-card {
+  background: var(--bg-alt);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+}
+
+.dash-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.dash-stat-label { font-size: 12px; color: var(--text-soft); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.dash-stat-change { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+.dash-stat-change.up { background: rgba(5, 150, 105, 0.1); color: #059669; }
+
+.dash-stat-value { font-size: 28px; font-weight: 700; color: var(--text); font-family: var(--font-heading); line-height: 1.1; margin-bottom: 10px; }
+
+.dash-stat-bar { height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden; }
+.dash-stat-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.6s var(--ease-out); }
+
+/* AI Row */
+.dash-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.dash-ai-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.dash-ai-card {
+  background: var(--bg-alt);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  border-left: 3px solid;
+}
+
+.dash-ai-card.chatgpt { border-left-color: #10A37F; }
+.dash-ai-card.gemini { border-left-color: #4285F4; }
+.dash-ai-card.claude { border-left-color: #D97706; }
+
+.dash-ai-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.dash-ai-icon { font-size: 16px; }
+.dash-ai-card.chatgpt .dash-ai-icon { color: #10A37F; }
+.dash-ai-card.gemini .dash-ai-icon { color: #4285F4; }
+.dash-ai-card.claude .dash-ai-icon { color: #D97706; }
+
+.dash-ai-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.dash-ai-pct { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-soft); }
+
+.dash-ai-num { font-size: 22px; font-weight: 700; font-family: var(--font-heading); color: var(--text); line-height: 1.2; margin-bottom: 8px; }
+
+.dash-ai-bar { height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden; }
+.dash-ai-fill { height: 100%; border-radius: 2px; transition: width 0.6s var(--ease-out); }
+.dash-ai-card.chatgpt .dash-ai-fill { background: #10A37F; }
+.dash-ai-card.gemini .dash-ai-fill { background: #4285F4; }
+.dash-ai-card.claude .dash-ai-fill { background: #D97706; }
+
+/* Table */
+.dash-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.dash-table th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--bg-alt);
+  color: var(--text-soft);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dash-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-soft);
+}
+
+.dash-table tr:last-child td { border-bottom: none; }
+
+.dash-table code {
+  font-size: 12px;
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.dash-cell-title { font-weight: 600; color: var(--text) !important; }
+
+.dash-edit-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-soft);
+  cursor: default;
+  font-family: var(--font-body);
+  transition: 0.2s;
+}
+
+.dash-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 860px) {
+  .dash-mockup { flex-direction: column; min-height: auto; }
+  .dash-sidebar { width: 100%; min-width: auto; flex-direction: row; padding: 12px 16px; }
+  .dash-sidebar-logo { border: none; padding: 0; }
+  .dash-nav { display: none; }
+  .dash-sidebar-user { display: none; }
+  .dash-stats { grid-template-columns: 1fr; }
+  .dash-ai-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -1113,6 +1368,178 @@ footer .links {
       <div class="use-emoji">📝</div>
       <h3>Research Briefs</h3>
       <p>Share a competitive analysis or literature review as a link. Colleagues consume the synthesis instantly, then ask AI for deeper context or counter-arguments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DASHBOARD CONCEPT ═══ -->
+<div class="section-divider"></div>
+<section class="section" id="dashboard">
+  <div class="section-label">Dashboard</div>
+  <h2 class="section-title">Full control. <span class="accent">Real insights.</span></h2>
+  <p class="section-sub">Manage all your contexts in one place. Track every click, scan, and AI conversation — broken down by platform.</p>
+
+  <!-- Dashboard Mockup -->
+  <div class="dash-mockup">
+    <!-- Sidebar -->
+    <div class="dash-sidebar">
+      <div class="dash-sidebar-logo">
+        <span class="dash-logo-icon">↗</span>
+        <span>Contxt</span>
+      </div>
+      <nav class="dash-nav">
+        <a href="#" class="dash-nav-item active">
+          <span class="dash-nav-icon">📋</span>
+          <span>Contexts</span>
+        </a>
+        <a href="#" class="dash-nav-item">
+          <span class="dash-nav-icon">📊</span>
+          <span>Analytics</span>
+        </a>
+        <a href="#" class="dash-nav-item">
+          <span class="dash-nav-icon">🔗</span>
+          <span>Domains</span>
+        </a>
+        <a href="#" class="dash-nav-item">
+          <span class="dash-nav-icon">⚙️</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+      <div class="dash-sidebar-user">
+        <div class="dash-avatar">KB</div>
+        <div class="dash-user-info">
+          <span class="dash-user-name">Kris B</span>
+          <span class="dash-user-plan">Pro Plan</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dash-main">
+      <!-- Header -->
+      <div class="dash-header">
+        <div>
+          <h3 class="dash-header-title">Contexts</h3>
+          <p class="dash-header-sub">23 active links · 12.4K views this month</p>
+        </div>
+        <button class="dash-create-btn">+ New Context</button>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="dash-stats">
+        <div class="dash-stat-card">
+          <div class="dash-stat-top">
+            <span class="dash-stat-label">Total Clicks</span>
+            <span class="dash-stat-change up">+12.3%</span>
+          </div>
+          <div class="dash-stat-value">47,281</div>
+          <div class="dash-stat-bar"><div class="dash-stat-fill" style="width:78%"></div></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-top">
+            <span class="dash-stat-label">QR Scans</span>
+            <span class="dash-stat-change up">+8.7%</span>
+          </div>
+          <div class="dash-stat-value">8,432</div>
+          <div class="dash-stat-bar"><div class="dash-stat-fill" style="width:45%"></div></div>
+        </div>
+        <div class="dash-stat-card">
+          <div class="dash-stat-top">
+            <span class="dash-stat-label">AI Loads</span>
+            <span class="dash-stat-change up">+24.1%</span>
+          </div>
+          <div class="dash-stat-value">19,674</div>
+          <div class="dash-stat-bar"><div class="dash-stat-fill" style="width:62%"></div></div>
+        </div>
+      </div>
+
+      <!-- AI Breakdown -->
+      <div class="dash-section-label">AI Loads by Platform</div>
+      <div class="dash-ai-row">
+        <div class="dash-ai-card chatgpt">
+          <div class="dash-ai-head">
+            <span class="dash-ai-icon">○</span>
+            <span class="dash-ai-name">ChatGPT</span>
+            <span class="dash-ai-pct">52%</span>
+          </div>
+          <div class="dash-ai-num">10,231</div>
+          <div class="dash-ai-bar"><div class="dash-ai-fill" style="width:52%"></div></div>
+        </div>
+        <div class="dash-ai-card gemini">
+          <div class="dash-ai-head">
+            <span class="dash-ai-icon">◆</span>
+            <span class="dash-ai-name">Gemini</span>
+            <span class="dash-ai-pct">28%</span>
+          </div>
+          <div class="dash-ai-num">5,509</div>
+          <div class="dash-ai-bar"><div class="dash-ai-fill" style="width:28%"></div></div>
+        </div>
+        <div class="dash-ai-card claude">
+          <div class="dash-ai-head">
+            <span class="dash-ai-icon">◈</span>
+            <span class="dash-ai-name">Claude</span>
+            <span class="dash-ai-pct">20%</span>
+          </div>
+          <div class="dash-ai-num">3,934</div>
+          <div class="dash-ai-bar"><div class="dash-ai-fill" style="width:20%"></div></div>
+        </div>
+      </div>
+
+      <!-- Context Table -->
+      <div class="dash-section-label">Recent Contexts</div>
+      <div class="dash-table-wrap">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Slug</th>
+              <th>Clicks</th>
+              <th>AI Loads</th>
+              <th>QR</th>
+              <th>Updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="dash-cell-title">Q1 Market Analysis Brief</td>
+              <td><code>q1-market-2026</code></td>
+              <td>8,421</td>
+              <td>3,209</td>
+              <td>1,142</td>
+              <td>2 min ago</td>
+              <td><button class="dash-edit-btn">Edit</button></td>
+            </tr>
+            <tr>
+              <td class="dash-cell-title">Product Launch FAQ</td>
+              <td><code>launch-faq-v2</code></td>
+              <td>5,673</td>
+              <td>2,891</td>
+              <td>843</td>
+              <td>1 hr ago</td>
+              <td><button class="dash-edit-btn">Edit</button></td>
+            </tr>
+            <tr>
+              <td class="dash-cell-title">SEO Strategy 2026</td>
+              <td><code>seo-strat-26</code></td>
+              <td>3,204</td>
+              <td>1,847</td>
+              <td>421</td>
+              <td>3 hrs ago</td>
+              <td><button class="dash-edit-btn">Edit</button></td>
+            </tr>
+            <tr>
+              <td class="dash-cell-title">Competitor Intel Report</td>
+              <td><code>comp-intel</code></td>
+              <td>2,891</td>
+              <td>1,456</td>
+              <td>312</td>
+              <td>Yesterday</td>
+              <td><button class="dash-edit-btn">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>
