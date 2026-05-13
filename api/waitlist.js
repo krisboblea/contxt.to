@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Waitlist`,
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Waitlist%20Signups`,
       {
         method: 'POST',
         headers: {
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
           records: [{
             fields: {
               Email: email,
-              'Created At': new Date().toISOString()
+              'Signup Timestamp': new Date().toISOString()
             }
           }]
         })
