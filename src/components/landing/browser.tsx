@@ -865,12 +865,18 @@ function LandingContent() {
           onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
           onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contxt</a></span>
         <div className="flex gap-6">
-          <a href="/" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+          <a href="/privacy" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Privacy</a>
-          <a href="/" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+          <a href="/terms" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Terms</a>
+          <a href="/contributing" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contributing</a>
+          <a href="/changelog" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Changelog</a>
           <a href="mailto:hello@contxt.to" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contact</a>
