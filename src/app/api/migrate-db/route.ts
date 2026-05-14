@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid key" }, { status: 403 })
   }
 
-  const url = process.env.DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL
+  const url = process.env.DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL || process.env.DB_TURSO_DATABASE_URL
   const authToken = process.env.DB_TURSO_AUTH_TOKEN || process.env.DB2_TURSO_AUTH_TOKEN
 
   if (!url || !url.startsWith("libsql://")) {
@@ -55,11 +55,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Dynamically import libsql client
     const { createClient } = await import("@libsql/client")
     const client = createClient({ url, authToken })
 
-    // Run migration
     const statements = MIGRATION_SQL
       .split(";")
       .map(s => s.trim())
@@ -71,7 +69,6 @@ export async function POST(request: NextRequest) {
       executed++
     }
 
-    // Verify
     const result = await client.execute(
       "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
     )
