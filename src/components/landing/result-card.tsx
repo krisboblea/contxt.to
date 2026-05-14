@@ -14,7 +14,8 @@ import { Copy, Check } from 'lucide-react'
 import { useState } from 'react'
 
 export function ResultCard({ slug }: { slug: string }) {
-  const url = `https://contxt.to/s/${slug}`
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://contxt.to"
+  const url = `${origin}/s/${slug}`
   const [copied, setCopied] = useState(false)
 
   async function copyUrl() {
