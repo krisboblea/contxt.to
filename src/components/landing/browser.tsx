@@ -516,7 +516,7 @@ function LandingContent() {
                 <form onSubmit={handleClaim} className="p-5 rounded-[14px] border"
                   style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
                   <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
-                    ✉️ Want to get notified when this link is visited?
+                    ✉️ Track visits, manage, and edit your links later
                   </div>
                   <div className="flex items-center gap-2">
                     <input
