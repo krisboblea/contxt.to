@@ -28,13 +28,9 @@ export default async function ContextPage({ params }: Props) {
     return (
       <AIContextPage
         context={{
-          slug: raw.slug,
           title: raw.title,
           summary: raw.summary,
           content: raw.content,
-          tags,
-          createdAt: raw.createdAt,
-          claimToken: raw.claimToken,
         }}
       />
     )
