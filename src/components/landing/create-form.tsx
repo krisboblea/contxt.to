@@ -28,6 +28,7 @@ export function CreateForm() {
   const [result, setResult] = useState<{
     slug: string
     claimToken: string
+    url: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
@@ -69,7 +70,7 @@ export function CreateForm() {
       })
 
       if (res.success) {
-        setResult({ slug: res.slug, claimToken: res.claimToken })
+        setResult({ slug: res.slug, claimToken: res.claimToken, url: res.url })
       } else {
         setError(res.error)
       }
@@ -84,7 +85,7 @@ export function CreateForm() {
   if (result) {
     return (
       <>
-        <ResultCard slug={result.slug} />
+        <ResultCard slug={result.slug} url={result.url} />
         <EmailPrompt slug={result.slug} claimToken={result.claimToken} />
       </>
     )

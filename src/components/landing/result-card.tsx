@@ -13,9 +13,7 @@ import { AiButtons } from '@/components/shared/ai-buttons'
 import { Copy, Check } from 'lucide-react'
 import { useState } from 'react'
 
-export function ResultCard({ slug }: { slug: string }) {
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://contxt.to"
-  const url = `${origin}/s/${slug}`
+export function ResultCard({ slug, url }: { slug: string; url: string }) {
   const [copied, setCopied] = useState(false)
 
   async function copyUrl() {
