@@ -4,8 +4,8 @@ import { getPrismaClient } from "@/lib/prisma"
 export const dynamic = "force-dynamic"
 
 export async function GET() {
-  const url = process.env.DATABASE_URL || process.env.DB_TURSO_DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL || "file:./prisma/dev.db"
-  const authToken = process.env.DB_TURSO_AUTH_TOKEN || process.env.DB2_TURSO_AUTH_TOKEN
+  const url = process.env.DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL || "file:./prisma/dev.db"
+  const authToken = process.env.DB2_TURSO_AUTH_TOKEN
 
   // Sanitize URLs — show protocol + host only
   function sanitizeUrl(u: string): string {
@@ -20,7 +20,6 @@ export async function GET() {
 
   const env = {
     DATABASE_URL: process.env.DATABASE_URL ? `${sanitizeUrl(process.env.DATABASE_URL)}` : null,
-    DB_TURSO_DATABASE_URL: process.env.DB_TURSO_DATABASE_URL ? `${sanitizeUrl(process.env.DB_TURSO_DATABASE_URL)}` : null,
     DB2_TURSO_DATABASE_URL: process.env.DB2_TURSO_DATABASE_URL ? `${sanitizeUrl(process.env.DB2_TURSO_DATABASE_URL)}` : null,
     DB_TURSO_AUTH_TOKEN: authToken ? `${authToken.slice(0, 10)}...` : null,
     NODE_ENV: process.env.NODE_ENV,
