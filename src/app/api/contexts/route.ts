@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({ slug, claimToken, url: `${baseUrl}/s/${slug}` }, { status: 201 })
-  } catch (e) {
+  } catch (e: any) {
     console.error('[contexts] DB error:', e)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ error: e?.message || "Internal server error", detail: String(e) }, { status: 500 })
   }
 }
