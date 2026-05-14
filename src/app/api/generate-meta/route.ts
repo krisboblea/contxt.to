@@ -11,23 +11,27 @@ function extractMetadata(text: string) {
   // Find sentence boundaries
   const sentences = clean.match(/[^.!?]+[\.!?]+/g) || [clean]
 
-  // Title: first sentence, max 12 words
+  // Title: first sentence, max 12 words, max 120 chars
   const firstSentence = sentences[0]?.trim() || clean
   const title = firstSentence
     .split(/\s+/)
     .slice(0, 12)
     .join(" ")
     .replace(/\.$/, "")
-    .trim() || "Shared Context"
+    .trim()
+    .slice(0, 120) || "Shared Context"
 
-  // Summary: first 2-3 sentences, max 30 words
+  // Summary: first 2-3 sentences, max 30 words, max 500 chars
   const summaryWords: string[] = []
   for (const s of sentences) {
     const words = s.trim().split(/\s+/)
     if (summaryWords.length + words.length > 30) break
     summaryWords.push(...words)
   }
-  const summary = summaryWords.join(" ").trim() || firstSentence
+  let summary = summaryWords.join(" ").trim() || firstSentence
+  if (summary.length > 500) {
+    summary = summary.slice(0, 497).trimEnd() + "..."
+  }
 
   return { title, summary, source: "extraction" as const }
 }
