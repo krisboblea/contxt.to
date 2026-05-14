@@ -109,8 +109,12 @@ function LandingContent() {
       })
 
       if (!ctxRes.ok) {
-        const err = await ctxRes.json()
-        throw new Error(err.error || 'Failed to create')
+        let msg = 'Failed to create'
+        try {
+          const err = await ctxRes.json()
+          msg = err.error || msg
+        } catch { /* body empty, use default */ }
+        throw new Error(msg)
       }
 
       const ctx = await ctxRes.json()

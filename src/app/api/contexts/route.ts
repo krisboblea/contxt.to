@@ -44,23 +44,30 @@ export async function POST(request: NextRequest) {
   }
 
   const { title, summary, content, tags } = parsed.data
-  const slug = await findUniqueSlug(db, title)
-  const claimToken = randomBytes(16).toString("hex")
-  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "contxt.to"
-  const proto = request.headers.get("x-forwarded-proto") || "https"
-  const baseUrl = `${proto}://${host}`
 
-  await db.context.create({
-    data: {
-      title,
-      slug,
-      summary,
-      content,
-      tags: JSON.stringify(tags ?? []),
-      claimToken,
-      creatorIp: request.headers.get("x-forwarded-for") ?? null,
-    },
-  })
+  try {
+    const slug = await findUniqueSlug(db, title)
+    const claimToken = randomBytes(16).toString("hex")
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "contxt.to"
+    const proto = request.headers.get("x-forwarded-proto") || "https"
+    const baseUrl = `${proto}://${host}`
 
-  return NextResponse.json({ slug, url: `${baseUrl}/s/${slug}` }, { status: 201 })
+    await db.context.create({
+      data: {
+        title,
+        slug,
+        summary,
+        content,
+        tags: JSON.stringify(tags ?? []),
+        claimToken,
+        creatorIp: request.headers.get("x-forwarded-for") ?? null,
+      },
+    })
+
+    return NextResponse.json({ slug, url: `${baseUrl}/s/${slug}` }, { status: 201 })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('[contexts] DB error:', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
 }
