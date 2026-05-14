@@ -1,8 +1,6 @@
-import Link from "next/link"
+"use client"
 
-export const metadata = {
-  title: "Page not found — contxt.to",
-}
+import Link from "next/link"
 
 export default function NotFound() {
   return (
