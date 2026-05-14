@@ -15,6 +15,7 @@ interface ContextView {
 
 export function BrowserContextPage({ context, url }: { context: ContextView; url: string }) {
   const [copied, setCopied] = useState(false)
+  const [shared, setShared] = useState(false)
 
   async function copyUrl() {
     try {
@@ -31,40 +32,44 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
     setTimeout(() => setCopied(false), 1800)
   }
 
+  async function shareUrl() {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: context.title,
+          text: context.summary,
+          url: url,
+        })
+        setShared(true)
+        setTimeout(() => setShared(false), 1800)
+      } catch {
+        // User cancelled or error — fallback to copy
+        await copyUrl()
+      }
+    } else {
+      await copyUrl()
+    }
+  }
+
   const encodedUrl = encodeURIComponent(url)
   const aiLinks = [
     {
       name: 'ChatGPT',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M22.54 5.06c-.28-.64-.68-1.22-1.18-1.71a6.43 6.43 0 00-1.72-1.17C17.99 1.11 15.77 1 12 1c-3.77 0-6 .11-7.64.18a6.43 6.43 0 00-1.72 1.17A6.23 6.23 0 001.46 5.1C.47 7.9 0 11.43 0 12c0 .57.47 4.1 1.46 6.9.28.64.68 1.22 1.18 1.71.5.49 1.08.89 1.72 1.17C6.01 21.89 8.23 22 12 22c3.77 0 6-.11 7.64-.18.64-.28 1.22-.68 1.72-1.17.5-.49.9-1.07 1.18-1.71C22.53 16.1 23 12.57 23 12c0-.57-.47-4.1-1.46-6.94z"/>
-        </svg>
-      ),
-      bg: 'bg-[#10a37f]',
+      shortName: 'GPT',
+      bg: '#10a37f',
       href: `https://chatgpt.com/?q=Read+and+discuss+this+contxt+link+${encodedUrl}`,
-      desc: "OpenAI's most capable assistant",
     },
     {
       name: 'Gemini',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 24A14.3 14.3 0 000 12 14.3 14.3 0 0012 0a14.3 14.3 0 0012 12 14.3 14.3 0 00-12 12z"/>
-        </svg>
-      ),
-      bg: 'bg-[#4285f4]',
+      shortName: 'G',
+      bg: '#4285f4',
       href: `https://gemini.google.com/?q=Read+and+discuss+this+contxt+link+${encodedUrl}`,
-      desc: "Google's multimodal AI",
     },
     {
       name: 'Claude',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14.8 2.7c-.4-.4-.9-.7-1.5-.7s-1.1.3-1.5.7L2.7 11.8c-.4.4-.7.9-.7 1.5s.3 1.1.7 1.5l9.1 9.1c.4.4.9.7 1.5.7s1.1-.3 1.5-.7l9.1-9.1c.4-.4.7-.9.7-1.5s-.3-1.1-.7-1.5L14.8 2.7z"/>
-        </svg>
-      ),
-      bg: 'bg-[#d97706]',
+      shortName: 'C',
+      bg: '#d97706',
       href: `https://claude.ai/new?q=Read+and+discuss+this+contxt+link+${encodedUrl}`,
-      desc: "Anthropic's AI assistant",
     },
   ]
 
@@ -79,8 +84,8 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
           </span>
         </div>
 
-        {/* Main card */}
-        <Card className="w-full border border-[#e8e8f0] rounded-[16px] p-8 sm:p-10 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] transition-shadow duration-300"
+        {/* Main card — tighter padding on mobile */}
+        <Card className="w-full border border-[#e8e8f0] rounded-[16px] p-5 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)] transition-shadow duration-300"
           style={{ background: '#ffffff' }}>
 
           {/* Knowledge info */}
@@ -101,7 +106,7 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
 
           <div className="h-px bg-[#e8e8f0] my-6" />
 
-          {/* Continue section */}
+          {/* Continue section — compact row list on mobile */}
           <div className="text-[0.8rem] font-semibold uppercase tracking-wide text-[#9595aa] mb-3">
             Continue this conversation in
           </div>
@@ -113,15 +118,15 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
                 href={ai.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3.5 p-3.5 rounded-xl border border-[#e8e8f0] text-[#1a1a2e] no-underline transition-all duration-200 hover:border-[#d0d0de] hover:bg-[#fafbfe] hover:-translate-y-px hover:shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] active:translate-y-0 group"
+                className="flex items-center gap-3 p-3 rounded-xl border border-[#e8e8f0] text-[#1a1a2e] no-underline transition-all duration-200 hover:border-[#d0d0de] hover:bg-[#fafbfe] hover:-translate-y-px hover:shadow-[0_1px_3px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.02)] active:translate-y-0 group min-h-[44px]"
               >
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-white ${ai.bg} transition-transform duration-200 group-hover:scale-105`}>
-                  {ai.icon}
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-white text-xs font-bold transition-transform duration-200 group-hover:scale-105"
+                  style={{ background: ai.bg }}
+                >
+                  {ai.shortName}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold mb-px">{ai.name}</div>
-                  <div className="text-xs text-[#6b6b80]">{ai.desc}</div>
-                </div>
+                <span className="flex-1 text-sm font-semibold">{ai.name}</span>
                 <span className="text-xs font-medium text-[#10a37f] opacity-0 -translate-x-1.5 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 whitespace-nowrap">
                   Open →
                 </span>
@@ -129,20 +134,32 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
             ))}
           </div>
 
-          {/* Copy area */}
-          <div
-            className="flex items-center gap-2 mt-5 p-2.5 px-3.5 rounded-[10px] border border-dashed border-[#e8e8f0] cursor-pointer transition-all duration-200 hover:border-[#d0d0de] hover:bg-[#fafbfe]"
-            onClick={copyUrl}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9595aa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
-              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
-            </svg>
-            <span className="flex-1 text-xs text-[#9595aa] truncate">
-              Read and discuss this contxt link: {url}
-            </span>
+          {/* Copy + Share row — at bottom of card */}
+          <div className="flex items-center gap-2 mt-5">
+            <div
+              className="flex-1 flex items-center gap-2 p-2.5 px-3.5 rounded-[10px] border border-dashed border-[#e8e8f0] cursor-pointer transition-all duration-200 hover:border-[#d0d0de] hover:bg-[#fafbfe]"
+              onClick={copyUrl}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9595aa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+              </svg>
+              <span className="flex-1 text-xs text-[#9595aa] truncate">
+                {url}
+              </span>
+            </div>
             <button
-              className={`px-3 py-1 rounded-md border-none text-[0.72rem] font-semibold cursor-pointer transition-all duration-150 font-inherit ${
+              onClick={shareUrl}
+              className={`px-3 py-2 rounded-md border-none text-[0.72rem] font-semibold cursor-pointer transition-all duration-150 font-inherit min-h-[44px] ${
+                shared
+                  ? 'bg-[#10a37f] text-white'
+                  : 'bg-[#f8f9fc] text-[#6b6b80] hover:bg-[#e8e8f0] hover:text-[#1a1a2e]'
+              }`}
+            >
+              {shared ? 'Shared!' : 'Share'}
+            </button>
+            <button
+              className={`px-3 py-2 rounded-md border-none text-[0.72rem] font-semibold cursor-pointer transition-all duration-150 font-inherit min-h-[44px] ${
                 copied
                   ? 'bg-[#10a37f] text-white'
                   : 'bg-[#f8f9fc] text-[#6b6b80] hover:bg-[#e8e8f0] hover:text-[#1a1a2e]'
@@ -157,7 +174,7 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
         {/* Content section */}
         {context.content && (
           <div className="w-full mt-8">
-            <CardContent className="prose prose-sm prose-slate max-w-none bg-white rounded-[16px] border border-[#e8e8f0] p-6 shadow-sm">
+            <CardContent className="prose prose-sm prose-slate max-w-none bg-white rounded-[16px] border border-[#e8e8f0] p-5 sm:p-6 shadow-sm">
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight, rehypeSanitize]}>
                 {context.content}
               </ReactMarkdown>
