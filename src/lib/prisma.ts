@@ -12,10 +12,10 @@ export async function getPrismaClient() {
     const { PrismaLibSql } = await import('@prisma/adapter-libsql')
 
     // Only use environment-level Turso (shared across deploys) for data persistence.
-    // DB2_TURSO_* are env-level vars we set manually. Never use DATABASE_URL (injected by Vercel
-    // Turso Integration — unique per deploy, ephemeral).
-    const url = process.env.DB2_TURSO_DATABASE_URL || process.env.DB_TURSO_DATABASE_URL || 'file:./prisma/dev.db'
-    const authToken = process.env.DB2_TURSO_AUTH_TOKEN || process.env.DB_TURSO_AUTH_TOKEN
+    // DB2_TURSO_* are env-level vars we set manually. Never use DATABASE_URL or DB_TURSO_*
+    // (injected by Vercel Turso Integration — unique per deploy, ephemeral).
+    const url = process.env.DB2_TURSO_DATABASE_URL || 'file:./prisma/dev.db'
+    const authToken = process.env.DB2_TURSO_AUTH_TOKEN
 
     const config: any = { url }
     if (authToken) config.authToken = authToken
