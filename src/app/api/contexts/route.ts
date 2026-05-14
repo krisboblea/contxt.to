@@ -3,6 +3,7 @@ import { z } from "zod"
 import { getPrismaClient } from "@/lib/prisma"
 import { generateSlug, shortCode } from "@/lib/utils"
 import { randomBytes } from "crypto"
+import { withRateLimit } from "@/lib/rate-limit"
 
 const bodySchema = z.object({
   title: z.string().min(2),
@@ -21,6 +22,10 @@ async function findUniqueSlug(db: any, base: string): Promise<string> {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 10 requests per 60 seconds per IP
+  const rateLimited = withRateLimit(request, null, { max: 10, windowSeconds: 60 })
+  if (rateLimited.status === 429) return rateLimited
+
   let body: unknown
   try {
     body = await request.json()

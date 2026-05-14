@@ -4,6 +4,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeSanitize from 'rehype-sanitize'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface ContextView {
@@ -157,7 +158,7 @@ export function BrowserContextPage({ context, url }: { context: ContextView; url
         {context.content && (
           <div className="w-full mt-8">
             <CardContent className="prose prose-sm prose-slate max-w-none bg-white rounded-[16px] border border-[#e8e8f0] p-6 shadow-sm">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight, rehypeSanitize]}>
                 {context.content}
               </ReactMarkdown>
             </CardContent>

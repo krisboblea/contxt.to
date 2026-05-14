@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { execFile } from "child_process"
 import { promisify } from "util"
+import { withRateLimit } from "@/lib/rate-limit"
 
 const execFileAsync = promisify(execFile)
 
 const SYSTEM_PROMPT = `You are a metadata generator. Given content below, generate a title (max 10 words) and a one-sentence summary (max 25 words). Return valid JSON only: {"title":"...","summary":"..."}. Title must be under 10 words, summary under 25 words.`
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 requests per 60 seconds per IP (AI generation is expensive)
+  const rateLimited = withRateLimit(request, null, { max: 5, windowSeconds: 60 })
+  if (rateLimited.status === 429) return rateLimited
+
   let body: { content?: string }
   try {
     body = await request.json()
