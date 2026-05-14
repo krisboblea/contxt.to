@@ -11,8 +11,13 @@ export async function getPrismaClient() {
     const { PrismaClient } = await import('@prisma/client')
     const { PrismaLibSql } = await import('@prisma/adapter-libsql')
 
-    const url = process.env.DATABASE_URL || 'file:./prisma/dev.db'
-    const adapter = new PrismaLibSql({ url })
+    const url = process.env.DATABASE_URL || process.env.DB_TURSO_DATABASE_URL || 'file:./prisma/dev.db'
+    const authToken = process.env.DB_TURSO_AUTH_TOKEN
+
+    const config: any = { url }
+    if (authToken) config.authToken = authToken
+
+    const adapter = new PrismaLibSql(config)
     prismaClient = new PrismaClient({ adapter })
     return prismaClient
   } catch {
