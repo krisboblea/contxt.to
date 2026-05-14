@@ -21,19 +21,19 @@ async function findUniqueSlug(db: any, base: string): Promise<string> {
     const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
-  return shortCode(8)
+  const fallback = shortCode(8)
+  const existing = await db.context.findUnique({ where: { slug: fallback } })
+  if (!existing) return fallback
+  for (let i = 0; i < 20; i++) {
+    const code = shortCode(12)
+    const exists = await db.context.findUnique({ where: { slug: code } })
+    if (!exists) return code
+  }
+  throw new Error("Unable to generate unique slug after exhausting all attempts")
 }
 
 async function getBaseUrl(): Promise<string> {
-  try {
-    const h = await headers()
-    const host = h.get("x-forwarded-host") || h.get("host") || "contxt.to"
-    const proto = h.get("x-forwarded-proto") || "https"
-    return `${proto}://${host}`
-  } catch {
-    // Fallback if headers() is not available (e.g. during build)
-    return process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
-  }
+  return process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
 }
 
 export async function createContext(data: ContextFormData): Promise<CreateContextResult> {

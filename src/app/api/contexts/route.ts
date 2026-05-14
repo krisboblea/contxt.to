@@ -9,7 +9,7 @@ const bodySchema = z.object({
   title: z.string().min(2).max(120),
   summary: z.string().min(10).max(500),
   content: z.string().min(10).max(50000),
-  tags: z.array(z.string().max(50)).max(2).optional(),
+  tags: z.string().max(200).optional(),
 })
 
 async function findUniqueSlug(db: any, base: string): Promise<string> {
@@ -18,7 +18,17 @@ async function findUniqueSlug(db: any, base: string): Promise<string> {
     const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
-  return shortCode(8)
+  // Final fallback: verify uniqueness
+  const fallback = shortCode(8)
+  const existing = await db.context.findUnique({ where: { slug: fallback } })
+  if (!existing) return fallback
+  // Extremely unlikely, but keep trying with random codes
+  for (let i = 0; i < 20; i++) {
+    const code = shortCode(12)
+    const exists = await db.context.findUnique({ where: { slug: code } })
+    if (!exists) return code
+  }
+  throw new Error("Unable to generate unique slug after exhausting all attempts")
 }
 
 export async function POST(request: NextRequest) {
@@ -48,9 +58,7 @@ export async function POST(request: NextRequest) {
   try {
     const slug = await findUniqueSlug(db, title)
     const claimToken = randomBytes(16).toString("hex")
-    const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "contxt.to"
-    const proto = request.headers.get("x-forwarded-proto") || "https"
-    const baseUrl = `${proto}://${host}`
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
 
     await db.context.create({
       data: {
@@ -64,10 +72,9 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({ slug, url: `${baseUrl}/s/${slug}` }, { status: 201 })
+    return NextResponse.json({ slug, claimToken, url: `${baseUrl}/s/${slug}` }, { status: 201 })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    console.error('[contexts] DB error:', msg)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[contexts] DB error:', e)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
