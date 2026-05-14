@@ -74,6 +74,10 @@ function LandingContent() {
       setError('Content must be at least 10 characters')
       return
     }
+    if (text.length > 50000) {
+      setError('Content must be under 50000 characters')
+      return
+    }
 
     setPending(true)
     setGenerating(true)

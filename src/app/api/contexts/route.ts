@@ -6,10 +6,10 @@ import { randomBytes } from "crypto"
 import { withRateLimit } from "@/lib/rate-limit"
 
 const bodySchema = z.object({
-  title: z.string().min(2),
+  title: z.string().min(2).max(120),
   summary: z.string().min(10).max(500),
   content: z.string().min(10).max(50000),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.string().max(50)).max(20).optional(),
 })
 
 async function findUniqueSlug(db: any, base: string): Promise<string> {
