@@ -47,7 +47,8 @@ function getKey(request: Request): string {
   }
   const realIp = request.headers.get("x-real-ip")
   if (realIp) return realIp
-  return `unknown-${Date.now()}`
+  // Fallback: use a static key so all unidentifiable requests share one bucket
+  return "unknown"
 }
 
 export interface RateLimitResult {

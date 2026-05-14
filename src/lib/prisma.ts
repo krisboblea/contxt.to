@@ -20,11 +20,8 @@ export async function getPrismaClient() {
     const adapter = new PrismaLibSql(config)
     prismaClient = new PrismaClient({ adapter })
     return prismaClient
-  } catch {
-    // Running in serverless env without DB — return null
+  } catch (e) {
+    console.error('[prisma] init failed:', e)
     return null
   }
 }
-
-// Re-export for backward compat, but won't crash on import
-export const prisma = null as any

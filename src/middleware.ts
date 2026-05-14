@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { classifyUA } from "@/lib/ua"
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const ua = request.headers.get("user-agent") ?? ""
   const visitorType = classifyUA(ua)
   const { pathname } = request.nextUrl
