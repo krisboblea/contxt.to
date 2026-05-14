@@ -5,12 +5,24 @@ import { generateSlug, shortCode } from "@/lib/utils"
 import { randomBytes } from "crypto"
 import { withRateLimit } from "@/lib/rate-limit"
 
+const tagsSchema = z.union([
+  z.string().max(200),
+  z.array(z.string().max(50)).max(2),
+]).optional()
+
 const bodySchema = z.object({
   title: z.string().min(2).max(120),
   summary: z.string().min(10).max(500),
   content: z.string().min(10).max(50000),
-  tags: z.string().max(200).optional(),
+  tags: tagsSchema,
 })
+
+function normalizeTags(tags: string | string[] | undefined): string {
+  if (!tags) return "[]"
+  if (Array.isArray(tags)) return JSON.stringify(tags.map(t => t.trim()).filter(Boolean))
+  // Comma-separated string
+  return JSON.stringify(tags.split(",").map(t => t.trim()).filter(Boolean))
+}
 
 async function findUniqueSlug(db: any, base: string): Promise<string> {
   for (let i = 0; i < 10; i++) {
@@ -58,7 +70,8 @@ export async function POST(request: NextRequest) {
   try {
     const slug = await findUniqueSlug(db, title)
     const claimToken = randomBytes(16).toString("hex")
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+      || `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "contxt.to"}`
 
     await db.context.create({
       data: {
@@ -66,7 +79,7 @@ export async function POST(request: NextRequest) {
         slug,
         summary,
         content,
-        tags: JSON.stringify(tags ?? []),
+        tags: normalizeTags(tags),
         claimToken,
         creatorIp: request.headers.get("x-forwarded-for") ?? null,
       },

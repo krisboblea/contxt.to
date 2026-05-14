@@ -33,7 +33,17 @@ async function findUniqueSlug(db: any, base: string): Promise<string> {
 }
 
 async function getBaseUrl(): Promise<string> {
-  return process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
+  // 1. Env var takes priority (set for production)
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL
+  // 2. Fall back to current request hostname (auto-adapts preview)
+  try {
+    const h = await headers()
+    const host = h.get("host") || "contxt.to"
+    const proto = h.get("x-forwarded-proto") || "https"
+    return `${proto}://${host}`
+  } catch {
+    return "https://contxt.to"
+  }
 }
 
 export async function createContext(data: ContextFormData): Promise<CreateContextResult> {
