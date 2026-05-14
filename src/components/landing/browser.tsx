@@ -624,24 +624,76 @@ function LandingContent() {
             The Experience
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-[60px] items-center mt-12">
-            <div className="anim-up">
-              <h2 className="font-heading font-bold leading-tight tracking-[-0.02em] mb-4" style={{
+          <div className="grid lg:grid-cols-2 gap-[60px] items-start mt-12">
+            {/* Left: Description */}
+            <div className="anim-up space-y-6">
+              <h2 className="font-heading font-bold leading-tight tracking-[-0.02em]" style={{
                 fontSize: 'clamp(28px, 3vw, 42px)',
                 color: '#16163D',
               }}>
-                Open a link. <span className="italic" style={{ color: '#FF2A6D' }}>Get the gist.</span> Go deeper.
+                <em className="italic" style={{ color: '#FF2A6D' }}>One</em> link.{' '}
+                <em className="italic" style={{ color: '#FF2A6D' }}>Two</em> views.
               </h2>
-              <p className="text-[15px] leading-relaxed mb-7 max-w-[420px]" style={{ color: '#4A4A6A' }}>
+              <p className="text-[15px] leading-relaxed max-w-[420px]" style={{ color: '#4A4A6A' }}>
                 Your recipient opens a short link, sees the core idea in seconds,
                 and can instantly dive into it — with AI carrying all the context.
+                The same link adapts to whoever opens it.
               </p>
-              <div className="flex flex-col gap-3">
+
+              {/* Browser experience card */}
+              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="12" r="4" />
+                      <line x1="21.17" y1="8" x2="12" y2="8" />
+                      <line x1="3.95" y1="6.06" x2="8.54" y2="14" />
+                      <line x1="10.88" y1="21.94" x2="15.46" y2="14" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold" style={{ color: '#16163D' }}>Browser View</div>
+                    <div className="text-xs" style={{ color: '#8B8BA8' }}>For humans reading on the web</div>
+                  </div>
+                </div>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                  Rich card layout with title, summary, and full context.
+                  One click sends everything into ChatGPT, Gemini, or Claude —
+                   no copy-paste needed.
+                </p>
+              </div>
+
+              {/* AI experience card */}
+              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold" style={{ color: '#16163D' }}>AI Agent View</div>
+                    <div className="text-xs" style={{ color: '#8B8BA8' }}>For AI crawlers reading programmatically</div>
+                  </div>
+                </div>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                  Structured YAML frontmatter with title, description, and raw content.
+                  AI agents (ChatGPT, Gemini, Claude crawlers) get plain text they
+                  can parse and act on immediately.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
                 {[
-                  'Smart previews that reveal the content, not just a title',
-                  'Auto-summarization with full source preservation',
-                  'Works with ChatGPT, Gemini, Claude, and more',
-                  'Private by default — nothing is public without you',
+                  'Same short link, two different rendering paths',
+                  'AI agents get clean YAML with no HTML/CSS noise',
+                  'Works with ChatGPT, Gemini, Claude, and all major crawlers',
+                  'Smart previews for sharing on Slack, email, and docs',
+                  'Private by default — nothing is public without you sending the link',
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
                     <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 text-white"
@@ -654,58 +706,104 @@ function LandingContent() {
               </div>
             </div>
 
-            <div className="anim-up rounded-[24px] border overflow-hidden shadow-lg"
-              style={{
-                background: '#FFFFFF',
-                borderColor: '#F0EDE4',
-                boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
-              }}>
-              {/* Title bar */}
-              <div className="flex items-center gap-2 px-5 py-3.5 border-b" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
-                <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-xs text-center border"
-                  style={{ background: '#FFFFFF', borderColor: '#F0EDE4', color: '#8B8BA8' }}>
-                  contxt.to/s/aK3mQ
-                </span>
-              </div>
-              {/* Body */}
-              <div className="p-6">
-                <h4 className="font-heading text-[22px] font-bold leading-tight mb-2.5" style={{ color: '#16163D' }}>
-                  Product Design Sprint Retro — Q1 2026
-                </h4>
-                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
-                  We ran 3 design sprints this quarter. Key wins: the onboarding
-                  redesign tested at 87% usability (up from 62%). Key misses: the
-                  analytics dashboard overhaul needs another iteration. Action
-                  items: ship onboarding v2, schedule dashboard workshop, hire a
-                  second product designer.
-                </p>
-                <div className="flex gap-2.5 mt-5 pt-5 border-t" style={{ borderColor: '#F0EDE4' }}>
-                  <a href="https://chatgpt.com"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                    style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FCF9F2' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
-                    </svg>
-                    Continue in ChatGPT
-                  </a>
-                  <a href="https://gemini.google.com"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                    style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FCF9F2' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                    </svg>
-                    Continue in Gemini
-                  </a>
+            {/* Right: Two mockups stacked */}
+            <div className="space-y-6">
+              {/* Browser mockup */}
+              <div className="anim-up rounded-[24px] border overflow-hidden shadow-lg"
+                style={{
+                  background: '#FFFFFF',
+                  borderColor: '#F0EDE4',
+                  boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
+                }}>
+                <div className="flex items-center gap-2 px-5 py-3.5 border-b" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
+                  <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-[11px] text-center border"
+                    style={{ background: '#FFFFFF', borderColor: '#F0EDE4', color: '#8B8BA8' }}>
+                    contxt.to/s/aK3mQ
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                    Browser
+                  </span>
                 </div>
+                <div className="p-5">
+                  <h4 className="font-heading text-[20px] font-bold leading-tight mb-2" style={{ color: '#16163D' }}>
+                    Product Design Sprint Retro — Q1 2026
+                  </h4>
+                  <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                    We ran 3 design sprints this quarter. Key wins: the onboarding
+                    redesign tested at 87% usability (up from 62%). Key misses: the
+                    analytics dashboard overhaul needs another iteration.
+                  </p>
+                  <div className="flex gap-2 mt-4 pt-4 border-t" style={{ borderColor: '#F0EDE4' }}>
+                    <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[12px] text-[11px] font-semibold border"
+                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
+                      </svg>
+                      Continue in ChatGPT
+                    </span>
+                    <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[12px] text-[11px] font-semibold border"
+                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      </svg>
+                      Continue in Gemini
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI YAML mockup */}
+              <div className="anim-up rounded-[24px] overflow-hidden shadow-lg"
+                style={{ '--delay': '0.2s', boxShadow: '0 24px 60px rgba(22, 22, 61, 0.18)' } as React.CSSProperties}>
+                {/* Terminal title bar */}
+                <div className="flex items-center gap-2 px-5 py-3 border-b"
+                  style={{ background: '#16163D', borderColor: 'rgba(255,255,255,0.06)' }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
+                  <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-center text-[10px] border"
+                    style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
+                    contxt.to/s/aK3mQ (AI Agent)
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    AI View
+                  </span>
+                </div>
+                {/* Code body */}
+                <div className="p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto"
+                  style={{ background: '#1a1a2e' }}>
+                  <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
+                  <div><span style={{ color: '#FF79C6' }}>name</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>Product Design Sprint Retro — Q1 2026</span></div>
+                  <div><span style={{ color: '#FF79C6' }}>description</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>&gt; Summary of 3 design sprints this quarter. Key</span></div>
+                  <div style={{ color: '#F1FA8C', paddingLeft: '13px' }}>wins: onboarding hit 87% usability.</div>
+                  <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
+                  <div style={{ color: '#6c6c8a', margin: '6px 0' }}># AI reads this block as the full context body</div>
+                  <div><span style={{ color: '#6272A4' }}>We ran 3 design sprints this quarter. Key wins: the</span></div>
+                  <div><span style={{ color: '#6272A4' }}>onboarding redesign tested at 87% usability</span></div>
+                  <div><span style={{ color: '#6272A4' }}>(up from 62%). Key misses...</span></div>
+                  <div style={{ color: '#6c6c8a', marginTop: '6px' }}>{'─'.repeat(40)}</div>
+                  <div style={{ color: '#50FA7B', marginTop: '6px' }}># AI agents get structured YAML — parse with any YAML library</div>
+                </div>
+              </div>
+
+              {/* Visual connector */}
+              <div className="flex items-center justify-center gap-3 text-xs font-medium" style={{ color: '#8B8BA8' }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  🌐
+                </span>
+                <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="#E8E3D8" strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <span className="font-semibold" style={{ color: '#FF2A6D' }}>same link</span>
+                <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="#E8E3D8" strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  {'<'}/&gt;
+                </span>
               </div>
             </div>
           </div>
