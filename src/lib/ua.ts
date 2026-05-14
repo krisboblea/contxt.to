@@ -9,6 +9,7 @@ const AI_AGENT_PATTERNS = [
   'google-extended',
   'googleother',
   'gemini',
+  'claude',
   'claude-web',
   'anthropic-ai',
   'perplexitybot',
