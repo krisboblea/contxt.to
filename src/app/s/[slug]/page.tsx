@@ -22,8 +22,6 @@ export default async function ContextPage({ params }: Props) {
   const raw = await db.context.findUnique({ where: { slug } })
   if (!raw) notFound()
 
-  const tags = JSON.parse(raw.tags) as string[]
-
   if (visitorType === "ai_agent") {
     return (
       <AIContextPage
@@ -39,12 +37,9 @@ export default async function ContextPage({ params }: Props) {
   return (
     <BrowserContextPage
       context={{
-        slug: raw.slug,
         title: raw.title,
         summary: raw.summary,
         content: raw.content,
-        tags,
-        createdAt: raw.createdAt,
       }}
       url={url}
     />
