@@ -11,10 +11,10 @@ export async function getPrismaClient() {
     const { PrismaClient } = await import('@prisma/client')
     const { PrismaLibSql } = await import('@prisma/adapter-libsql')
 
-    // Priority: explicit DATABASE_URL > environment-level Turso (shared across env) > deployment-level Turso > local SQLite
-    // DB2_TURSO_* are environment-level vars set by Turso Integration (shared within each env)
-    // DB_TURSO_* are deployment-level vars (unique per deploy — avoid for data persistence)
-    const url = process.env.DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL || process.env.DB_TURSO_DATABASE_URL || 'file:./prisma/dev.db'
+    // Priority: environment-level Turso (shared across deploys) > deployment-level Turso > local SQLite
+    // DB2_TURSO_* are environment-level vars set via Vercel env (persist across deploys)
+    // DATABASE_URL / DB_TURSO_* are deployment-level vars set by Turso Integration (unique per deploy — avoid for data persistence)
+    const url = process.env.DB2_TURSO_DATABASE_URL || process.env.DATABASE_URL || process.env.DB_TURSO_DATABASE_URL || 'file:./prisma/dev.db'
     const authToken = process.env.DB2_TURSO_AUTH_TOKEN || process.env.DB_TURSO_AUTH_TOKEN
 
     const config: any = { url }
