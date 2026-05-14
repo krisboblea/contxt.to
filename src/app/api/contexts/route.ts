@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
   try {
     const slug = await findUniqueSlug(db, title)
     const claimToken = randomBytes(16).toString("hex")
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://contxt.to"
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+      || `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "contxt.to"}`
 
     await db.context.create({
       data: {
