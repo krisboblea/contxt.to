@@ -29,10 +29,12 @@ function LandingContent() {
   const [emailSent, setEmailSent] = useState(false)
   const [claimError, setClaimError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [baseUrl, setBaseUrl] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
+  useEffect(() => { setBaseUrl(window.location.origin) }, [])
 
   // Scroll observer for animations
   useEffect(() => {
@@ -383,7 +385,7 @@ function LandingContent() {
                               color: '#FF2A6D',
                               borderColor: 'rgba(255, 42, 109, 0.1)',
                             }}>
-                            read https://mvp.contxt.to and shorten this chat and create a shareable link
+                            {`read ${baseUrl} and shorten this chat and create a shareable link`}
                           </code>
                         </>
                       )}
@@ -391,7 +393,7 @@ function LandingContent() {
 
                     {!result && (
                       <div className="flex gap-2">
-                        <a href="https://chatgpt.com/?q=read+https%3A%2F%2Fmvp.contxt.to+and+shorten+this+chat+and+create+a+shareable+link"
+                        <a href={`https://chatgpt.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
                           target="_blank" rel="noopener noreferrer"
                           className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
                           style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
@@ -402,7 +404,7 @@ function LandingContent() {
                           </svg>
                           Continue in ChatGPT
                         </a>
-                        <a href="https://gemini.google.com/?q=read+https%3A%2F%2Fmvp.contxt.to+and+shorten+this+chat+and+create+a+shareable+link"
+                        <a href={`https://gemini.google.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
                           target="_blank" rel="noopener noreferrer"
                           className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
                           style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
