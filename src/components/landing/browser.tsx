@@ -880,6 +880,9 @@ function LandingContent() {
           <a href="mailto:hello@contxt.to" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contact</a>
+          <a href="mailto:ai@contxt.to" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>AI Support</a>
         </div>
       </footer>
 

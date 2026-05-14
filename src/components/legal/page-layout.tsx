@@ -292,6 +292,13 @@ export function LegalPage({ title, content }: LegalPageProps) {
           >
             Contact
           </a>
+          <a
+            href="mailto:ai@contxt.to"
+            className="no-underline transition-colors"
+            style={{ color: "#4A4A6A" }}
+          >
+            AI Support
+          </a>
         </div>
       </footer>
     </main>
