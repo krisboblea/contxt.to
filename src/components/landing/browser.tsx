@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { EmailPrompt } from './email-prompt'
+import { useState, useEffect, useRef } from 'react'
 
 export function LandingBrowser() {
   return (
@@ -25,6 +24,10 @@ function LandingContent() {
     body: string
   } | null>(null)
   const [copied, setCopied] = useState(false)
+  const [showQR, setShowQR] = useState(false)
+  const [emailValue, setEmailValue] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
+  const [claimError, setClaimError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
@@ -104,6 +107,7 @@ function LandingContent() {
       }
 
       const ctx = await ctxRes.json()
+      setContent('')
       setResult({
         slug: ctx.slug,
         claimToken: ctx.claimToken || '',
@@ -134,6 +138,23 @@ function LandingContent() {
     }
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function handleClaim(e: React.FormEvent) {
+    e.preventDefault()
+    if (!emailValue || !result) return
+    setClaimError(null)
+    try {
+      const res = await fetch('/api/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: result.slug, token: result.claimToken, email: emailValue }),
+      })
+      if (!res.ok) throw new Error('Failed to save')
+      setEmailSent(true)
+    } catch {
+      setClaimError('Could not save right now')
+    }
   }
 
   return (
@@ -250,45 +271,92 @@ function LandingContent() {
 
                   {/* Link row */}
                   {result && (
-                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-[14px] mb-3.5 border"
+                    <div className="flex flex-wrap items-center gap-2 px-3 py-2.5 rounded-[14px] mb-3 border"
                       style={{
                         background: 'rgba(255, 42, 109, 0.06)',
                         borderColor: 'rgba(255, 42, 109, 0.1)',
                       }}>
-                      <span className="flex-1 text-[15px] font-semibold truncate" style={{ color: '#FF2A6D' }}>
+                      <span className="flex-1 text-[14px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
                         {result.url}
                       </span>
-                      <button
-                        onClick={copyLink}
-                        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full border text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit ${
-                          copied
-                            ? 'text-white'
-                            : ''
-                        }`}
-                        style={
-                          copied
-                            ? { background: '#FF2A6D', borderColor: '#FF2A6D' }
-                            : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }
-                        }
-                        onMouseEnter={(e) => {
-                          if (!copied) {
-                            e.currentTarget.style.borderColor = '#FF2A6D'
-                            e.currentTarget.style.color = '#FF2A6D'
+                      <div className="flex items-center gap-1.5">
+                        {/* Open */}
+                        <a
+                          href={result.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold no-underline cursor-pointer transition-all font-inherit"
+                          style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
+                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                          Open
+                        </a>
+                        {/* QR toggle */}
+                        <button
+                          onClick={() => setShowQR(!showQR)}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer transition-all font-inherit"
+                          style={{
+                            background: showQR ? 'rgba(255,42,109,0.08)' : '#FFFFFF',
+                            borderColor: showQR ? '#FF2A6D' : '#E8E3D8',
+                            color: showQR ? '#FF2A6D' : '#4A4A6A',
+                          }}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="4" height="4" rx="1" />
+                            <line x1="9" y1="14" x2="14" y2="9" />
+                            <line x1="9" y1="16" x2="16" y2="9" />
+                          </svg>
+                          QR
+                        </button>
+                        {/* Copy */}
+                        <button
+                          onClick={copyLink}
+                          className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit ${
+                            copied ? 'text-white' : ''
+                          }`}
+                          style={
+                            copied
+                              ? { background: '#FF2A6D', borderColor: '#FF2A6D' }
+                              : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }
                           }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!copied) {
-                            e.currentTarget.style.borderColor = '#E8E3D8'
-                            e.currentTarget.style.color = '#4A4A6A'
-                          }
-                        }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                        </svg>
-                        {copied ? 'Copied!' : 'Copy'}
-                      </button>
+                          onMouseEnter={(e) => {
+                            if (!copied) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!copied) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }
+                          }}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                          {copied ? 'Copied!' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* QR Code (collapsible) */}
+                  {result && showQR && (
+                    <div className="flex justify-center mb-3.5 p-3 rounded-[14px] border"
+                      style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                      <img
+                        src={`/api/qr?url=${encodeURIComponent(result.url)}`}
+                        alt="QR Code for link"
+                        width={120}
+                        height={120}
+                        className="block"
+                        style={{ imageRendering: 'pixelated' }}
+                      />
                     </div>
                   )}
 
@@ -349,9 +417,48 @@ function LandingContent() {
                     )}
                   </div>
 
-                  {result && (
-                    <div className="mt-4">
-                      <EmailPrompt slug={result.slug} claimToken={result.claimToken} />
+                  {/* Inline email section */}
+                  {result && !emailSent && (
+                    <form onSubmit={handleClaim} className="mt-4 p-4 rounded-[14px] border"
+                      style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[13px] font-medium whitespace-nowrap" style={{ color: '#4A4A6A' }}>
+                          ✉️ Want to track your link?
+                        </span>
+                        <div className="flex items-center gap-1.5 flex-1 max-w-[280px]">
+                          <input
+                            type="email"
+                            value={emailValue}
+                            onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
+                            placeholder="your@email.com"
+                            required
+                            className="flex-1 px-3 py-1.5 rounded-[10px] border text-[12px] outline-none transition-all font-inherit"
+                            style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D', minWidth: 0 }}
+                            onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
+                            onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
+                          />
+                          <button
+                            type="submit"
+                            className="px-3.5 py-1.5 rounded-[10px] border-none text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
+                            style={{ background: '#FF2A6D' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                      {claimError && (
+                        <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>
+                      )}
+                    </form>
+                  )}
+                  {result && emailSent && (
+                    <div className="mt-4 p-4 rounded-[14px] border text-center"
+                      style={{ background: 'rgba(255, 42, 109, 0.03)', borderColor: '#F0EDE4' }}>
+                      <span className="text-[13px] font-medium" style={{ color: '#4A4A6A' }}>
+                        ✅ We&apos;ll notify you at <strong style={{ color: '#16163D' }}>{emailValue}</strong> when this link is visited.
+                      </span>
                     </div>
                   )}
                 </div>
