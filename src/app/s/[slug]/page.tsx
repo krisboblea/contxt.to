@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { headers } from "next/headers"
-import { prisma } from "@/lib/prisma"
+import { getPrismaClient } from "@/lib/prisma"
 import { BrowserContextPage } from "@/components/context/browser-page"
 import { AIContextPage } from "@/components/context/ai-page"
 
@@ -13,7 +13,9 @@ export default async function ContextPage({ params }: Props) {
   const h = await headers()
   const visitorType = h.get("x-visitor-type") ?? "browser"
 
-  const raw = await prisma.context.findUnique({ where: { slug } })
+  const db = await getPrismaClient()
+  if (!db) notFound()
+  const raw = await db.context.findUnique({ where: { slug } })
   if (!raw) notFound()
 
   const tags = JSON.parse(raw.tags) as string[]
@@ -50,7 +52,9 @@ export default async function ContextPage({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
-  const context = await prisma.context.findUnique({ where: { slug } })
+  const db = await getPrismaClient()
+  if (!db) return { title: "Not Found — contxt.to" }
+  const context = await db.context.findUnique({ where: { slug } })
   if (!context) return { title: "Not Found — contxt.to" }
   return {
     title: `${context.title} — contxt.to`,

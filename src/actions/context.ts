@@ -1,18 +1,9 @@
 "use server"
 
-import { z } from "zod"
 import { getPrismaClient } from "@/lib/prisma"
 import { slugify, randomSuffix } from "@/lib/utils"
 import { randomBytes } from "crypto"
-
-export const contextSchema = z.object({
-  title: z.string().min(2, "Title must be at least 2 characters"),
-  summary: z.string().min(10, "Summary must be at least 10 characters").max(500),
-  content: z.string().min(10, "Content must be at least 10 characters").max(50000),
-  tags: z.string().optional(),
-})
-
-export type ContextFormData = z.infer<typeof contextSchema>
+import { createContextSchema as contextSchema, type CreateContextForm as ContextFormData } from "@/lib/schemas"
 
 type CreateContextResult =
   | { success: true; slug: string; claimToken: string }
