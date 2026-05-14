@@ -6,12 +6,12 @@ const { mockFindUnique, mockCreate } = vi.hoisted(() => ({
 }))
 
 vi.mock("@/lib/prisma", () => ({
-  prisma: {
+  getPrismaClient: async () => ({
     context: {
       findUnique: mockFindUnique,
       create: mockCreate,
     },
-  },
+  }),
 }))
 
 import { POST } from "@/app/api/contexts/route"
