@@ -7,11 +7,11 @@ export async function GET() {
 
   // 1. Check env vars
   results.env = {
-    DB2_TURSO_DATABASE_URL: !!process.env.DB2_TURSO_DATABASE_URL,
+    DB2_TURSO_DATABASE_URL: process.env.DB2_TURSO_DATABASE_URL ? process.env.DB2_TURSO_DATABASE_URL.substring(0, 50) + '...' : null,
     DB2_TURSO_AUTH_TOKEN: !!process.env.DB2_TURSO_AUTH_TOKEN,
-    DB_TURSO_DATABASE_URL: !!process.env.DB_TURSO_DATABASE_URL,
+    DB_TURSO_DATABASE_URL: process.env.DB_TURSO_DATABASE_URL ? process.env.DB_TURSO_DATABASE_URL.substring(0, 50) + '...' : null,
     DB_TURSO_AUTH_TOKEN: !!process.env.DB_TURSO_AUTH_TOKEN,
-    DATABASE_URL: !!process.env.DATABASE_URL,
+    DATABASE_URL: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 50) + '...' : null,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     VERCEL_ENV: process.env.VERCEL_ENV,
@@ -52,6 +52,26 @@ export async function GET() {
     }
   } catch (e: any) {
     results.prisma = { ok: false, error: e.message, stack: e.stack?.split("\n").slice(0, 5).join("\n") }
+  }
+
+  // 4. Same URL resolution as getPrismaClient (uses DATABASE_URL first)
+  try {
+    const { createClient } = await import("@libsql/client")
+    const url = process.env.DATABASE_URL || process.env.DB2_TURSO_DATABASE_URL || process.env.DB_TURSO_DATABASE_URL
+    const authToken = process.env.DB2_TURSO_AUTH_TOKEN || process.env.DB_TURSO_AUTH_TOKEN
+    
+    results.prisma_url_resolution = {
+      url: url ? url.substring(0, 50) + '...' : null,
+      hasToken: !!authToken
+    }
+    
+    if (url && authToken) {
+      const client = createClient({ url, authToken })
+      const r = await client.execute("SELECT count(*) as cnt FROM Context")
+      results.prisma_url_test = { ok: true, count: r.rows[0]?.cnt }
+    }
+  } catch (e: any) {
+    results.prisma_url_test = { ok: false, error: e.message }
   }
 
   return NextResponse.json(results)
