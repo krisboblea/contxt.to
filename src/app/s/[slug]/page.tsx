@@ -13,6 +13,10 @@ export default async function ContextPage({ params }: Props) {
   const h = await headers()
   const visitorType = h.get("x-visitor-type") ?? "browser"
 
+  const host = h.get("x-forwarded-host") || h.get("host") || "contxt.to"
+  const proto = h.get("x-forwarded-proto") || "https"
+  const url = `${proto}://${host}/s/${slug}`
+
   const db = await getPrismaClient()
   if (!db) notFound()
   const raw = await db.context.findUnique({ where: { slug } })
@@ -46,6 +50,7 @@ export default async function ContextPage({ params }: Props) {
         tags,
         createdAt: raw.createdAt,
       }}
+      url={url}
     />
   )
 }

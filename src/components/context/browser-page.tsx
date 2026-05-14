@@ -14,7 +14,7 @@ interface ContextView {
   createdAt: Date
 }
 
-export function BrowserContextPage({ context }: { context: ContextView }) {
+export function BrowserContextPage({ context, url }: { context: ContextView; url: string }) {
   const date = new Date(context.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -72,7 +72,7 @@ export function BrowserContextPage({ context }: { context: ContextView }) {
             Open this context in your favorite AI assistant to continue
             the discussion.
           </p>
-          <AiButtons slug={context.slug} title={context.title} />
+          <AiButtons url={url} />
         </CardContent>
       </Card>
 

@@ -51,7 +51,7 @@ export function ResultCard({ slug, url }: { slug: string; url: string }) {
           <p className="text-sm text-muted-foreground mb-3">
             Share this link — recipients can continue in any AI:
           </p>
-          <AiButtons slug={slug} />
+          <AiButtons url={url} />
         </div>
       </CardContent>
     </Card>
