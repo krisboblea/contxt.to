@@ -23,6 +23,7 @@ function LandingContent() {
     summary: string
     body: string
   } | null>(null)
+  const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const [showQR, setShowQR] = useState(false)
   const [emailValue, setEmailValue] = useState('')
@@ -73,6 +74,10 @@ function LandingContent() {
       setError('Content must be at least 10 characters')
       return
     }
+    if (text.length > 50000) {
+      setError('Content must be under 50000 characters')
+      return
+    }
 
     setPending(true)
     setGenerating(true)
@@ -104,8 +109,12 @@ function LandingContent() {
       })
 
       if (!ctxRes.ok) {
-        const err = await ctxRes.json()
-        throw new Error(err.error || 'Failed to create')
+        let msg = 'Failed to create'
+        try {
+          const err = await ctxRes.json()
+          msg = err.error || msg
+        } catch { /* body empty, use default */ }
+        throw new Error(msg)
       }
 
       const ctx = await ctxRes.json()
@@ -118,6 +127,7 @@ function LandingContent() {
         summary: meta.summary,
         body: text.length > 200 ? text.substring(0, 197) + '...' : text,
       })
+      setShowModal(true)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
     } finally {
@@ -267,202 +277,52 @@ function LandingContent() {
 
               <div className="p-6 sm:p-7" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
 
-                {/* Result Area */}
-                <div className="transition-all duration-500"
-                  style={{ animation: result ? 'slideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards' : undefined }}>
-
-                  {/* Link row */}
-                  {result && (
-                    <div className="flex flex-wrap items-center gap-2 px-3 py-2.5 rounded-[14px] mb-3 border"
-                      style={{
-                        background: 'rgba(255, 42, 109, 0.06)',
-                        borderColor: 'rgba(255, 42, 109, 0.1)',
-                      }}>
-                      <span className="flex-1 text-[14px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
-                        {result.url}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        {/* Open */}
-                        <a
-                          href={result.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold no-underline cursor-pointer transition-all font-inherit"
-                          style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
-                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                            <polyline points="15 3 21 3 21 9" />
-                            <line x1="10" y1="14" x2="21" y2="3" />
-                          </svg>
-                          Open
-                        </a>
-                        {/* QR toggle */}
-                        <button
-                          onClick={() => setShowQR(!showQR)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer transition-all font-inherit"
-                          style={{
-                            background: showQR ? 'rgba(255,42,109,0.08)' : '#FFFFFF',
-                            borderColor: showQR ? '#FF2A6D' : '#E8E3D8',
-                            color: showQR ? '#FF2A6D' : '#4A4A6A',
-                          }}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="14" y="14" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="4" height="4" rx="1" />
-                            <line x1="9" y1="14" x2="14" y2="9" />
-                            <line x1="9" y1="16" x2="16" y2="9" />
-                          </svg>
-                          QR
-                        </button>
-                        {/* Copy */}
-                        <button
-                          onClick={copyLink}
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit ${
-                            copied ? 'text-white' : ''
-                          }`}
-                          style={
-                            copied
-                              ? { background: '#FF2A6D', borderColor: '#FF2A6D' }
-                              : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }
-                          }
-                          onMouseEnter={(e) => {
-                            if (!copied) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!copied) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }
-                          }}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                          </svg>
-                          {copied ? 'Copied!' : 'Copy'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* QR Code (collapsible) */}
-                  {result && showQR && (
-                    <div className="flex justify-center mb-3.5 p-3 rounded-[14px] border"
-                      style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
-                      <img
-                        src={`/api/qr?url=${encodeURIComponent(result.url)}`}
-                        alt="QR Code for link"
-                        width={120}
-                        height={120}
-                        className="block"
-                        style={{ imageRendering: 'pixelated' }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Preview block */}
+                {/* Preview block — always visible */}
+                <div className="transition-all duration-500">
                   <div className="p-5 rounded-[14px] border" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
                     <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2"
                       style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
-                      {result ? '✨ Your Link Preview' : '💡 Try This Prompt'}
+                      💡 Try This Prompt
                     </span>
-
                     <div className="text-[17px] font-bold leading-tight mb-1.5" style={{ color: '#16163D' }}>
-                      {result ? result.title : 'Share AI Chat → One Link'}
+                      Share AI Chat → One Link
                     </div>
-
                     <div className="text-[13px] leading-relaxed mb-4" style={{ color: '#8B8BA8' }}>
-                      {result ? (
-                        result.summary
-                      ) : (
-                        <>
-                          Paste into ChatGPT / Gemini and tap Continue:
-                          <code className="block text-[13px] leading-relaxed font-medium p-2.5 mt-2 rounded-[8px] border"
-                            style={{
-                              background: 'rgba(255, 42, 109, 0.06)',
-                              color: '#FF2A6D',
-                              borderColor: 'rgba(255, 42, 109, 0.1)',
-                            }}>
-                            {`read ${baseUrl} and shorten this chat and create a shareable link`}
-                          </code>
-                        </>
-                      )}
+                      Paste into ChatGPT / Gemini and tap Continue:
+                      <code className="block text-[13px] leading-relaxed font-medium p-2.5 mt-2 rounded-[8px] border"
+                        style={{
+                          background: 'rgba(255, 42, 109, 0.06)',
+                          color: '#FF2A6D',
+                          borderColor: 'rgba(255, 42, 109, 0.1)',
+                        }}>
+                        {`read ${baseUrl} and shorten this chat and create a shareable link`}
+                      </code>
                     </div>
-
-                    {!result && (
-                      <div className="flex gap-2">
-                        <a href={`https://chatgpt.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
-                          target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                          style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
-                          </svg>
-                          Continue in ChatGPT
-                        </a>
-                        <a href={`https://gemini.google.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
-                          target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                          style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                          </svg>
-                          Continue in Gemini
-                        </a>
-                      </div>
-                    )}
+                    <div className="flex gap-2">
+                      <a href={`https://chatgpt.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
+                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
+                        </svg>
+                        Continue in ChatGPT
+                      </a>
+                      <a href={`https://gemini.google.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
+                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                        Continue in Gemini
+                      </a>
+                    </div>
                   </div>
-
-                  {/* Inline email section */}
-                  {result && !emailSent && (
-                    <form onSubmit={handleClaim} className="mt-4 p-4 rounded-[14px] border"
-                      style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-[13px] font-medium whitespace-nowrap" style={{ color: '#4A4A6A' }}>
-                          ✉️ Want to track your link?
-                        </span>
-                        <div className="flex items-center gap-1.5 flex-1 max-w-[280px]">
-                          <input
-                            type="email"
-                            value={emailValue}
-                            onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
-                            placeholder="your@email.com"
-                            required
-                            className="flex-1 px-3 py-1.5 rounded-[10px] border text-[12px] outline-none transition-all font-inherit"
-                            style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D', minWidth: 0 }}
-                            onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
-                            onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
-                          />
-                          <button
-                            type="submit"
-                            className="px-3.5 py-1.5 rounded-[10px] border-none text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
-                            style={{ background: '#FF2A6D' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                      {claimError && (
-                        <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>
-                      )}
-                    </form>
-                  )}
-                  {result && emailSent && (
-                    <div className="mt-4 p-4 rounded-[14px] border text-center"
-                      style={{ background: 'rgba(255, 42, 109, 0.03)', borderColor: '#F0EDE4' }}>
-                      <span className="text-[13px] font-medium" style={{ color: '#4A4A6A' }}>
-                        ✅ We&apos;ll notify you at <strong style={{ color: '#16163D' }}>{emailValue}</strong> when this link is visited.
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Divider */}
@@ -541,6 +401,169 @@ function LandingContent() {
           </div>
         </div>
       </section>
+
+      {/* ═══ RESULT MODAL ═══ */}
+      {showModal && result && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          style={{ background: 'rgba(22, 22, 61, 0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+          onClick={() => { setShowModal(false) }}
+        >
+          <div
+            className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[24px] border shadow-2xl"
+            style={{ background: '#FFFFFF', borderColor: '#F0EDE4', boxShadow: '0 32px 80px rgba(22, 22, 61, 0.2)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-[24px]"
+              style={{ background: 'linear-gradient(90deg, #FF2A6D, transparent 60%)' }} />
+
+            {/* Close button */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border transition-all cursor-pointer"
+              style={{ background: '#FCF9F2', borderColor: '#F0EDE4', color: '#4A4A6A' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#FF2A6D' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#FCF9F2'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.borderColor = '#F0EDE4' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="p-7 sm:p-10" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+              {/* Success badge */}
+              <div className="flex items-center gap-2 mb-6">
+                <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'rgba(255, 42, 109, 0.08)' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <span className="text-[15px] font-semibold" style={{ color: '#16163D' }}>Link created successfully</span>
+              </div>
+
+              {/* Link row */}
+              <div className="flex items-center gap-2 px-4 py-3 rounded-[14px] mb-5 border"
+                style={{ background: 'rgba(255, 42, 109, 0.06)', borderColor: 'rgba(255, 42, 109, 0.1)' }}>
+                <span className="flex-1 text-[15px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
+                  {result.url}
+                </span>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <a href={result.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold no-underline cursor-pointer transition-all font-inherit"
+                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    Open
+                  </a>
+                  <button onClick={() => setShowQR(!showQR)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer transition-all font-inherit"
+                    style={{ background: showQR ? 'rgba(255,42,109,0.08)' : '#FFFFFF', borderColor: showQR ? '#FF2A6D' : '#E8E3D8', color: showQR ? '#FF2A6D' : '#4A4A6A' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="14" width="7" height="7" rx="1" />
+                      <rect x="3" y="14" width="4" height="4" rx="1" />
+                      <line x1="9" y1="14" x2="14" y2="9" />
+                      <line x1="9" y1="16" x2="16" y2="9" />
+                    </svg>
+                    QR
+                  </button>
+                  <button onClick={copyLink}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit ${copied ? 'text-white' : ''}`}
+                    style={copied ? { background: '#FF2A6D', borderColor: '#FF2A6D' } : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                    onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' } }}
+                    onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' } }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+
+              {/* QR Code */}
+              {showQR && (
+                <div className="flex justify-center mb-5 p-4 rounded-[14px] border"
+                  style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                  <img src={`/api/qr?url=${encodeURIComponent(result.url)}`} alt="QR Code" width={130} height={130} className="block" style={{ imageRendering: 'pixelated' }} />
+                </div>
+              )}
+
+              {/* Preview */}
+              <div className="p-5 sm:p-6 rounded-[14px] border mb-5" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3"
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
+                  ✨ Your Link Preview
+                </span>
+                <div className="text-[19px] font-bold leading-tight mb-2" style={{ color: '#16163D' }}>
+                  {result.title}
+                </div>
+                <div className="text-[14px] leading-relaxed" style={{ color: '#8B8BA8' }}>
+                  {result.summary}
+                </div>
+              </div>
+
+              {/* Email claim */}
+              {!emailSent ? (
+                <form onSubmit={handleClaim} className="p-5 rounded-[14px] border"
+                  style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                  <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
+                    ✉️ Track visits, manage, and edit your links later
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="email" value={emailValue}
+                      onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
+                      placeholder="your@email.com" required
+                      className="flex-1 px-3.5 py-2.5 rounded-[12px] border text-[13px] outline-none transition-all font-inherit"
+                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
+                    />
+                    <button type="submit"
+                      className="px-5 py-2.5 rounded-[12px] border-none text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
+                      style={{ background: '#FF2A6D' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                  {claimError && <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>}
+                </form>
+              ) : (
+                <div className="p-5 rounded-[14px] border text-center"
+                  style={{ background: 'rgba(255, 42, 109, 0.03)', borderColor: '#F0EDE4' }}>
+                  <span className="text-[14px] font-medium" style={{ color: '#4A4A6A' }}>
+                    ✅ We&apos;ll notify you at <strong style={{ color: '#16163D' }}>{emailValue}</strong> when this link is visited.
+                  </span>
+                </div>
+              )}
+
+              {/* Close button at bottom */}
+              <div className="mt-6 text-center">
+                <button onClick={() => setShowModal(false)}
+                  className="px-6 py-2.5 rounded-full border text-[13px] font-semibold cursor-pointer transition-all font-inherit"
+                  style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}
+                >
+                  Create another link
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* ═══ HOW IT WORKS ═══ */}
       <div className="relative z-10 h-px max-w-[1200px] mx-auto"
@@ -624,24 +647,76 @@ function LandingContent() {
             The Experience
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-[60px] items-center mt-12">
-            <div className="anim-up">
-              <h2 className="font-heading font-bold leading-tight tracking-[-0.02em] mb-4" style={{
+          <div className="grid lg:grid-cols-2 gap-[60px] items-start mt-12">
+            {/* Left: Description */}
+            <div className="anim-up space-y-6">
+              <h2 className="font-heading font-bold leading-tight tracking-[-0.02em]" style={{
                 fontSize: 'clamp(28px, 3vw, 42px)',
                 color: '#16163D',
               }}>
-                Open a link. <span className="italic" style={{ color: '#FF2A6D' }}>Get the gist.</span> Go deeper.
+                <em className="italic" style={{ color: '#FF2A6D' }}>One</em> link.{' '}
+                <em className="italic" style={{ color: '#FF2A6D' }}>Two</em> views.
               </h2>
-              <p className="text-[15px] leading-relaxed mb-7 max-w-[420px]" style={{ color: '#4A4A6A' }}>
+              <p className="text-[15px] leading-relaxed max-w-[420px]" style={{ color: '#4A4A6A' }}>
                 Your recipient opens a short link, sees the core idea in seconds,
                 and can instantly dive into it — with AI carrying all the context.
+                The same link adapts to whoever opens it.
               </p>
-              <div className="flex flex-col gap-3">
+
+              {/* Browser experience card */}
+              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="12" r="4" />
+                      <line x1="21.17" y1="8" x2="12" y2="8" />
+                      <line x1="3.95" y1="6.06" x2="8.54" y2="14" />
+                      <line x1="10.88" y1="21.94" x2="15.46" y2="14" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold" style={{ color: '#16163D' }}>Browser View</div>
+                    <div className="text-xs" style={{ color: '#8B8BA8' }}>For humans reading on the web</div>
+                  </div>
+                </div>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                  Rich card layout with title, summary, and full context.
+                  One click sends everything into ChatGPT, Gemini, or Claude —
+                   no copy-paste needed.
+                </p>
+              </div>
+
+              {/* AI experience card */}
+              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2">
+                      <polyline points="16 18 22 12 16 6" />
+                      <polyline points="8 6 2 12 8 18" />
+                    </svg>
+                  </span>
+                  <div>
+                    <div className="text-sm font-bold" style={{ color: '#16163D' }}>AI Agent View</div>
+                    <div className="text-xs" style={{ color: '#8B8BA8' }}>For AI crawlers reading programmatically</div>
+                  </div>
+                </div>
+                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                  Structured YAML frontmatter with title, description, and raw content.
+                  AI agents (ChatGPT, Gemini, Claude crawlers) get plain text they
+                  can parse and act on immediately.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
                 {[
-                  'Smart previews that reveal the content, not just a title',
-                  'Auto-summarization with full source preservation',
-                  'Works with ChatGPT, Gemini, Claude, and more',
-                  'Private by default — nothing is public without you',
+                  'Same short link, two different rendering paths',
+                  'AI agents get clean YAML with no HTML/CSS noise',
+                  'Works with ChatGPT, Gemini, Claude, and all major crawlers',
+                  'Smart previews for sharing on Slack, email, and docs',
+                  'Private by default — nothing is public without you sending the link',
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
                     <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 text-white"
@@ -654,58 +729,104 @@ function LandingContent() {
               </div>
             </div>
 
-            <div className="anim-up rounded-[24px] border overflow-hidden shadow-lg"
-              style={{
-                background: '#FFFFFF',
-                borderColor: '#F0EDE4',
-                boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
-              }}>
-              {/* Title bar */}
-              <div className="flex items-center gap-2 px-5 py-3.5 border-b" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
-                <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
-                <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-xs text-center border"
-                  style={{ background: '#FFFFFF', borderColor: '#F0EDE4', color: '#8B8BA8' }}>
-                  contxt.to/s/aK3mQ
-                </span>
-              </div>
-              {/* Body */}
-              <div className="p-6">
-                <h4 className="font-heading text-[22px] font-bold leading-tight mb-2.5" style={{ color: '#16163D' }}>
-                  Product Design Sprint Retro — Q1 2026
-                </h4>
-                <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
-                  We ran 3 design sprints this quarter. Key wins: the onboarding
-                  redesign tested at 87% usability (up from 62%). Key misses: the
-                  analytics dashboard overhaul needs another iteration. Action
-                  items: ship onboarding v2, schedule dashboard workshop, hire a
-                  second product designer.
-                </p>
-                <div className="flex gap-2.5 mt-5 pt-5 border-t" style={{ borderColor: '#F0EDE4' }}>
-                  <a href="https://chatgpt.com"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                    style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FCF9F2' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
-                    </svg>
-                    Continue in ChatGPT
-                  </a>
-                  <a href="https://gemini.google.com"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                    style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FCF9F2' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                    </svg>
-                    Continue in Gemini
-                  </a>
+            {/* Right: Two mockups stacked */}
+            <div className="space-y-6">
+              {/* Browser mockup */}
+              <div className="anim-up rounded-[24px] border overflow-hidden shadow-lg"
+                style={{
+                  background: '#FFFFFF',
+                  borderColor: '#F0EDE4',
+                  boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
+                }}>
+                <div className="flex items-center gap-2 px-5 py-3.5 border-b" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
+                  <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-[11px] text-center border"
+                    style={{ background: '#FFFFFF', borderColor: '#F0EDE4', color: '#8B8BA8' }}>
+                    contxt.to/s/aK3mQ
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                    Browser
+                  </span>
                 </div>
+                <div className="p-5">
+                  <h4 className="font-heading text-[20px] font-bold leading-tight mb-2" style={{ color: '#16163D' }}>
+                    Product Design Sprint Retro — Q1 2026
+                  </h4>
+                  <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                    We ran 3 design sprints this quarter. Key wins: the onboarding
+                    redesign tested at 87% usability (up from 62%). Key misses: the
+                    analytics dashboard overhaul needs another iteration.
+                  </p>
+                  <div className="flex gap-2 mt-4 pt-4 border-t" style={{ borderColor: '#F0EDE4' }}>
+                    <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[12px] text-[11px] font-semibold border"
+                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
+                      </svg>
+                      Continue in ChatGPT
+                    </span>
+                    <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[12px] text-[11px] font-semibold border"
+                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      </svg>
+                      Continue in Gemini
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI YAML mockup */}
+              <div className="anim-up rounded-[24px] overflow-hidden shadow-lg"
+                style={{ '--delay': '0.2s', boxShadow: '0 24px 60px rgba(22, 22, 61, 0.18)' } as React.CSSProperties}>
+                {/* Terminal title bar */}
+                <div className="flex items-center gap-2 px-5 py-3 border-b"
+                  style={{ background: '#16163D', borderColor: 'rgba(255,255,255,0.06)' }}>
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
+                  <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-center text-[10px] border"
+                    style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
+                    contxt.to/s/aK3mQ (AI Agent)
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                    style={{ background: 'rgba(255, 255, 255, 0.08)', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    AI View
+                  </span>
+                </div>
+                {/* Code body */}
+                <div className="p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto"
+                  style={{ background: '#1a1a2e' }}>
+                  <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
+                  <div><span style={{ color: '#FF79C6' }}>name</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>Product Design Sprint Retro — Q1 2026</span></div>
+                  <div><span style={{ color: '#FF79C6' }}>description</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>&gt; Summary of 3 design sprints this quarter. Key</span></div>
+                  <div style={{ color: '#F1FA8C', paddingLeft: '13px' }}>wins: onboarding hit 87% usability.</div>
+                  <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
+                  <div style={{ color: '#6c6c8a', margin: '6px 0' }}># AI reads this block as the full context body</div>
+                  <div><span style={{ color: '#6272A4' }}>We ran 3 design sprints this quarter. Key wins: the</span></div>
+                  <div><span style={{ color: '#6272A4' }}>onboarding redesign tested at 87% usability</span></div>
+                  <div><span style={{ color: '#6272A4' }}>(up from 62%). Key misses...</span></div>
+                  <div style={{ color: '#6c6c8a', marginTop: '6px' }}>{'─'.repeat(40)}</div>
+                  <div style={{ color: '#50FA7B', marginTop: '6px' }}># AI agents get structured YAML — parse with any YAML library</div>
+                </div>
+              </div>
+
+              {/* Visual connector */}
+              <div className="flex items-center justify-center gap-3 text-xs font-medium" style={{ color: '#8B8BA8' }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  🌐
+                </span>
+                <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="#E8E3D8" strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <span className="font-semibold" style={{ color: '#FF2A6D' }}>same link</span>
+                <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="#E8E3D8" strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  {'<'}/&gt;
+                </span>
               </div>
             </div>
           </div>
@@ -767,15 +888,24 @@ function LandingContent() {
           onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
           onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contxt</a></span>
         <div className="flex gap-6">
-          <a href="/" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+          <a href="/privacy" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Privacy</a>
-          <a href="/" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+          <a href="/terms" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Terms</a>
+          <a href="/contributing" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contributing</a>
+          <a href="/changelog" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Changelog</a>
           <a href="mailto:hello@contxt.to" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contact</a>
+          <a href="mailto:ai@contxt.to" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>AI Support</a>
         </div>
       </footer>
 

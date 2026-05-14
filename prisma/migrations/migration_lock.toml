@@ -1,0 +1,4 @@
+# Prisma Migrate lock file
+# Learn more: https://pris.ly/d/doc-migrate-lockfile
+
+provider = "sqlite"

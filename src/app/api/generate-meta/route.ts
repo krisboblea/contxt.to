@@ -1,12 +1,46 @@
 import { NextRequest, NextResponse } from "next/server"
-import { execFile } from "child_process"
-import { promisify } from "util"
+import { withRateLimit } from "@/lib/rate-limit"
 
-const execFileAsync = promisify(execFile)
+/**
+ * Smart extraction: derive title + summary from raw text without an LLM.
+ * Reliable, fast, works everywhere (Vercel serverless included).
+ */
+function extractMetadata(text: string) {
+  const clean = text.replace(/\n+/g, " ").trim()
 
-const SYSTEM_PROMPT = `You are a metadata generator. Given content below, generate a title (max 10 words) and a one-sentence summary (max 25 words). Return valid JSON only: {"title":"...","summary":"..."}. Title must be under 10 words, summary under 25 words.`
+  // Find sentence boundaries
+  const sentences = clean.match(/[^.!?]+[\.!?]+/g) || [clean]
+
+  // Title: first sentence, max 12 words, max 120 chars
+  const firstSentence = sentences[0]?.trim() || clean
+  const title = firstSentence
+    .split(/\s+/)
+    .slice(0, 12)
+    .join(" ")
+    .replace(/\.$/, "")
+    .trim()
+    .slice(0, 120) || "Shared Context"
+
+  // Summary: first 2-3 sentences, max 30 words, max 500 chars
+  const summaryWords: string[] = []
+  for (const s of sentences) {
+    const words = s.trim().split(/\s+/)
+    if (summaryWords.length + words.length > 30) break
+    summaryWords.push(...words)
+  }
+  let summary = summaryWords.join(" ").trim() || firstSentence
+  if (summary.length > 500) {
+    summary = summary.slice(0, 497).trimEnd() + "..."
+  }
+
+  return { title, summary, source: "extraction" as const }
+}
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 requests per 60 seconds per IP
+  const rateLimited = withRateLimit(request, null, { max: 5, windowSeconds: 60 })
+  if (rateLimited.status === 429) return rateLimited
+
   let body: { content?: string }
   try {
     body = await request.json()
@@ -19,48 +53,7 @@ export async function POST(request: NextRequest) {
   }
 
   const trimmed = body.content.trim().slice(0, 5000)
+  const result = extractMetadata(trimmed)
 
-  try {
-    const prompt = `${SYSTEM_PROMPT}\n\nContent:\n${trimmed}`
-    const { stdout } = await execFileAsync("gemini", ["-p", prompt, "--output-format", "json"], {
-      timeout: 60000,
-      maxBuffer: 1024 * 10,
-      env: { ...process.env, TERM: "dumb", NO_COLOR: "1" },
-    })
-
-    // Parse JSON from output
-    const lines = stdout.split("\n").filter(l => l.trim().startsWith("{"))
-    for (const line of lines) {
-      try {
-        const parsed = JSON.parse(line.trim())
-        if (parsed.title && parsed.summary) {
-          return NextResponse.json({
-            title: String(parsed.title).trim().slice(0, 120),
-            summary: String(parsed.summary).trim().slice(0, 500),
-          })
-        }
-      } catch {}
-    }
-
-    throw new Error("Could not parse AI response")
-  } catch (err) {
-    console.error("generate-meta error:", err)
-
-    // Fallback: smart extraction
-    const text = trimmed.replace(/\n+/g, " ").trim()
-    // Title: first sentence or first line, max 10 words
-    const firstSentence = text.match(/^.*?[\.!?](\s|$)/)?.[0]?.trim() || text
-    const title = firstSentence.split(/\s+/).slice(0, 10).join(" ").replace(/\.$/, "").trim() || "Shared Context"
-    // Summary: first 2-3 sentences, max 25 words
-    const sentences = text.match(/[^.!?]+[\.!?]+/g) || [text]
-    const summaryWords: string[] = []
-    for (const s of sentences) {
-      const words = s.trim().split(/\s+/)
-      if (summaryWords.length + words.length > 25) break
-      summaryWords.push(...words)
-    }
-    const summary = summaryWords.join(" ").trim() || firstSentence
-
-    return NextResponse.json({ title, summary, source: "extraction" })
-  }
+  return NextResponse.json(result)
 }

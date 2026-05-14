@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contxt — Brand Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500;1,9..40,600&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#FCF9F2;color:#16163D;line-height:1.6;overflow-x:hidden}
+
+/* ── Noise Texture ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:10000;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  opacity:0.6;mix-blend-mode:multiply}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(22,22,61,0.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(22,22,61,0.2)}
+
+/* ── Typography ── */
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em;line-height:1.08}
+code{font-family:'JetBrains Mono',monospace;font-size:0.8em;background:rgba(255,42,109,0.06);padding:0.15em 0.4em;border-radius:4px;color:#FF2A6D}
+.section-label{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#FF2A6D;margin-bottom:12px;font-family:'DM Sans',sans-serif}
+
+/* ── Layout ── */
+.container{max-width:1200px;margin:0 auto;padding:0 40px}
+@media(max-width:768px){.container{padding:0 24px}}
+
+/* ── Fade Animations ── */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1),transform 0.8s cubic-bezier(0.22,1,0.36,1)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.delay-1{transition-delay:0.1s}
+.delay-2{transition-delay:0.2s}
+.delay-3{transition-delay:0.3s}
+.delay-4{transition-delay:0.4s}
+.delay-5{transition-delay:0.5s}
+
+/* ── COVER ── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;padding:40px 24px 80px}
+.cover-brand{font-family:'Playfair Display',Georgia,serif;font-size:clamp(64px,10vw,140px);font-weight:800;letter-spacing:-0.04em;line-height:1;color:#16163D;position:relative}
+.cover-brand .dot{display:inline-block;width:0.25em;height:0.25em;border-radius:50%;background:#FF2A6D;vertical-align:super;margin-left:0.04em}
+.cover-tagline{font-size:clamp(14px,1.3vw,18px);color:#4A4A6A;margin-top:20px;font-weight:400;max-width:480px;line-height:1.7}
+.cover-sub{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#FF2A6D;margin-bottom:24px;font-family:'DM Sans',sans-serif}
+.cover-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:#4A4A6A;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s}
+.cover-scroll:hover{opacity:0.5}
+.cover-scroll .arrow{animation:bounceArrow 2s ease-in-out infinite}
+@keyframes bounceArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── Section Base ── */
+.section{padding:120px 0;border-top:1px solid rgba(22,22,61,0.06)}
+.section:first-of-type{border-top:none}
+.section-title{font-size:clamp(32px,4vw,56px);line-height:1.08;letter-spacing:-0.03em;margin-bottom:12px}
+.section-sub{font-size:clamp(14px,1.1vw,16px);color:#4A4A6A;max-width:520px;line-height:1.8}
+.section-header{margin-bottom:60px}
+
+/* ── 1. PHILOSOPHY ── */
+.phil-block{max-width:680px}
+.phil-block p{font-size:clamp(15px,1.15vw,17px);line-height:1.9;color:#4A4A6A;margin-bottom:20px}
+.phil-block p strong{color:#16163D;font-weight:600}
+.phil-quote{font-family:'Playfair Display',Georgia,serif;font-size:clamp(24px,2.2vw,34px);font-style:italic;color:#16163D;line-height:1.35;letter-spacing:-0.01em;padding:32px 0 24px 32px;border-left:3px solid #FF2A6D;margin:32px 0 20px}
+
+/* ── 2. LOGO ── */
+.logo-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px}
+@media(max-width:900px){.logo-grid{grid-template-columns:1fr}}
+
+.logo-card{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;transition:box-shadow 0.3s}
+.logo-card:hover{box-shadow:0 8px 32px rgba(22,22,61,0.06)}
+.logo-card.dark{background:#16163D}
+.logo-card-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#4A4A6A;margin-top:20px;font-family:'DM Sans',sans-serif}
+.logo-card.dark .logo-card-label{color:rgba(255,255,255,0.5)}
+
+.logo-lockup{font-family:'Playfair Display',Georgia,serif;font-size:clamp(36px,4vw,52px);font-weight:800;letter-spacing:-0.03em;color:#16163D}
+.logo-lockup .pink-square{display:inline-flex;width:0.6em;height:0.6em;background:#FF2A6D;border-radius:6px;align-items:center;justify-content:center;color:#fff;font-size:0.6em;font-weight:700;font-family:'DM Sans',sans-serif;vertical-align:middle;margin-right:6px;line-height:1}
+.logo-card.dark .logo-lockup{color:#FFF}
+.logo-card.dark .logo-lockup .pink-square{background:#FF2A6D}
+
+/* Logo Do/Don't grid */
+.logo-usage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
+@media(max-width:900px){.logo-usage-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.logo-usage-grid{grid-template-columns:1fr}}
+
+.logo-example{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:12px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:140px;position:relative;overflow:hidden}
+.logo-example.dont{opacity:0.55;border-color:rgba(255,42,109,0.15);background:rgba(255,42,109,0.02)}
+.logo-example .badge{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:100px}
+.logo-example .badge.do{background:rgba(22,22,61,0.06);color:#4A4A6A}
+.logo-example .badge.dont{background:rgba(255,42,109,0.08);color:#FF2A6D}
+.logo-example .mini-logo{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#16163D}
+.logo-example .mini-logo .pink-square-mini{display:inline-flex;width:18px;height:18px;background:#FF2A6D;border-radius:4px;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;vertical-align:middle;margin-right:4px}
+.logo-example.dont .mini-logo{color:#16163D}
+.logo-example .cross{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.logo-example .cross svg{width:60%;height:60%;opacity:0.08}
+
+/* Clear space diagram */
+.space-diagram{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;padding:48px;margin-top:40px;position:relative}
+.space-diagram-inner{border:1px dashed rgba(255,42,109,0.3);border-radius:8px;padding:24px;display:flex;align-items:center;justify-content:center;min-height:100px;position:relative}
+.space-diagram-inner .space-label{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#FFFFFF;padding:0 10px;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#FF2A6D;white-space:nowrap}
+.space-diagram .mini-logolock{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;color:#16163D}
+.space-diagram .mini-logolock .ps{display:inline-flex;width:22px;height:22px;background:#FF2A6D;border-radius:5px;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;vertical-align:middle;margin-right:5px}
+.space-annotation{font-size:11px;color:#4A4A6A;text-align:center;margin-top:12px}
+
+/* ── 3. COLOR ── */
+.color-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}
+@media(max-width:900px){.color-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.color-grid{grid-template-columns:1fr}}
+
+.swatch{border-radius:16px;overflow:hidden;background:#FFF;border:1px solid rgba(22,22,61,0.06);transition:transform 0.3s,box-shadow 0.3s}
+.swatch:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(22,22,61,0.08)}
+.swatch-color{height:140px;position:relative}
+.swatch-color .swatch-tag{position:absolute;bottom:12px;right:12px;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:100px;background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45)}
+.swatch-info{padding:16px 18px 18px}
+.swatch-name{font-size:13px;font-weight:700;color:#16163D;margin-bottom:2px}
+.swatch-role{font-size:11px;color:#4A4A6A;margin-bottom:8px}
+.swatch-values{display:flex;flex-direction:column;gap:2px}
+.swatch-values span{font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B8BA8}
+
+/* ── 4. TYPOGRAPHY ── */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px}
+@media(max-width:768px){.type-grid{grid-template-columns:1fr}}
+
+.type-card{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;padding:36px;transition:box-shadow 0.3s}
+.type-card:hover{box-shadow:0 8px 32px rgba(22,22,61,0.06)}
+.type-card h3{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#16163D;margin-bottom:4px}
+.type-card .sub{font-size:11px;color:#4A4A6A;margin-bottom:20px}
+.type-specimen{margin-top:16px}
+.type-specimen .line{display:flex;align-items:baseline;gap:16px;padding:6px 0;border-bottom:1px solid rgba(22,22,61,0.04)}
+.type-specimen .line:last-child{border-bottom:none}
+.type-specimen .size{font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B8BA8;width:48px;flex-shrink:0;text-align:right}
+.type-specimen .sample{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#16163D}
+.type-specimen .weight{font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8B8BA8;width:70px;text-align:right;flex-shrink:0}
+
+/* Type do/don't */
+.type-rules{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.type-rules{grid-template-columns:1fr}}
+.type-rule{padding:24px;border-radius:12px}
+.type-rule.do{background:#FFF;border:1px solid rgba(22,22,61,0.06)}
+.type-rule.dont{background:rgba(255,42,109,0.02);border:1px solid rgba(255,42,109,0.1)}
+.type-rule .rule-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.type-rule.do .rule-label{color:#4A4A6A}
+.type-rule.dont .rule-label{color:#FF2A6D}
+.type-rule .rule-text{font-size:14px;color:#4A4A6A;line-height:1.7}
+
+/* ── 5. VOICE ── */
+.voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:40px}
+@media(max-width:768px){.voice-grid{grid-template-columns:1fr}}
+.voice-principle{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;padding:32px}
+.voice-principle .icon{width:32px;height:32px;border-radius:10px;background:rgba(255,42,109,0.06);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:14px}
+.voice-principle h4{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:#16163D;margin-bottom:6px}
+.voice-principle p{font-size:14px;color:#4A4A6A;line-height:1.8}
+
+.voice-examples{margin-top:48px;display:grid;gap:16px}
+.voice-example{padding:20px 24px;border-radius:12px;font-size:14px;line-height:1.7}
+.voice-example.good{background:#FFF;border:1px solid rgba(22,22,61,0.06)}
+.voice-example.good .vtag{color:#16163D;font-weight:600}
+.voice-example.bad{background:rgba(255,42,109,0.02);border:1px solid rgba(255,42,109,0.1)}
+.voice-example.bad .vtag{color:#FF2A6D;font-weight:600}
+.voice-example .vtag{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+
+/* ── 6. APPLICATION ── */
+.app-showcase{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:40px}
+@media(max-width:768px){.app-showcase{grid-template-columns:1fr}}
+.app-card{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;overflow:hidden;transition:box-shadow 0.3s,transform 0.3s}
+.app-card:hover{box-shadow:0 12px 40px rgba(22,22,61,0.08);transform:translateY(-3px)}
+.app-card-preview{padding:40px;display:flex;align-items:center;justify-content:center;min-height:200px;position:relative}
+.app-card-preview .ui-mock{width:100%;max-width:300px}
+.app-card-preview .ui-mock .url-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#FCF9F2;border:1px solid rgba(22,22,61,0.06);border-radius:100px;margin-bottom:12px}
+.app-card-preview .ui-mock .url-bar .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.app-card-preview .ui-mock .url-bar .dot:nth-child(1){background:#FF5F56}
+.app-card-preview .ui-mock .url-bar .dot:nth-child(2){background:#FFBD2E}
+.app-card-preview .ui-mock .url-bar .dot:nth-child(3){background:#27C93F}
+.app-card-preview .ui-mock .url-bar .url-text{flex:1;font-size:10px;text-align:center;color:#8B8BA8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-card-preview .ui-mock .card{background:#FFF;border:1px solid rgba(22,22,61,0.06);border-radius:12px;padding:16px;box-shadow:0 4px 16px rgba(22,22,61,0.04)}
+.app-card-preview .ui-mock .card .title{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;color:#16163D;margin-bottom:4px}
+.app-card-preview .ui-mock .card .summary{font-size:11px;color:#4A4A6A;margin-bottom:12px;line-height:1.5}
+.app-card-preview .ui-mock .card .btn-group{display:flex;gap:6px}
+.app-card-preview .ui-mock .card .btn-group .btn{flex:1;padding:7px 8px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(22,22,61,0.04);color:#4A4A6A}
+.app-card-preview .ui-mock .landing{text-align:center;padding:20px}
+.app-card-preview .ui-mock .landing .big{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:800;color:#16163D;letter-spacing:-0.02em;margin-bottom:6px}
+.app-card-preview .ui-mock .landing .big .pink{color:#FF2A6D;font-style:italic}
+.app-card-preview .ui-mock .landing .desc{font-size:11px;color:#4A4A6A;max-width:220px;margin:0 auto 14px;line-height:1.5}
+.app-card-preview .ui-mock .landing .cta-btn{display:inline-block;padding:8px 24px;border-radius:100px;background:#FF2A6D;color:#fff;font-size:11px;font-weight:600;border:none}
+.app-card-info{padding:24px;border-top:1px solid rgba(22,22,61,0.06)}
+.app-card-info h4{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}
+.app-card-info p{font-size:12px;color:#4A4A6A;line-height:1.7}
+
+/* ── 7. ASSETS ── */
+.assets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+@media(max-width:768px){.assets-grid{grid-template-columns:1fr}}
+.asset-card{background:#FFFFFF;border:1px solid rgba(22,22,61,0.06);border-radius:12px;padding:28px;text-align:center;transition:box-shadow 0.3s}
+.asset-card:hover{box-shadow:0 8px 24px rgba(22,22,61,0.06)}
+.asset-card .icon-wrap{width:48px;height:48px;border-radius:14px;background:rgba(255,42,109,0.06);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px}
+.asset-card h4{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}
+.asset-card p{font-size:11px;color:#4A4A6A;margin-bottom:14px}
+.asset-card .dl-btn{display:inline-block;padding:7px 18px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid rgba(22,22,61,0.12);color:#4A4A6A;text-decoration:none;transition:all 0.2s;cursor:pointer}
+.asset-card .dl-btn:hover{border-color:#FF2A6D;color:#FF2A6D;background:rgba(255,42,109,0.04)}
+
+/* ── Footer ── */
+.footer{border-top:1px solid rgba(22,22,61,0.06);padding:48px 0;text-align:center}
+.footer p{font-size:12px;color:#8B8BA8}
+.footer .version{font-family:'JetBrains Mono',monospace;font-size:10px;color:#4A4A6A;margin-top:4px}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .section{padding:80px 0}
+  .logo-card,.type-card{padding:24px}
+  .swatch-color{height:100px}
+  .space-diagram{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<section class="cover">
+  <div class="cover-sub">Brand Guidelines v1.0</div>
+  <div class="cover-brand fade-up visible">
+    Contxt<span class="dot"></span>
+  </div>
+  <p class="cover-tagline fade-up visible delay-1">
+    Context sharing for AI &mdash; a brand built on clarity, warmth, and the belief that good context should travel effortlessly.
+  </p>
+  <div class="cover-scroll" onclick="document.getElementById('philosophy').scrollIntoView({behavior:'smooth'})">
+    <span>Scroll</span>
+    <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+  </div>
+</section>
+
+<!-- ═══ 1. PHILOSOPHY ═══ -->
+<section class="section" id="philosophy">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">01 &mdash; Philosophy</div>
+      <h2 class="section-title">The essence of Contxt</h2>
+      <p class="section-sub">Why this brand exists and what it stands for.</p>
+    </div>
+    <div class="phil-block fade-up delay-1">
+      <p>
+        Contxt exists at the intersection of <strong>knowledge and conversation</strong>.
+        We live in a world where the best insights are scattered across Slack threads,
+        meeting notes, and research docs&mdash;and the hardest part of any discussion
+        is getting everyone up to speed. Contxt removes that friction.
+      </p>
+      <div class="phil-quote">
+        A single link carries the full picture. The conversation begins where context ends.
+      </div>
+      <p>
+        The brand is <strong>warm but precise</strong>. It welcomes curiosity while
+        rewarding clarity. It borrows the elegance of editorial design&mdash;Playfair Display&rsquo;s
+        italic grace, the quiet structure of DM Sans&mdash;and pairs it with a bold,
+        unmistakable signature: <strong>pink</strong>. Not a shy pink, not a pastel pink.
+        A confident, slightly daring pink that says &ldquo;this is different.&rdquo;
+      </p>
+    </div>
+    <div class="phil-block fade-up delay-2" style="margin-top:40px">
+      <p><strong>Brand archetype:</strong> The Creator + The Sage. We help people make
+      and share knowledge. We remove barriers between thinking and discussing.</p>
+      <p><strong>Tagline:</strong> <em style="color:#FF2A6D;font-style:italic">Your context, in a single link.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 2. LOGO ═══ -->
+<section class="section" id="logo">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">02 &mdash; Logo</div>
+      <h2 class="section-title">The mark.</h2>
+      <p class="section-sub">Primary lockup, clear space, and incorrect usage.</p>
+    </div>
+
+    <!-- Primary lockup -->
+    <div class="logo-grid fade-up delay-1">
+      <div class="logo-card">
+        <div class="logo-lockup">
+          <span class="pink-square">c</span>
+          Contxt
+        </div>
+        <span class="logo-card-label">Primary &mdash; Light</span>
+      </div>
+      <div class="logo-card dark">
+        <div class="logo-lockup" style="color:#FFF">
+          <span class="pink-square">c</span>
+          Contxt
+        </div>
+        <span class="logo-card-label">Inverse &mdash; Dark</span>
+      </div>
+    </div>
+
+    <!-- Clear space diagram -->
+    <div class="space-diagram fade-up delay-2">
+      <div class="space-diagram-inner">
+        <span class="space-label">Clear space = height of the mark</span>
+        <div class="mini-logolock">
+          <span class="ps">c</span>
+          Contxt
+        </div>
+      </div>
+      <p class="space-annotation">Minimum clear space on all sides equals the height of the pink square mark.</p>
+    </div>
+
+    <!-- Do / Don't -->
+    <div class="logo-usage-grid fade-up delay-3">
+      <div class="logo-example">
+        <span class="badge do">Correct</span>
+        <div class="mini-logo"><span class="pink-square-mini">c</span>Contxt</div>
+      </div>
+      <div class="logo-example dont">
+        <span class="badge dont">Don&rsquo;t</span>
+        <div class="mini-logo" style="filter:hue-rotate(200deg)"><span style="background:#4285F4;display:inline-flex;width:18px;height:18px;border-radius:4px;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;vertical-align:middle;margin-right:4px">c</span>Contxt</div>
+        <div class="cross"><svg viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" stroke-width="1.2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+      </div>
+      <div class="logo-example dont">
+        <span class="badge dont">Don&rsquo;t</span>
+        <div class="mini-logo"><span class="pink-square-mini" style="background:#16163D">c</span>Contxt</div>
+        <div class="cross"><svg viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" stroke-width="1.2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+      </div>
+      <div class="logo-example dont">
+        <span class="badge dont">Don&rsquo;t</span>
+        <div class="mini-logo"><span class="pink-square-mini" style="border-radius:50%;font-size:9px">c</span>Contxt</div>
+        <div class="cross"><svg viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" stroke-width="1.2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. COLOR ═══ -->
+<section class="section" id="color">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">03 &mdash; Color</div>
+      <h2 class="section-title">The palette.</h2>
+      <p class="section-sub">A restrained palette built for clarity and contrast.</p>
+    </div>
+
+    <div class="color-grid fade-up delay-1">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FF2A6D">
+          <span class="swatch-tag" style="background:rgba(255,255,255,0.2);color:#fff">Primary</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Signal Pink</div>
+          <div class="swatch-role">Primary accent &bull; CTAs, links, highlights</div>
+          <div class="swatch-values">
+            <span>#FF2A6D</span>
+            <span>rgb(255, 42, 109)</span>
+            <span>hsl(341, 100%, 58%)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#16163D">
+          <span class="swatch-tag" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6)">Text</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Deep Navy</div>
+          <div class="swatch-role">Primary text &bull; Headings, body copy</div>
+          <div class="swatch-values">
+            <span>#16163D</span>
+            <span>rgb(22, 22, 61)</span>
+            <span>hsl(240, 47%, 16%)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FCF9F2">
+          <span class="swatch-tag" style="background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45)">Bg</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Warm Cream</div>
+          <div class="swatch-role">Background &bull; Page surfaces, cards</div>
+          <div class="swatch-values">
+            <span>#FCF9F2</span>
+            <span>rgb(252, 249, 242)</span>
+            <span>hsl(42, 63%, 97%)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#4A4A6A">
+          <span class="swatch-tag" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6)">Soft</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Muted Indigo</div>
+          <div class="swatch-role">Secondary text &bull; Subtitles, labels</div>
+          <div class="swatch-values">
+            <span>#4A4A6A</span>
+            <span>rgb(74, 74, 106)</span>
+            <span>hsl(240, 18%, 35%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="color-grid fade-up delay-2" style="margin-top:24px">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFFFFF;border-bottom:1px solid rgba(22,22,61,0.06)">
+          <span class="swatch-tag" style="background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45)">Surface</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Pure White</div>
+          <div class="swatch-role">Card / surface &bull; Elevated containers</div>
+          <div class="swatch-values">
+            <span>#FFFFFF</span>
+            <span>rgb(255, 255, 255)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F0EDE4">
+          <span class="swatch-tag" style="background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45)">Border</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Warm Border</div>
+          <div class="swatch-role">Borders &bull; Dividers, form edges</div>
+          <div class="swatch-values">
+            <span>#F0EDE4</span>
+            <span>rgb(240, 237, 228)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#8B8BA8">
+          <span class="swatch-tag" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6)">Faint</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Muted Lavender</div>
+          <div class="swatch-role">Placeholder &bull; Captions, disabled text</div>
+          <div class="swatch-values">
+            <span>#8B8BA8</span>
+            <span>rgb(139, 139, 168)</span>
+          </div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E8E3D8">
+          <span class="swatch-tag" style="background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45)">Light</span>
+        </div>
+        <div class="swatch-info">
+          <div class="swatch-name">Light Border</div>
+          <div class="swatch-role">Subtle edges &bull; Divider lines</div>
+          <div class="swatch-values">
+            <span>#E8E3D8</span>
+            <span>rgb(232, 227, 216)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage notes -->
+    <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:20px" class="fade-up delay-3">
+      <div style="background:#FFF;border:1px solid rgba(22,22,61,0.06);border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:#16163D;margin-bottom:6px">Ratio guideline</div>
+        <div style="height:24px;display:flex;border-radius:6px;overflow:hidden;margin-bottom:8px">
+          <div style="flex:5;background:#FCF9F2;display:flex;align-items:center;justify-content:center;font-size:8px;color:#8B8BA8;font-weight:600">50% Cream</div>
+          <div style="flex:3;background:#FFF;display:flex;align-items:center;justify-content:center;font-size:8px;color:#8B8BA8;font-weight:600">30% White</div>
+          <div style="flex:1.5;background:#16163D;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(255,255,255,0.5);font-weight:600">15% Navy</div>
+          <div style="flex:0.5;background:#FF2A6D;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(255,255,255,0.7);font-weight:600">5% Pink</div>
+        </div>
+        <p style="font-size:11px;color:#4A4A6A;line-height:1.6">Pink should never exceed 5&ndash;8% of any layout surface to maintain its impact as an accent.</p>
+      </div>
+      <div style="background:#FFF;border:1px solid rgba(22,22,61,0.06);border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:#16163D;margin-bottom:6px">Accessibility</div>
+        <p style="font-size:11px;color:#4A4A6A;line-height:1.6">Signal Pink (#FF2A6D) on Deep Navy (#16163D) achieves a contrast ratio of 4.4:1 &mdash; meets AA for large text. Always pair pink with navy or white backgrounds; never on cream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 4. TYPOGRAPHY ═══ -->
+<section class="section" id="typography">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">04 &mdash; Typography</div>
+      <h2 class="section-title">The voice, visible.</h2>
+      <p class="section-sub">Two complementary typefaces that define the brand&rsquo;s character.</p>
+    </div>
+
+    <div class="type-grid fade-up delay-1">
+      <div class="type-card">
+        <h3>Playfair Display</h3>
+        <div class="sub">Headings &bull; Display &bull; Serif</div>
+        <div style="width:100%;height:1px;background:rgba(22,22,61,0.06);margin-bottom:16px"></div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:48px;font-weight:800;letter-spacing:-0.03em;line-height:1;color:#16163D;margin-bottom:12px">Aa</div>
+        <div class="type-specimen">
+          <div class="line"><span class="size">56</span><span class="sample" style="font-size:56px;font-weight:800">The context is everything</span><span class="weight">ExtraBold</span></div>
+          <div class="line"><span class="size">40</span><span class="sample" style="font-size:40px;font-weight:700">The context is everything</span><span class="weight">Bold</span></div>
+          <div class="line"><span class="size">32</span><span class="sample" style="font-size:32px;font-weight:600">The context is everything</span><span class="weight">SemiBold</span></div>
+          <div class="line"><span class="size">24</span><span class="sample" style="font-size:24px;font-weight:700;font-style:italic">The context is everything</span><span class="weight">Bold Italic</span></div>
+          <div class="line"><span class="size">18</span><span class="sample" style="font-size:18px;font-weight:500;font-style:italic">The context is everything</span><span class="weight">Medium Italic</span></div>
+        </div>
+      </div>
+      <div class="type-card">
+        <h3>DM Sans</h3>
+        <div class="sub">Body &bull; UI &bull; Sans-serif</div>
+        <div style="width:100%;height:1px;background:rgba(22,22,61,0.06);margin-bottom:16px"></div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:40px;font-weight:700;letter-spacing:-0.03em;line-height:1;color:#16163D;margin-bottom:12px">Aa</div>
+        <div class="type-specimen">
+          <div class="line"><span class="size">18</span><span class="sample" style="font-size:18px;font-weight:600">The context is everything</span><span class="weight">SemiBold</span></div>
+          <div class="line"><span class="size">16</span><span class="sample" style="font-size:16px;font-weight:500">The context is everything</span><span class="weight">Medium</span></div>
+          <div class="line"><span class="size">15</span><span class="sample" style="font-size:15px;font-weight:400">The context is everything</span><span class="weight">Regular</span></div>
+          <div class="line"><span class="size">14</span><span class="sample" style="font-size:14px;font-weight:400;line-height:1.5">The context is everything. Good context carries the conversation forward without repeating the backstory.</span><span class="weight">Body</span></div>
+          <div class="line"><span class="size">12</span><span class="sample" style="font-size:12px;font-weight:500">The context is everything</span><span class="weight">Small</span></div>
+          <div class="line"><span class="size">10</span><span class="sample" style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase">The context is everything</span><span class="weight">Caption</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monospace -->
+    <div class="type-card fade-up delay-2" style="margin-top:24px;background:#FFF;border:1px solid rgba(22,22,61,0.06);border-radius:16px;padding:36px">
+      <h3 style="font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;color:#16163D;margin-bottom:4px">JetBrains Mono</h3>
+      <div class="sub" style="font-size:11px;color:#4A4A6A;margin-bottom:20px">Code &bull; Technical &bull; Monospace</div>
+      <div style="display:flex;align-items:center;gap:16px;padding:6px 0;border-bottom:1px solid rgba(22,22,61,0.04)">
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B8BA8;width:48px;flex-shrink:0;text-align:right">14</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:#16163D">const contxt = await createLink(content)</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8B8BA8;width:70px;text-align:right;flex-shrink:0">Medium</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:16px;padding:6px 0">
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#8B8BA8;width:48px;flex-shrink:0;text-align:right">12</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:400;color:#16163D">$ curl https://contxt.to/s/aK3mQ</span>
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8B8BA8;width:70px;text-align:right;flex-shrink:0">Regular</span>
+      </div>
+    </div>
+
+    <!-- Typography Rules -->
+    <div class="type-rules fade-up delay-3">
+      <div class="type-rule do">
+        <div class="rule-label">Do</div>
+        <div class="rule-text">Use <strong>Playfair Display</strong> for all headings above 18px. Use <strong>DM Sans</strong> for all body copy, labels, buttons, and UI text. Use <strong>JetBrains Mono</strong> for code, URLs, and technical references.</div>
+      </div>
+      <div class="type-rule dont">
+        <div class="rule-label">Don&rsquo;t</div>
+        <div class="rule-text">Mix more than three typefaces on any surface. Never use Playfair Display for body text below 16px &mdash; it loses legibility. Never stretch or distort type.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 5. VOICE ═══ -->
+<section class="section" id="voice">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">05 &mdash; Voice &amp; Tone</div>
+      <h2 class="section-title">How we speak.</h2>
+      <p class="section-sub">Warm, clear, and human. No jargon, no hype.</p>
+    </div>
+
+    <div class="voice-grid fade-up delay-1">
+      <div class="voice-principle">
+        <div class="icon">✧</div>
+        <h4>Warm, never saccharine</h4>
+        <p>Contxt is friendly but professional. We use contractions. We avoid exclamation marks at the end of every sentence. Warmth comes from clarity, not enthusiasm.</p>
+      </div>
+      <div class="voice-principle">
+        <div class="icon">◈</div>
+        <h4>Precise, never cold</h4>
+        <p>We say exactly what we mean in as few words as possible. Precision doesn&rsquo;t mean dry &mdash; it means every word earns its place.</p>
+      </div>
+      <div class="voice-principle">
+        <div class="icon">⊹</div>
+        <h4>Human, never corporate</h4>
+        <p>No &ldquo;leverage,&rdquo; no &ldquo;synergize,&rdquo; no &ldquo;seamlessly.&rdquo; Write like a smart person explaining something to another smart person. Direct, honest, specific.</p>
+      </div>
+      <div class="voice-principle">
+        <div class="icon">⌘</div>
+        <h4>Confident, never arrogant</h4>
+        <p>We know what we are. We don&rsquo;t oversell. The product speaks for itself &mdash; copy gets out of the way.</p>
+      </div>
+    </div>
+
+    <div class="voice-examples fade-up delay-2">
+      <div class="voice-example good">
+        <span class="vtag">✓ Do</span>
+        &ldquo;Paste anything. Get a link. Your team sees the gist and picks up in any AI tool. No account needed.&rdquo;
+      </div>
+      <div class="voice-example bad">
+        <span class="vtag">✗ Don&rsquo;t</span>
+        &ldquo;Leverage our revolutionary AI-powered context-sharing platform to seamlessly transform your team&rsquo;s knowledge management workflow!&rdquo;
+      </div>
+      <div class="voice-example good">
+        <span class="vtag">✓ Do</span>
+        &ldquo;We ran 3 design sprints this quarter. Key wins: onboarding redesigned at 87% usability. Key misses: dashboard overhaul needs another iteration.&rdquo;
+      </div>
+      <div class="voice-example bad">
+        <span class="vtag">✗ Don&rsquo;t</span>
+        &ldquo;The product design sprint retrospective for the first quarter of fiscal year 2026 contains actionable insights and key performance indicators...&rdquo;
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 6. APPLICATION ═══ -->
+<section class="section" id="application">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">06 &mdash; Application</div>
+      <h2 class="section-title">The brand in use.</h2>
+      <p class="section-sub">How the system comes together across key surfaces.</p>
+    </div>
+
+    <div class="app-showcase fade-up delay-1">
+      <div class="app-card">
+        <div class="app-card-preview" style="background:#FCF9F2">
+          <div class="ui-mock">
+            <div class="landing">
+              <div class="big">Your context,<br><span class="pink">in a single link</span>.</div>
+              <div class="desc">Paste any knowledge. Get a short link. Anyone can read the gist and continue in ChatGPT, Gemini, or Claude.</div>
+              <div class="cta-btn">Create your link</div>
+            </div>
+          </div>
+        </div>
+        <div class="app-card-info">
+          <h4>Landing Page (Hero)</h4>
+          <p>The hero sets the brand tone immediately. Giant Playfair Display headline with the italic pink accent. DM Sans body copy. Pink CTA on white card.</p>
+        </div>
+      </div>
+      <div class="app-card">
+        <div class="app-card-preview" style="background:#F5F0E6">
+          <div class="ui-mock">
+            <div class="card" style="max-width:260px;margin:0 auto">
+              <div class="title">Product Design Sprint Retro</div>
+              <div class="summary">We ran 3 design sprints this quarter. Key wins: the onboarding redesign tested at 87% usability...</div>
+              <div class="btn-group">
+                <span class="btn">Continue in ChatGPT</span>
+                <span class="btn">Continue in Gemini</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-card-info">
+          <h4>Shared Context Page</h4>
+          <p>Clean card layout for the shared link. Playfair title, DM Sans summary. AI action buttons in subtle gray — never competing with content.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-showcase fade-up delay-2" style="margin-top:24px">
+      <div class="app-card">
+        <div class="app-card-preview" style="background:#16163D">
+          <div style="text-align:center;padding:16px">
+            <div style="font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:800;letter-spacing:-0.03em;color:#FFF;margin-bottom:4px">
+              Contxt<span style="color:#FF2A6D">.</span>
+            </div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:400">context sharing for AI</div>
+          </div>
+        </div>
+        <div class="app-card-info">
+          <h4>Dark Background Mark</h4>
+          <p>The logo on dark surfaces. Pink keeps its vibrancy; navy background provides strong contrast for the white text.</p>
+        </div>
+      </div>
+      <div class="app-card">
+        <div class="app-card-preview" style="background:#FFF;border-bottom:1px solid rgba(22,22,61,0.06)">
+          <div style="display:flex;align-items:center;gap:10px;width:100%;max-width:320px">
+            <div style="width:28px;height:28px;background:#FF2A6D;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">c</div>
+            <div style="font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:800;color:#16163D">Contxt</div>
+            <div style="flex:1"></div>
+            <span style="font-size:10px;font-weight:600;color:#4A4A6A">How it works</span>
+            <span style="font-size:10px;font-weight:600;color:#4A4A6A">Use cases</span>
+          </div>
+        </div>
+        <div class="app-card-info">
+          <h4>Navigation Bar</h4>
+          <p>Compact logo lockup with pink square icon. DM Sans nav items in muted indigo. The wordmark stays in Playfair Display even at small sizes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 7. ASSETS ═══ -->
+<section class="section" id="assets">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label">07 &mdash; Assets</div>
+      <h2 class="section-title">Download the kit.</h2>
+      <p class="section-sub">Logo files, color swatches, and font links for production use.</p>
+    </div>
+
+    <div class="assets-grid fade-up delay-1">
+      <div class="asset-card">
+        <div class="icon-wrap">⊞</div>
+        <h4>Logo Package</h4>
+        <p>SVG + PNG &bull; Light &amp; Dark variants</p>
+        <span class="dl-btn" onclick="alert('Assets download (placeholder) — export from brand page')">Download ZIP</span>
+      </div>
+      <div class="asset-card">
+        <div class="icon-wrap">◉</div>
+        <h4>Color Palette</h4>
+        <p>.clr file &bull; ASE &bull; JSON</p>
+        <span class="dl-btn" onclick="alert('Assets download (placeholder) — export from brand page')">Download ZIP</span>
+      </div>
+      <div class="asset-card">
+        <div class="icon-wrap">⌨</div>
+        <h4>Fonts</h4>
+        <p>Google Fonts &bull; Self-hosted</p>
+        <a class="dl-btn" href="https://fonts.google.com/specimen/Playfair+Display" target="_blank" rel="noopener">Playfair Display</a>
+        <a class="dl-btn" href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noopener" style="margin-left:6px">DM Sans</a>
+      </div>
+    </div>
+
+    <!-- Reference links -->
+    <div style="margin-top:40px;display:flex;flex-wrap:wrap;gap:12px" class="fade-up delay-2">
+      <a href="https://contxt.to" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:100px;background:#FFF;border:1px solid rgba(22,22,61,0.06);font-size:13px;font-weight:600;color:#16163D;text-decoration:none;transition:all 0.2s"
+         onmouseenter="this.style.borderColor='#FF2A6D';this.style.color='#FF2A6D'" onmouseleave="this.style.borderColor='rgba(22,22,61,0.06)';this.style.color='#16163D'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        contxt.to
+      </a>
+      <a href="https://github.com/redirhub/contxt.to" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:100px;background:#FFF;border:1px solid rgba(22,22,61,0.06);font-size:13px;font-weight:600;color:#16163D;text-decoration:none;transition:all 0.2s"
+         onmouseenter="this.style.borderColor='#FF2A6D';this.style.color='#FF2A6D'" onmouseleave="this.style.borderColor='rgba(22,22,61,0.06)';this.style.color='#16163D'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2026 Contxt &mdash; a RedirHub product.</p>
+    <div class="version">Brand Guidelines v1.0 &bull; Updated May 2026</div>
+  </div>
+</footer>
+
+<!-- ═══ Intersection Observer for scroll animations ═══ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+</script>
+</body>
+</html>
