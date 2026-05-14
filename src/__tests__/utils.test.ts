@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest"
-import { cn, slugify, generateSlug, randomSuffix } from "@/lib/utils"
+import { cn, generateSlug, shortCode, slugPrefix } from "@/lib/utils"
 
 describe("cn", () => {
   test("merges class names", () => {
@@ -15,52 +15,54 @@ describe("cn", () => {
   })
 })
 
-describe("slugify", () => {
-  test("lowercases and replaces spaces", () => {
-    expect(slugify("Hello World")).toBe("hello-world")
+describe("shortCode", () => {
+  test("returns a 5-char string by default", () => {
+    const s = shortCode()
+    expect(s).toHaveLength(5)
   })
 
-  test("removes special characters", () => {
-    expect(slugify("Hello! @World#")).toBe("hello-world")
-  })
-
-  test("trims leading/trailing hyphens", () => {
-    expect(slugify("  --hello--  ")).toBe("hello")
-  })
-
-  test("truncates to 60 characters", () => {
-    const long = "a".repeat(100)
-    expect(slugify(long).length).toBeLessThanOrEqual(60)
-  })
-
-  test("collapses multiple hyphens", () => {
-    expect(slugify("hello   world")).toBe("hello-world")
-  })
-})
-
-describe("randomSuffix", () => {
-  test("returns a 4-char string by default", () => {
-    const s = randomSuffix()
-    expect(s).toHaveLength(4)
+  test("respects custom length", () => {
+    expect(shortCode(3)).toHaveLength(3)
+    expect(shortCode(8)).toHaveLength(8)
   })
 
   test("returns alphanumeric characters only", () => {
-    const s = randomSuffix(8)
-    expect(s).toMatch(/^[a-z0-9]+$/)
+    const s = shortCode(10)
+    expect(s).toMatch(/^[a-zA-Z0-9]+$/)
+  })
+})
+
+describe("slugPrefix", () => {
+  test("takes first two words, lowercased", () => {
+    expect(slugPrefix("Bug Fix Done")).toBe("bug-fix")
+  })
+
+  test("removes special chars", () => {
+    expect(slugPrefix("Hello! World# Test")).toBe("hello-world")
+  })
+
+  test("caps at 12 chars", () => {
+    expect(slugPrefix("A very long title here").length).toBeLessThanOrEqual(12)
+  })
+
+  test("returns empty string for empty input", () => {
+    expect(slugPrefix("")).toBe("")
   })
 })
 
 describe("generateSlug", () => {
-  test("includes slugified title and a suffix", () => {
+  test("includes prefix and a 5-char random code", () => {
     const slug = generateSlug("My Project")
-    expect(slug).toMatch(/^my-project-[a-z0-9]{4}$/)
+    expect(slug).toMatch(/^my-project-[a-zA-Z0-9]{5}$/)
+  })
+
+  test("falls back to just code for empty title", () => {
+    const slug = generateSlug("")
+    expect(slug).toMatch(/^[a-zA-Z0-9]{5}$/)
   })
 
   test("produces different slugs for the same input", () => {
-    const a = generateSlug("test")
-    const b = generateSlug("test")
-    // Statistically overwhelmingly likely to differ
-    const attempts = Array.from({ length: 10 }, () => generateSlug("test"))
+    const attempts = Array.from({ length: 20 }, () => generateSlug("test"))
     const unique = new Set(attempts).size
     expect(unique).toBeGreaterThan(1)
   })

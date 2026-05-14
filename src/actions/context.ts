@@ -1,7 +1,7 @@
 "use server"
 
 import { getPrismaClient } from "@/lib/prisma"
-import { slugify, randomSuffix } from "@/lib/utils"
+import { generateSlug, shortCode } from "@/lib/utils"
 import { randomBytes } from "crypto"
 import { createContextSchema as contextSchema, type CreateContextForm as ContextFormData } from "@/lib/schemas"
 import { headers } from "next/headers"
@@ -16,12 +16,12 @@ function parseTags(raw?: string): string[] {
 }
 
 async function findUniqueSlug(db: any, base: string): Promise<string> {
-  for (let i = 0; i < 5; i++) {
-    const candidate = `${slugify(base)}-${randomSuffix()}`
+  for (let i = 0; i < 10; i++) {
+    const candidate = generateSlug(base)
     const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
-  return `${slugify(base)}-${randomBytes(4).toString("hex")}`
+  return shortCode(8)
 }
 
 async function getBaseUrl(): Promise<string> {

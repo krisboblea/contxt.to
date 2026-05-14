@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { getPrismaClient } from "@/lib/prisma"
-import { slugify, randomSuffix } from "@/lib/utils"
+import { generateSlug, shortCode } from "@/lib/utils"
 import { randomBytes } from "crypto"
 
 const bodySchema = z.object({
@@ -12,12 +12,12 @@ const bodySchema = z.object({
 })
 
 async function findUniqueSlug(db: any, base: string): Promise<string> {
-  for (let i = 0; i < 5; i++) {
-    const candidate = `${slugify(base)}-${randomSuffix()}`
+  for (let i = 0; i < 10; i++) {
+    const candidate = generateSlug(base)
     const existing = await db.context.findUnique({ where: { slug: candidate } })
     if (!existing) return candidate
   }
-  return `${slugify(base)}-${randomBytes(4).toString("hex")}`
+  return shortCode(8)
 }
 
 export async function POST(request: NextRequest) {
