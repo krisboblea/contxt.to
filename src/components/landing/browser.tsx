@@ -23,19 +23,26 @@ function LandingContent() {
     summary: string
     body: string
   } | null>(null)
-  const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [showQR, setShowQR] = useState(false)
-  const [emailValue, setEmailValue] = useState('')
-  const [emailSent, setEmailSent] = useState(false)
-  const [claimError, setClaimError] = useState<string | null>(null)
+  const [shared, setShared] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [baseUrl, setBaseUrl] = useState('')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => { setBaseUrl(window.location.origin) }, [])
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [mobileMenuOpen])
 
   // Scroll observer for animations
   useEffect(() => {
@@ -55,7 +62,7 @@ function LandingContent() {
     return () => obs.disconnect()
   }, [mounted, result])
 
-  // Mobile scroll: when result changes, scroll to tool card
+  // Mobile scroll: when result appears, scroll to tool card
   useEffect(() => {
     if (result && window.innerWidth < 1024) {
       areaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -127,7 +134,6 @@ function LandingContent() {
         summary: meta.summary,
         body: text.length > 200 ? text.substring(0, 197) + '...' : text,
       })
-      setShowModal(true)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong')
     } finally {
@@ -152,22 +158,45 @@ function LandingContent() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  async function handleClaim(e: React.FormEvent) {
-    e.preventDefault()
-    if (!emailValue || !result) return
-    setClaimError(null)
-    try {
-      const res = await fetch('/api/claim', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: result.slug, token: result.claimToken, email: emailValue }),
-      })
-      if (!res.ok) throw new Error('Failed to save')
-      setEmailSent(true)
-    } catch {
-      setClaimError('Could not save right now')
+  async function shareLink() {
+    if (!result) return
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: result.title,
+          text: result.summary,
+          url: result.url,
+        })
+        setShared(true)
+        setTimeout(() => setShared(false), 2000)
+      } catch {
+        // User cancelled or error — fallback to copy
+        await copyLink()
+      }
+    } else {
+      await copyLink()
     }
   }
+
+  function handleCreateAnother() {
+    setResult(null)
+    setError(null)
+    setCopied(false)
+    setShared(false)
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
+  }
+
+  // Auto-resize textarea
+  function handleTextareaInput(e: React.FormEvent<HTMLTextAreaElement>) {
+    const el = e.currentTarget
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }
+
+  const encodedResultUrl = result ? encodeURIComponent(result.url) : ''
 
   return (
     <>
@@ -196,6 +225,8 @@ function LandingContent() {
           </span>
           Contxt
         </a>
+
+        {/* Desktop nav links */}
         <div className="flex items-center gap-8 max-sm:hidden">
           <a href="#how" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }) }}>
@@ -206,7 +237,85 @@ function LandingContent() {
             Use Cases
           </a>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="sm:hidden flex items-center justify-center w-11 h-11 rounded-xl border-none cursor-pointer transition-all"
+          style={{ background: 'transparent', color: '#16163D' }}
+          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
       </nav>
+
+      {/* Mobile Menu Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[200] sm:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0"
+            style={{ background: 'rgba(22, 22, 61, 0.3)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          {/* Sheet */}
+          <div
+            className="absolute top-0 right-0 bottom-0 w-[280px] p-6 pt-20 shadow-2xl"
+            style={{
+              background: '#FFFFFF',
+              animation: 'slideInRight 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+            }}
+          >
+            {/* Close button */}
+            <button
+              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full border border-[#F0EDE4] cursor-pointer transition-all"
+              style={{ background: '#FCF9F2', color: '#4A4A6A' }}
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <nav className="flex flex-col gap-1">
+              <button
+                className="w-full text-left px-4 py-3.5 rounded-xl text-[15px] font-semibold border-none cursor-pointer transition-all"
+                style={{ background: 'transparent', color: '#16163D' }}
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+              >
+                How It Works
+              </button>
+              <button
+                className="w-full text-left px-4 py-3.5 rounded-xl text-[15px] font-semibold border-none cursor-pointer transition-all"
+                style={{ background: 'transparent', color: '#16163D' }}
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+              >
+                Use Cases
+              </button>
+              <a
+                href="/changelog"
+                className="block w-full px-4 py-3.5 rounded-xl text-[15px] font-semibold no-underline transition-all"
+                style={{ color: '#16163D' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Changelog
+              </a>
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* ═══ HERO ═══ */}
       <section className="relative z-10 min-h-screen flex flex-col px-6 pt-[110px] pb-10"
@@ -238,27 +347,28 @@ function LandingContent() {
               continue in ChatGPT, Gemini, or Claude — instantly, no signup.
             </p>
 
-            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-5">
-              <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
-                <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+            {/* Feature badges — compact horizontal on mobile */}
+            <div className="flex flex-wrap gap-2 sm:gap-5">
+              <div className="flex items-center gap-2 text-[12px] sm:text-sm px-2 py-1" style={{ color: '#4A4A6A' }}>
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[11px] sm:text-[13px] font-bold flex-shrink-0"
                   style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
                   ⚡
                 </span>
-                Zero friction — paste and share
+                <span className="whitespace-nowrap">Zero friction</span>
               </div>
-              <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
-                <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+              <div className="flex items-center gap-2 text-[12px] sm:text-sm px-2 py-1" style={{ color: '#4A4A6A' }}>
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[11px] sm:text-[13px] font-bold flex-shrink-0"
                   style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
                   🤖
                 </span>
-                Continue in any AI
+                <span className="whitespace-nowrap">Continue in any AI</span>
               </div>
-              <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
-                <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
+              <div className="flex items-center gap-2 text-[12px] sm:text-sm px-2 py-1" style={{ color: '#4A4A6A' }}>
+                <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[11px] sm:text-[13px] font-bold flex-shrink-0"
                   style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
                   🔒
                 </span>
-                Private by default
+                <span className="whitespace-nowrap">Private by default</span>
               </div>
             </div>
           </div>
@@ -275,295 +385,226 @@ function LandingContent() {
               <div className="absolute top-0 left-0 right-0 h-[3px]"
                 style={{ background: 'linear-gradient(90deg, #FF2A6D, transparent 60%)' }} />
 
-              <div className="p-6 sm:p-7" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+              {/* ——— INPUT STATE (no result yet) ——— */}
+              {!result && (
+                <div className="p-6 sm:p-7" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
 
-                {/* Preview block — always visible */}
-                <div className="transition-all duration-500">
-                  <div className="p-5 rounded-[14px] border" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
-                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2"
-                      style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
-                      💡 Try This Prompt
+                  {/* Textarea — first thing in the card */}
+                  <textarea
+                    ref={textareaRef}
+                    value={content}
+                    onChange={(e) => {
+                      setContent(e.target.value)
+                      handleTextareaInput(e as unknown as React.FormEvent<HTMLTextAreaElement>)
+                    }}
+                    onInput={handleTextareaInput}
+                    placeholder="Paste your knowledge here..."
+                    maxLength={50000}
+                    rows={4}
+                    className="w-full p-3.5 rounded-[14px] text-sm leading-relaxed outline-none resize-none transition-all font-inherit"
+                    style={{
+                      background: '#FCF9F2',
+                      border: '1px solid #E8E3D8',
+                      color: '#16163D',
+                      minHeight: 90,
+                      maxHeight: '50vh',
+                      overflowY: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255, 42, 109, 0.12)' }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.boxShadow = 'none' }}
+                  />
+
+                  {/* Create button — full width */}
+                  <div className="flex flex-col gap-2 mt-3">
+                    <button
+                      onClick={handleCreate}
+                      disabled={pending || generating}
+                      className="w-full h-12 inline-flex items-center justify-center gap-2 px-5 rounded-full text-[15px] font-semibold border-none cursor-pointer transition-all font-inherit"
+                      style={{
+                        background: '#FF2A6D',
+                        color: '#fff',
+                        boxShadow: '0 4px 16px rgba(255, 42, 109, 0.25)',
+                        opacity: pending || generating ? 0.4 : 1,
+                        minHeight: 48,
+                      }}
+                      onMouseEnter={(e) => { if (!pending && !generating) { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255, 42, 109, 0.35)' } }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.25)' }}
+                    >
+                      {generating ? (
+                        <>
+                          <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
+                          Generating...
+                        </>
+                      ) : pending ? (
+                        <>
+                          <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                          </svg>
+                          Create
+                        </>
+                      )}
+                    </button>
+
+                    {/* Character count — below the button */}
+                    <div className="text-center">
+                      <span className="text-xs font-medium" style={{
+                        color: charCount > 45000 ? '#FF2A6D' : '#8B8BA8',
+                      }}>
+                        {charCount.toLocaleString()} / 50,000
+                      </span>
+                    </div>
+                  </div>
+
+                  {error && (
+                    <p className="text-xs mt-2" style={{ color: '#FF2A6D' }}>{error}</p>
+                  )}
+                </div>
+              )}
+
+              {/* ——— RESULT STATE (inline replacement) ——— */}
+              {result && (
+                <div className="p-6 sm:p-7" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+                  {/* Success badge */}
+                  <div className="flex items-center gap-2 mb-5">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255, 42, 109, 0.08)' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
                     </span>
-                    <div className="text-[17px] font-bold leading-tight mb-1.5" style={{ color: '#16163D' }}>
-                      Share AI Chat → One Link
-                    </div>
-                    <div className="text-[13px] leading-relaxed mb-4" style={{ color: '#8B8BA8' }}>
-                      Paste into ChatGPT / Gemini and tap Continue:
-                      <code className="block text-[13px] leading-relaxed font-medium p-2.5 mt-2 rounded-[8px] border"
-                        style={{
-                          background: 'rgba(255, 42, 109, 0.06)',
-                          color: '#FF2A6D',
-                          borderColor: 'rgba(255, 42, 109, 0.1)',
-                        }}>
-                        {`read ${baseUrl} and shorten this chat and create a shareable link`}
-                      </code>
-                    </div>
-                    <div className="flex gap-2">
-                      <a href={`https://chatgpt.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
+                    <span className="text-[14px] sm:text-[15px] font-semibold" style={{ color: '#16163D' }}>Link created successfully</span>
+                  </div>
+
+                  {/* URL row — full width, copy + share + open */}
+                  <div className="flex items-center gap-2 px-3 sm:px-4 py-3 rounded-[14px] mb-5 border"
+                    style={{ background: 'rgba(255, 42, 109, 0.06)', borderColor: 'rgba(255, 42, 109, 0.1)' }}>
+                    <span className="flex-1 text-[13px] sm:text-[15px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
+                      {result.url}
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <a href={result.url} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full border text-[11px] sm:text-[12px] font-semibold no-underline cursor-pointer transition-all font-inherit min-h-[36px]"
                         style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z" />
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
                         </svg>
-                        Continue in ChatGPT
+                        <span className="max-sm:hidden">Open</span>
                       </a>
-                      <a href={`https://gemini.google.com/?q=${encodeURIComponent('read ' + baseUrl + ' and shorten this chat and create a shareable link')}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-[14px] text-[13px] font-semibold border no-underline cursor-pointer transition-all font-inherit"
-                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255, 42, 109, 0.06)' }}
-                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      <button onClick={shareLink}
+                        className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full border text-[11px] sm:text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit min-h-[36px] ${shared ? 'text-white' : ''}`}
+                        style={shared ? { background: '#FF2A6D', borderColor: '#FF2A6D' } : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                        onMouseEnter={(e) => { if (!shared) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' } }}
+                        onMouseLeave={(e) => { if (!shared) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' } }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="18" cy="5" r="3" />
+                          <circle cx="6" cy="12" r="3" />
+                          <circle cx="18" cy="19" r="3" />
+                          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                         </svg>
-                        Continue in Gemini
+                        <span className="max-sm:hidden">{shared ? 'Shared!' : 'Share'}</span>
+                      </button>
+                      <button onClick={copyLink}
+                        className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full border text-[11px] sm:text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit min-h-[36px] ${copied ? 'text-white' : ''}`}
+                        style={copied ? { background: '#FF2A6D', borderColor: '#FF2A6D' } : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                        onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' } }}
+                        onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' } }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                        <span className="max-sm:hidden">{copied ? 'Copied!' : 'Copy'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  <div className="p-4 sm:p-5 rounded-[14px] border mb-5" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3"
+                      style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
+                      ✨ Your Link Preview
+                    </span>
+                    <div className="text-[17px] sm:text-[19px] font-bold leading-tight mb-1.5" style={{ color: '#16163D' }}>
+                      {result.title}
+                    </div>
+                    <div className="text-[13px] sm:text-[14px] leading-relaxed" style={{ color: '#8B8BA8' }}>
+                      {result.summary}
+                    </div>
+                  </div>
+
+                  {/* AI buttons — horizontal scroll on mobile */}
+                  <div className="mb-5">
+                    <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: '#8B8BA8' }}>
+                      Continue this conversation in
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1"
+                      style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
+                      <a
+                        href={`https://chatgpt.com/?q=${encodeURIComponent('read ' + result.url + ' and discuss this context')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-[12px] border text-[13px] font-semibold no-underline cursor-pointer transition-all font-inherit flex-shrink-0 whitespace-nowrap min-h-[44px]"
+                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A', scrollSnapAlign: 'start' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#10a37f'; e.currentTarget.style.color = '#10a37f'; e.currentTarget.style.background = 'rgba(16, 163, 127, 0.04)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}
+                      >
+                        <span className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-white text-[11px] font-bold" style={{ background: '#10a37f' }}>GPT</span>
+                        ChatGPT
+                      </a>
+                      <a
+                        href={`https://gemini.google.com/?q=${encodeURIComponent('read ' + result.url + ' and discuss this context')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-[12px] border text-[13px] font-semibold no-underline cursor-pointer transition-all font-inherit flex-shrink-0 whitespace-nowrap min-h-[44px]"
+                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A', scrollSnapAlign: 'start' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#4285f4'; e.currentTarget.style.color = '#4285f4'; e.currentTarget.style.background = 'rgba(66, 133, 244, 0.04)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}
+                      >
+                        <span className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-white text-[11px] font-bold" style={{ background: '#4285f4' }}>G</span>
+                        Gemini
+                      </a>
+                      <a
+                        href={`https://claude.ai/new?q=${encodeURIComponent('read ' + result.url + ' and discuss this context')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3.5 py-2.5 rounded-[12px] border text-[13px] font-semibold no-underline cursor-pointer transition-all font-inherit flex-shrink-0 whitespace-nowrap min-h-[44px]"
+                        style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A', scrollSnapAlign: 'start' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#d97706'; e.currentTarget.style.color = '#d97706'; e.currentTarget.style.background = 'rgba(217, 119, 6, 0.04)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}
+                      >
+                        <span className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-white text-[11px] font-bold" style={{ background: '#d97706' }}>C</span>
+                        Claude
                       </a>
                     </div>
                   </div>
+
+                  {/* Create another link */}
+                  <div className="text-center">
+                    <button onClick={handleCreateAnother}
+                      className="px-6 py-2.5 rounded-full border text-[13px] font-semibold cursor-pointer transition-all font-inherit min-h-[44px]"
+                      style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}
+                    >
+                      Create another link
+                    </button>
+                  </div>
                 </div>
-
-                {/* Divider */}
-                <div className="flex items-center gap-3 my-5">
-                  <div className="flex-1 h-px" style={{ background: '#F0EDE4' }} />
-                  <span className="text-xs font-medium whitespace-nowrap" style={{ color: '#8B8BA8' }}>or paste manually</span>
-                  <div className="flex-1 h-px" style={{ background: '#F0EDE4' }} />
-                </div>
-
-                {/* Textarea */}
-                <textarea
-                  ref={textareaRef}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Paste your knowledge here..."
-                  maxLength={50000}
-                  rows={3}
-                  className="w-full p-3.5 rounded-[14px] text-sm leading-relaxed outline-none resize-y transition-all font-inherit"
-                  style={{
-                    background: '#FCF9F2',
-                    border: '1px solid #E8E3D8',
-                    color: '#16163D',
-                    minHeight: 70,
-                  }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255, 42, 109, 0.12)' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.boxShadow = 'none' }}
-                />
-
-                {/* Input bar */}
-                <div className="flex items-center justify-between mt-2.5">
-                  <button
-                    onClick={handleCreate}
-                    disabled={pending || generating}
-                    className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[14px] font-semibold border-none cursor-pointer transition-all font-inherit"
-                    style={{
-                      background: '#FF2A6D',
-                      color: '#fff',
-                      boxShadow: '0 4px 16px rgba(255, 42, 109, 0.25)',
-                      opacity: pending || generating ? 0.4 : 1,
-                    }}
-                    onMouseEnter={(e) => { if (!pending && !generating) { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255, 42, 109, 0.35)' } }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.25)' }}
-                  >
-                    {generating ? (
-                      <>
-                        <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
-                        Generating...
-                      </>
-                    ) : pending ? (
-                      <>
-                        <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                        </svg>
-                        Create
-                      </>
-                    )}
-                  </button>
-                  <span className="text-xs font-medium" style={{
-                    color: charCount > 4500 ? '#FF2A6D' : '#8B8BA8',
-                  }}>
-                    {charCount} / 50000
-                  </span>
-                </div>
-
-                {error && (
-                  <p className="text-xs mt-2" style={{ color: '#FF2A6D' }}>{error}</p>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
       </section>
-
-      {/* ═══ RESULT MODAL ═══ */}
-      {showModal && result && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-          style={{ background: 'rgba(22, 22, 61, 0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
-          onClick={() => { setShowModal(false) }}
-        >
-          <div
-            className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[24px] border shadow-2xl"
-            style={{ background: '#FFFFFF', borderColor: '#F0EDE4', boxShadow: '0 32px 80px rgba(22, 22, 61, 0.2)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Accent bar */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-[24px]"
-              style={{ background: 'linear-gradient(90deg, #FF2A6D, transparent 60%)' }} />
-
-            {/* Close button */}
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full border transition-all cursor-pointer"
-              style={{ background: '#FCF9F2', borderColor: '#F0EDE4', color: '#4A4A6A' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#FF2A6D' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#FCF9F2'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.borderColor = '#F0EDE4' }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            <div className="p-7 sm:p-10" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
-              {/* Success badge */}
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'rgba(255, 42, 109, 0.08)' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF2A6D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </span>
-                <span className="text-[15px] font-semibold" style={{ color: '#16163D' }}>Link created successfully</span>
-              </div>
-
-              {/* Link row */}
-              <div className="flex items-center gap-2 px-4 py-3 rounded-[14px] mb-5 border"
-                style={{ background: 'rgba(255, 42, 109, 0.06)', borderColor: 'rgba(255, 42, 109, 0.1)' }}>
-                <span className="flex-1 text-[15px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
-                  {result.url}
-                </span>
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <a href={result.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold no-underline cursor-pointer transition-all font-inherit"
-                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
-                    </svg>
-                    Open
-                  </a>
-                  <button onClick={() => setShowQR(!showQR)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer transition-all font-inherit"
-                    style={{ background: showQR ? 'rgba(255,42,109,0.08)' : '#FFFFFF', borderColor: showQR ? '#FF2A6D' : '#E8E3D8', color: showQR ? '#FF2A6D' : '#4A4A6A' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="7" height="7" rx="1" />
-                      <rect x="14" y="3" width="7" height="7" rx="1" />
-                      <rect x="14" y="14" width="7" height="7" rx="1" />
-                      <rect x="3" y="14" width="4" height="4" rx="1" />
-                      <line x1="9" y1="14" x2="14" y2="9" />
-                      <line x1="9" y1="16" x2="16" y2="9" />
-                    </svg>
-                    QR
-                  </button>
-                  <button onClick={copyLink}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-[12px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit ${copied ? 'text-white' : ''}`}
-                    style={copied ? { background: '#FF2A6D', borderColor: '#FF2A6D' } : { background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                    onMouseEnter={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' } }}
-                    onMouseLeave={(e) => { if (!copied) { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' } }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                    </svg>
-                    {copied ? 'Copied!' : 'Copy'}
-                  </button>
-                </div>
-              </div>
-
-              {/* QR Code */}
-              {showQR && (
-                <div className="flex justify-center mb-5 p-4 rounded-[14px] border"
-                  style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
-                  <img src={`/api/qr?url=${encodeURIComponent(result.url)}`} alt="QR Code" width={130} height={130} className="block" style={{ imageRendering: 'pixelated' }} />
-                </div>
-              )}
-
-              {/* Preview */}
-              <div className="p-5 sm:p-6 rounded-[14px] border mb-5" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
-                <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3"
-                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
-                  ✨ Your Link Preview
-                </span>
-                <div className="text-[19px] font-bold leading-tight mb-2" style={{ color: '#16163D' }}>
-                  {result.title}
-                </div>
-                <div className="text-[14px] leading-relaxed" style={{ color: '#8B8BA8' }}>
-                  {result.summary}
-                </div>
-              </div>
-
-              {/* Email claim */}
-              {!emailSent ? (
-                <form onSubmit={handleClaim} className="p-5 rounded-[14px] border"
-                  style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
-                  <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
-                    ✉️ Track visits, manage, and edit your links later
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="email" value={emailValue}
-                      onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
-                      placeholder="your@email.com" required
-                      className="flex-1 px-3.5 py-2.5 rounded-[12px] border text-[13px] outline-none transition-all font-inherit"
-                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
-                    />
-                    <button type="submit"
-                      className="px-5 py-2.5 rounded-[12px] border-none text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
-                      style={{ background: '#FF2A6D' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
-                    >
-                      Save
-                    </button>
-                  </div>
-                  {claimError && <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>}
-                </form>
-              ) : (
-                <div className="p-5 rounded-[14px] border text-center"
-                  style={{ background: 'rgba(255, 42, 109, 0.03)', borderColor: '#F0EDE4' }}>
-                  <span className="text-[14px] font-medium" style={{ color: '#4A4A6A' }}>
-                    ✅ We&apos;ll notify you at <strong style={{ color: '#16163D' }}>{emailValue}</strong> when this link is visited.
-                  </span>
-                </div>
-              )}
-
-              {/* Close button at bottom */}
-              <div className="mt-6 text-center">
-                <button onClick={() => setShowModal(false)}
-                  className="px-6 py-2.5 rounded-full border text-[13px] font-semibold cursor-pointer transition-all font-inherit"
-                  style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D' }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A' }}
-                >
-                  Create another link
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
 
       {/* ═══ HOW IT WORKS ═══ */}
       <div className="relative z-10 h-px max-w-[1200px] mx-auto"
@@ -909,6 +950,7 @@ function LandingContent() {
         </div>
       </footer>
 
+
       {/* Animation styles */}
       <style>{`
         .anim-up {
@@ -921,9 +963,9 @@ function LandingContent() {
           opacity: 1;
           transform: translateY(0);
         }
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
         }
       `}</style>
     </>
