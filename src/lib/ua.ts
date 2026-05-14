@@ -1,6 +1,8 @@
 export type VisitorType = 'browser' | 'ai_agent'
 
 const AI_AGENT_PATTERNS = [
+  'curl',
+  'Wget',
   'GPTBot',
   'OAI-SearchBot',
   'ChatGPT',
