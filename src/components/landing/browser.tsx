@@ -231,23 +231,22 @@ function LandingContent() {
       </nav>
 
       {/* ═══ HERO ═══ */}
-      <section className="relative z-10 min-h-screen flex flex-col px-6 pt-[110px] pb-10"
-        style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+      <section className="relative z-10 min-h-screen flex flex-col px-6 pt-[110px] pb-10 font-sans">
         <div className="w-full max-w-[1200px] mx-auto grid lg:grid-cols-[1fr_480px] gap-12 items-center"
           style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.3s' }}>
 
           {/* Left: Headline */}
           <div className="anim-up" style={{ '--delay': '0.15s' } as React.CSSProperties}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider mb-6 border"
-              style={{ color: '#FF2A6D', borderColor: '#E8E3D8', background: 'rgba(255, 42, 109, 0.03)', letterSpacing: '0.06em' }}>
+              style={{ color: '#4A4A6A', borderColor: '#E8E3D8', background: 'rgba(255, 42, 109, 0.03)', letterSpacing: '0.06em' }}>
               <span className="w-[5px] h-[5px] rounded-full animate-pulse" style={{ background: '#FF2A6D' }} />
-              CONTEXT SHARING FOR AI
+              AI-READY KNOWLEDGE SHARING
             </div>
 
             <h1 className="font-heading font-bold leading-[1.08] tracking-[-0.03em] mb-[18px]"
               style={{ fontSize: 'clamp(42px, 4.8vw, 66px)', color: '#16163D' }}>
-              Your context,<br />
-              in <em className="italic not-italic" style={{ color: '#FF2A6D', fontStyle: 'italic' }}>a single link</em>.
+              Share once.<br />
+              <em className="italic not-italic" style={{ color: '#FF2A6D', fontStyle: 'italic' }}>Discuss anywhere.</em>
             </h1>
 
             <p className="text-base leading-relaxed mb-8" style={{
@@ -256,28 +255,27 @@ function LandingContent() {
               maxWidth: 420,
               lineHeight: 1.7,
             }}>
-              Paste any knowledge. Get a short link. Anyone can read the gist and
-              continue in ChatGPT, Gemini, or Claude — instantly, no signup.
+              Drop your notes, research, or meeting recap into Contxt. Get a link that anyone can open — and instantly continue the conversation in ChatGPT, Gemini, or Claude. No signup. No copy-paste. No friction.
             </p>
 
             <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-5">
               <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
                 <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
-                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#4A4A6A' }}>
                   ⚡
                 </span>
                 Zero friction — paste and share
               </div>
               <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
                 <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
-                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#4A4A6A' }}>
                   🤖
                 </span>
                 Continue in any AI
               </div>
               <div className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
                 <span className="w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0"
-                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
+                  style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#4A4A6A' }}>
                   🔒
                 </span>
                 Private by default
@@ -287,21 +285,21 @@ function LandingContent() {
 
           {/* Right: Tool Card */}
           <div ref={areaRef} id="tool" className="anim-up" style={{ '--delay': '0.3s' } as React.CSSProperties}>
-            <div className="rounded-[24px] border shadow-lg overflow-hidden relative"
+            <div className="rounded-[20px] border shadow-lg overflow-hidden relative"
               style={{
                 background: '#FFFFFF',
                 borderColor: '#F0EDE4',
-                boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
+                boxShadow: '0 12px 40px rgba(22, 22, 61, 0.08)',
               }}>
               {/* Accent bar */}
               <div className="absolute top-0 left-0 right-0 h-[3px]"
                 style={{ background: 'linear-gradient(90deg, #FF2A6D, transparent 60%)' }} />
 
-              <div className="p-6 sm:p-7" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+              <div className="p-6 sm:p-7 font-sans">
 
                 {/* Preview block — always visible */}
                 <div className="transition-all duration-500">
-                  <div className="p-5 rounded-[14px] border" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+                  <div className="p-5 rounded-[10px] border" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
                     <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2"
                       style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
                       💡 Try This Prompt
@@ -362,7 +360,7 @@ function LandingContent() {
                   placeholder="Paste your knowledge here..."
                   maxLength={50000}
                   rows={3}
-                  className="w-full p-3.5 rounded-[14px] text-sm leading-relaxed outline-none resize-y transition-all font-inherit"
+                  className="w-full p-3.5 rounded-[10px] text-sm leading-relaxed outline-none resize-y transition-all font-inherit"
                   style={{
                     background: '#FCF9F2',
                     border: '1px solid #E8E3D8',
@@ -446,12 +444,12 @@ function LandingContent() {
           onClick={() => { setShowModal(false) }}
         >
           <div
-            className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[24px] border shadow-2xl"
+            className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto rounded-[20px] border shadow-2xl"
             style={{ background: '#FFFFFF', borderColor: '#F0EDE4', boxShadow: '0 32px 80px rgba(22, 22, 61, 0.2)' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Accent bar */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-[24px]"
+            <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-[20px]"
               style={{ background: 'linear-gradient(90deg, #FF2A6D, transparent 60%)' }} />
 
             {/* Close button */}
@@ -468,7 +466,7 @@ function LandingContent() {
               </svg>
             </button>
 
-            <div className="p-7 sm:p-10" style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+            <div className="p-7 sm:p-10 font-sans">
               {/* Success badge */}
               <div className="flex items-center gap-2 mb-6">
                 <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'rgba(255, 42, 109, 0.08)' }}>
@@ -480,7 +478,7 @@ function LandingContent() {
               </div>
 
               {/* Link row */}
-              <div className="flex items-center gap-2 px-4 py-3 rounded-[14px] mb-5 border"
+              <div className="flex items-center gap-2 px-4 py-3 rounded-[10px] mb-5 border"
                 style={{ background: 'rgba(255, 42, 109, 0.06)', borderColor: 'rgba(255, 42, 109, 0.1)' }}>
                 <span className="flex-1 text-[15px] font-semibold min-w-0 truncate" style={{ color: '#FF2A6D' }}>
                   {result.url}
@@ -527,14 +525,14 @@ function LandingContent() {
 
               {/* QR Code */}
               {showQR && (
-                <div className="flex justify-center mb-5 p-4 rounded-[14px] border"
+                <div className="flex justify-center mb-5 p-4 rounded-[10px] border"
                   style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
                   <img src={`/api/qr?url=${encodeURIComponent(result.url)}`} alt="QR Code" width={130} height={130} className="block" style={{ imageRendering: 'pixelated' }} />
                 </div>
               )}
 
               {/* Preview */}
-              <div className="p-5 sm:p-6 rounded-[14px] border mb-5" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
+              <div className="p-5 sm:p-6 rounded-[10px] border mb-5" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
                 <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3"
                   style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D', letterSpacing: '0.06em' }}>
                   ✨ Your Link Preview
@@ -549,7 +547,7 @@ function LandingContent() {
 
               {/* Email claim */}
               {!emailSent ? (
-                <form onSubmit={handleClaim} className="p-5 rounded-[14px] border"
+                <form onSubmit={handleClaim} className="p-5 rounded-[10px] border"
                   style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
                   <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
                     ✉️ Track visits, manage, and edit your links later
@@ -559,7 +557,7 @@ function LandingContent() {
                       type="email" value={emailValue}
                       onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
                       placeholder="your@email.com" required
-                      className="flex-1 px-3.5 py-2.5 rounded-[12px] border text-[13px] outline-none transition-all font-inherit"
+                      className="flex-1 px-3.5 py-2.5 rounded-[10px] border text-[13px] outline-none transition-all font-inherit"
                       style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
@@ -576,7 +574,7 @@ function LandingContent() {
                   {claimError && <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>}
                 </form>
               ) : (
-                <div className="p-5 rounded-[14px] border text-center"
+                <div className="p-5 rounded-[10px] border text-center"
                   style={{ background: 'rgba(255, 42, 109, 0.03)', borderColor: '#F0EDE4' }}>
                   <span className="text-[14px] font-medium" style={{ color: '#4A4A6A' }}>
                     ✅ We&apos;ll notify you at <strong style={{ color: '#16163D' }}>{emailValue}</strong> when this link is visited.
@@ -605,9 +603,9 @@ function LandingContent() {
       <div className="relative z-10 h-px max-w-[1200px] mx-auto"
         style={{ background: 'linear-gradient(90deg, transparent, #E8E3D8, transparent)' }} />
 
-      <section id="how" className="relative z-10 px-6 py-[80px] max-w-[1200px] mx-auto w-full"
-        style={{ fontFamily: "'DM Sans', system-ui, sans-serif", background: '#FCF9F2' }}>
-        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#FF2A6D', letterSpacing: '0.12em' }}>
+      <section id="how" className="relative z-10 px-6 py-[80px] max-w-[1200px] mx-auto w-full font-sans"
+        style={{ background: '#FCF9F2' }}>
+        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>
           How It Works
         </div>
         <h2 className="font-heading font-bold leading-tight tracking-[-0.02em] mb-3" style={{
@@ -649,7 +647,7 @@ function LandingContent() {
             desc: 'Recipients open the link, see the gist, and tap "Continue in ChatGPT" or "Gemini" — full context flows into their chat. Instant discussion.',
           }].map((step, i) => (
             <div key={i}
-              className="anim-up rounded-[24px] border p-8 shadow-sm transition-all"
+              className="anim-up rounded-[20px] border p-8 shadow-sm transition-all"
               style={{
                 background: '#FFFFFF',
                 borderColor: '#F0EDE4',
@@ -665,7 +663,7 @@ function LandingContent() {
                 e.currentTarget.style.transform = 'none'
               }}
             >
-              <div className="w-11 h-11 rounded-[14px] flex items-center justify-center mb-[18px]"
+              <div className="w-11 h-11 rounded-[10px] flex items-center justify-center mb-[18px]"
                 style={{ background: 'rgba(255, 42, 109, 0.06)', color: '#FF2A6D' }}>
                 {step.icon}
               </div>
@@ -677,9 +675,9 @@ function LandingContent() {
       </section>
 
       {/* ═══ THE EXPERIENCE ═══ */}
-      <div className="relative z-10 px-6 py-[80px]" style={{ background: '#F5F0E6' }}>
+      <div className="relative z-10 px-6 py-[80px] max-w-[1200px] mx-auto w-full" style={{ background: '#F5F0E6' }}>
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#FF2A6D', letterSpacing: '0.12em' }}>
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>
             The Experience
           </div>
 
@@ -687,7 +685,7 @@ function LandingContent() {
             {/* Left: Description */}
             <div className="anim-up space-y-6">
               <h2 className="font-heading font-bold leading-tight tracking-[-0.02em]" style={{
-                fontSize: 'clamp(28px, 3vw, 42px)',
+                fontSize: 'clamp(32px, 3.5vw, 48px)',
                 color: '#16163D',
               }}>
                 <em className="italic" style={{ color: '#FF2A6D' }}>One</em> link.{' '}
@@ -700,7 +698,7 @@ function LandingContent() {
               </p>
 
               {/* Browser experience card */}
-              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+              <div className="rounded-[20px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
                 <div className="flex items-center gap-2.5 mb-2.5">
                   <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
                     style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
@@ -725,7 +723,7 @@ function LandingContent() {
               </div>
 
               {/* AI experience card */}
-              <div className="rounded-[16px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+              <div className="rounded-[20px] border p-5" style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
                 <div className="flex items-center gap-2.5 mb-2.5">
                   <span className="w-8 h-8 rounded-[10px] flex items-center justify-center"
                     style={{ background: 'rgba(255, 42, 109, 0.06)' }}>
@@ -755,7 +753,7 @@ function LandingContent() {
                   'Private by default — nothing is public without you sending the link',
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm" style={{ color: '#4A4A6A' }}>
-                    <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 text-white"
+                    <span className="w-[24px] h-[24px] rounded-full flex items-center justify-center text-[14px] font-bold flex-shrink-0 text-white"
                       style={{ background: '#FF2A6D' }}>
                       ✓
                     </span>
@@ -768,11 +766,11 @@ function LandingContent() {
             {/* Right: Two mockups stacked */}
             <div className="space-y-6">
               {/* Browser mockup */}
-              <div className="anim-up rounded-[24px] border overflow-hidden shadow-lg"
+              <div className="anim-up rounded-[20px] border overflow-hidden shadow-lg"
                 style={{
                   background: '#FFFFFF',
                   borderColor: '#F0EDE4',
-                  boxShadow: '0 24px 60px rgba(22, 22, 61, 0.12)',
+                  boxShadow: '0 12px 40px rgba(22, 22, 61, 0.08)',
                 }}>
                 <div className="flex items-center gap-2 px-5 py-3.5 border-b" style={{ background: '#FCF9F2', borderColor: '#F0EDE4' }}>
                   <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
@@ -816,8 +814,8 @@ function LandingContent() {
               </div>
 
               {/* AI YAML mockup */}
-              <div className="anim-up rounded-[24px] overflow-hidden shadow-lg"
-                style={{ '--delay': '0.2s', boxShadow: '0 24px 60px rgba(22, 22, 61, 0.18)' } as React.CSSProperties}>
+              <div className="anim-up rounded-[20px] overflow-hidden shadow-lg"
+                style={{ '--delay': '0.2s', boxShadow: '0 12px 40px rgba(22, 22, 61, 0.08)' } as React.CSSProperties}>
                 {/* Terminal title bar */}
                 <div className="flex items-center gap-2 px-5 py-3 border-b"
                   style={{ background: '#16163D', borderColor: 'rgba(255,255,255,0.06)' }}>
@@ -870,9 +868,9 @@ function LandingContent() {
       </div>
 
       {/* ═══ USE CASES ═══ */}
-      <section id="use" className="relative z-10 px-6 py-[80px] max-w-[1200px] mx-auto w-full"
-        style={{ fontFamily: "'DM Sans', system-ui, sans-serif", background: '#FCF9F2' }}>
-        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#FF2A6D', letterSpacing: '0.12em' }}>
+      <section id="use" className="relative z-10 px-6 py-[80px] max-w-[1200px] mx-auto w-full font-sans"
+        style={{ background: '#FCF9F2' }}>
+        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>
           Use Cases
         </div>
         <h2 className="font-heading font-bold leading-tight tracking-[-0.02em] mb-3" style={{
@@ -893,7 +891,7 @@ function LandingContent() {
             { emoji: '📝', title: 'Research Briefs', desc: 'Share a competitive analysis or literature review as a link. Colleagues consume the synthesis instantly, then ask AI for deeper context or counter-arguments.' },
           ].map((item, i) => (
             <div key={i}
-              className="anim-up rounded-[24px] border p-7 shadow-sm transition-all"
+              className="anim-up rounded-[20px] border p-7 shadow-sm transition-all"
               style={{
                 background: '#FFFFFF',
                 borderColor: '#F0EDE4',
@@ -917,6 +915,22 @@ function LandingContent() {
         </div>
       </section>
 
+      {/* ═══ TRUST ═══ */}
+      <section className="relative z-10 px-6 py-[60px] max-w-[1200px] mx-auto w-full" style={{ background: '#FCF9F2' }}>
+        <div className="text-center max-w-[600px] mx-auto">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>Trust</div>
+          <h2 className="font-heading font-bold leading-tight tracking-[-0.02em] mb-4" style={{ fontSize: 'clamp(28px, 3vw, 42px)', color: '#16163D' }}>
+            Private. <span style={{ color: '#FF2A6D', fontStyle: 'italic' }}>No catch.</span>
+          </h2>
+          <p className="text-base leading-relaxed mb-6" style={{ color: '#4A4A6A' }}>
+            Links are private — only people you share with can access them. No public directory. No search indexing. No signup required for you or your recipients.
+          </p>
+          <p className="text-sm" style={{ color: '#8B8BA8' }}>
+            Built by people tired of copy-pasting the same context into every AI chat. Free to use. Always.
+          </p>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-8 border-t text-[13px]"
         style={{ borderColor: '#F0EDE4', color: '#8B8BA8', background: '#FCF9F2' }}>
@@ -930,9 +944,6 @@ function LandingContent() {
           <a href="/terms" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Terms</a>
-          <a href="/contributing" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
-            onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Contributing</a>
           <a href="/changelog" className="no-underline transition-colors" style={{ color: '#4A4A6A' }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FF2A6D'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#4A4A6A'}>Changelog</a>
