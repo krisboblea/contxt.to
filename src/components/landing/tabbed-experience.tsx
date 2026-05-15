@@ -129,7 +129,7 @@ function AIMockup() {
   )
 }
 
-// ── Mockup: Developer view ────────────────────────────────────
+// ── Mockup: Developer view (curl demo) ───────────────────────
 
 function DeveloperMockup() {
   return (
@@ -141,20 +141,21 @@ function DeveloperMockup() {
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
         <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
           style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}>
-          Request Handling
+          Terminal
         </span>
       </div>
       <div className="p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto" style={{ background: '#1a1a2e' }}>
-        <div><span style={{ color: '#6272A4' }}>// Middleware detects visitor type via User-Agent</span></div>
-        <div><span style={{ color: '#FF79C6' }}>if</span><span style={{ color: '#fff' }}> (</span><span style={{ color: '#F1FA8C' }}>visitorType</span><span style={{ color: '#FF79C6' }}> === </span><span style={{ color: '#50FA7B' }}>'ai_agent'</span><span style={{ color: '#fff' }}>)</span></div>
-        <div style={{ paddingLeft: '13px' }}><span style={{ color: '#6272A4' }}>→</span> <span style={{ color: '#50FA7B' }}>YAML</span><span style={{ color: '#fff' }}> with structured data</span></div>
-        <div><span style={{ color: '#FF79C6' }}>else</span></div>
-        <div style={{ paddingLeft: '13px' }}><span style={{ color: '#6272A4' }}>→</span> <span style={{ color: '#50FA7B' }}>HTML</span><span style={{ color: '#fff' }}> with rich card layout</span></div>
-        <div style={{ color: '#6c6c8a', marginTop: '8px' }}>{'─'.repeat(40)}</div>
-        <div style={{ color: '#50FA7B' }}>✓ User-Agent detection via middleware</div>
-        <div style={{ color: '#50FA7B' }}>✓ AI crawlers get clean YAML — zero HTML noise</div>
-        <div style={{ color: '#50FA7B' }}>✓ Compatible with ChatGPT, Gemini, Claude crawlers</div>
-        <div style={{ color: '#50FA7B' }}>✓ Same short link — two rendering paths</div>
+        <div><span style={{ color: '#50FA7B' }}>$</span> <span style={{ color: '#fff' }}>curl -s https://contxt.to/s/aK3mQ</span></div>
+        <div style={{ color: '#6c6c8a', margin: '6px 0' }}>{'─'.repeat(40)}</div>
+        <div><span style={{ color: '#FF79C6' }}>name</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>Product Design Sprint Retro — Q1 2026</span></div>
+        <div><span style={{ color: '#FF79C6' }}>description</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>&gt; Summary of 3 design sprints this quarter. Key</span></div>
+        <div style={{ color: '#F1FA8C', paddingLeft: '13px' }}>wins: onboarding hit 87% usability.</div>
+        <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
+        <div style={{ color: '#6272A4' }}>We ran 3 design sprints this quarter. Key wins: the</div>
+        <div style={{ color: '#6272A4' }}>onboarding redesign tested at 87% usability</div>
+        <div style={{ color: '#6272A4' }}>(up from 62%). Key misses...</div>
+        <div style={{ color: '#6c6c8a', marginTop: '6px' }}>{'─'.repeat(40)}</div>
+        <div style={{ color: '#50FA7B' }}># Same structured output as AI agents. One URL.</div>
       </div>
     </div>
   )
@@ -183,9 +184,9 @@ export function TabbedExperience() {
               <em className="italic" style={{ color: C.rose }}>Two</em> views.
             </h2>
             <p className="text-[15px] leading-relaxed max-w-[420px]" style={{ color: C.muted }}>
-              Your recipient opens a short link, sees the core idea in seconds,
-              and can instantly dive into it — with AI carrying all the context.
-              The same link adapts to whoever opens it.
+              Humans get a clean reading card. AI agents get structured data they
+              can act on instantly. Your curl command gets the same thing.
+              One URL. No copy-paste. No formatting.
             </p>
             <CheckmarkList />
           </div>
