@@ -180,13 +180,12 @@ export function TabbedExperience() {
               fontSize: 'clamp(32px, 3.5vw, 48px)',
               color: C.navy,
             }}>
-              <em className="italic" style={{ color: C.rose }}>One</em> link.{' '}
-              <em className="italic" style={{ color: C.rose }}>Two</em> views.
+              Your content,{' '}
+              <em className="italic" style={{ color: C.rose }}>ready</em> for humans &amp; AI.
             </h2>
             <p className="text-[15px] leading-relaxed max-w-[420px]" style={{ color: C.muted }}>
-              Humans get a clean reading card. AI agents get structured data they
-              can act on instantly. Your curl command gets the same thing.
-              One URL. No copy-paste. No formatting.
+              One link adapts to whoever opens it — a clean reading card for people,
+              structured YAML for AI agents and curl. No copy-paste. No formatting.
             </p>
             <CheckmarkList />
           </div>
