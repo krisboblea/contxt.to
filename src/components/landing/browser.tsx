@@ -196,14 +196,36 @@ function LandingContent() {
           </span>
           Contxt
         </a>
-        <div className="flex items-center gap-8 max-sm:hidden">
-          <a href="#how" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
-            onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }) }}>
-            How It Works
-          </a>
-          <a href="#use" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
-            onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }) }}>
-            Use Cases
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8 max-sm:hidden">
+            <a href="#how" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
+              onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }) }}>
+              How It Works
+            </a>
+            <a href="#use" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
+              onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }) }}>
+              Use Cases
+            </a>
+            <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
+              style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Create
+            </a>
+          </div>
+          {/* Mobile: compact create button */}
+          <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
+            className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
+            style={{ background: '#FF2A6D', color: '#fff' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
           </a>
         </div>
       </nav>
@@ -264,7 +286,7 @@ function LandingContent() {
           </div>
 
           {/* Right: Tool Card */}
-          <div ref={areaRef} className="anim-up" style={{ '--delay': '0.3s' } as React.CSSProperties}>
+          <div ref={areaRef} id="tool" className="anim-up" style={{ '--delay': '0.3s' } as React.CSSProperties}>
             <div className="rounded-[24px] border shadow-lg overflow-hidden relative"
               style={{
                 background: '#FFFFFF',
@@ -353,44 +375,58 @@ function LandingContent() {
 
                 {/* Input bar */}
                 <div className="flex items-center justify-between mt-2.5">
-                  <button
-                    onClick={handleCreate}
-                    disabled={pending || generating}
-                    className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[14px] font-semibold border-none cursor-pointer transition-all font-inherit"
-                    style={{
-                      background: '#FF2A6D',
-                      color: '#fff',
-                      boxShadow: '0 4px 16px rgba(255, 42, 109, 0.25)',
-                      opacity: pending || generating ? 0.4 : 1,
-                    }}
-                    onMouseEnter={(e) => { if (!pending && !generating) { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255, 42, 109, 0.35)' } }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.25)' }}
-                  >
-                    {generating ? (
-                      <>
-                        <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
-                        Generating...
-                      </>
-                    ) : pending ? (
-                      <>
-                        <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                        </svg>
-                        Create
-                      </>
-                    )}
-                  </button>
-                  <span className="text-xs font-medium" style={{
-                    color: charCount > 4500 ? '#FF2A6D' : '#8B8BA8',
-                  }}>
-                    {charCount} / 50000
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleCreate}
+                      disabled={pending || generating || !content.trim()}
+                      className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[14px] font-semibold border-none cursor-pointer transition-all font-inherit disabled:cursor-not-allowed"
+                      style={{
+                        background: '#FF2A6D',
+                        color: '#fff',
+                        boxShadow: '0 4px 16px rgba(255, 42, 109, 0.25)',
+                        opacity: pending || generating || !content.trim() ? 0.4 : 1,
+                      }}
+                      onMouseEnter={(e) => { if (!pending && !generating && !!content.trim()) { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255, 42, 109, 0.35)' } }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.25)' } }
+                    >
+                      {generating ? (
+                        <>
+                          <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
+                          Generating...
+                        </>
+                      ) : pending ? (
+                        <>
+                          <span className="inline-block w-[18px] h-[18px] border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#fff' }} />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                          </svg>
+                          Create
+                        </>
+                      )}
+                    </button>
+                    <span className="text-[11px] font-medium hidden sm:inline" style={{ color: '#8B8BA8' }}>
+                      Free. No signup.
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <a href="https://contxt.to/s/contxt-Tmuyc" target="_blank" rel="noopener noreferrer"
+                      className="text-xs font-medium no-underline transition-colors hidden sm:inline"
+                      style={{ color: '#4A4A6A' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#FF2A6D' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = '#4A4A6A' }}>
+                      See an example →
+                    </a>
+                    <span className="text-xs font-medium" style={{
+                      color: charCount > 4500 ? '#FF2A6D' : '#8B8BA8',
+                    }}>
+                      {charCount} / 50000
+                    </span>
+                  </div>
                 </div>
 
                 {error && (
@@ -924,6 +960,14 @@ function LandingContent() {
         @keyframes slideIn {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .anim-up,
+          .anim-up.is-visible {
+            opacity: 1;
+            transform: none;
+            transition: none;
+          }
         }
       `}</style>
     </>
