@@ -282,30 +282,6 @@ function LandingContent() {
                 Private by default
               </div>
             </div>
-
-            {/* AI logos bar */}
-            <div className="mt-10 pt-7 border-t" style={{ borderColor: '#E8E3D8' }}>
-              <div className="text-[11px] font-bold uppercase tracking-widest mb-5 text-center lg:text-left" style={{ color: '#8B8BA8', letterSpacing: '0.1em' }}>
-                Works with every major AI
-              </div>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-                {[
-                  { name: 'ChatGPT', file: 'chatgpt.svg', h: 28 },
-                  { name: 'Claude', file: 'claude.svg', h: 16 },
-                  { name: 'Gemini', file: 'gemini.svg', h: 22 },
-                  { name: 'DeepSeek', file: 'deepseek.svg', h: 22 },
-                  { name: 'Grok', file: 'grok.svg', h: 26 },
-                ].map(({ name, file, h }) => (
-                  <div key={name}
-                    className="flex items-center justify-center px-5 py-3 rounded-[14px] border transition-all"
-                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', minHeight: 52, minWidth: 100 }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,42,109,0.1)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.boxShadow = 'none' }}>
-                    <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 100 }} loading="lazy" />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Right: Tool Card */}
@@ -457,6 +433,30 @@ function LandingContent() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* ═══ AI LOGOS ═══ */}
+        <div className="w-full max-w-[1200px] mx-auto mt-12 sm:mt-16 px-0">
+          <div className="text-[11px] font-bold uppercase tracking-widest mb-6 text-center" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>
+            Works with every major AI
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[
+              { name: 'ChatGPT', file: 'chatgpt.svg', h: 32 },
+              { name: 'Claude', file: 'claude.svg', h: 24 },
+              { name: 'Gemini', file: 'gemini.svg', h: 28 },
+              { name: 'DeepSeek', file: 'deepseek.svg', h: 28 },
+              { name: 'Grok', file: 'grok.svg', h: 32 },
+            ].map(({ name, file, h }) => (
+              <div key={name}
+                className="flex items-center justify-center px-6 py-4 rounded-[14px] border transition-all"
+                style={{ background: '#FFFFFF', borderColor: '#EDE9E0', minHeight: 60, minWidth: 120, filter: 'grayscale(1)', opacity: 0.7 }}
+                onMouseEnter={(e) => { e.currentTarget.style.filter = 'grayscale(0)'; e.currentTarget.style.opacity = '1'; e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,42,109,0.08)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.filter = 'grayscale(1)'; e.currentTarget.style.opacity = '0.7'; e.currentTarget.style.borderColor = '#EDE9E0'; e.currentTarget.style.boxShadow = 'none' }}>
+                <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 120 }} loading="lazy" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
