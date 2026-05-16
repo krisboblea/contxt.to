@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 200" fill="none">
+  <defs>
+    <linearGradient id="claude-g" x1="0" y1="0" x2="1000" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CC4B3C"/>
+      <stop offset="100%" stop-color="#CF6A4C"/>
+    </linearGradient>
+  </defs>
+  <text x="0" y="145" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="150" font-weight="700" fill="url(#claude-g)" letter-spacing="-2">Claude</text>
+</svg>

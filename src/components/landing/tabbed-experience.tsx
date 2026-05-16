@@ -60,7 +60,7 @@ function BrowserMockup() {
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
-        <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-[11px] text-center border"
+        <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-[11px] text-center border truncate"
           style={{ background: '#FFFFFF', borderColor: C.border, color: C.label }}>
           contxt.to/s/aK3mQ
         </span>
@@ -69,14 +69,14 @@ function BrowserMockup() {
           Browser
         </span>
       </div>
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         <h4 className="font-heading text-[20px] font-bold leading-tight mb-2" style={{ color: C.navy }}>
           Product Design Sprint Retro — Q1 2026
         </h4>
         <p className="text-[13px] leading-relaxed mb-4" style={{ color: C.muted }}>
           We ran 3 design sprints this quarter. Key wins: the onboarding redesign tested at 87% usability (up from 62%). Key misses: the analytics dashboard overhaul needs another iteration.
         </p>
-        <div className="flex gap-2 pt-4 border-t" style={{ borderColor: C.border }}>
+        <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t" style={{ borderColor: C.border }}>
           <span className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-[10px] text-[11px] font-semibold border"
             style={{ background: C.cream, borderColor: C.borderStrong, color: C.muted }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M22.281 2.719a3 3 0 0 0-3.04-.602L3.166 8.356a3 3 0 0 0-.16 5.528l6.047 3.14 3.142 6.046a3 3 0 0 0 5.528-.16l6.24-18.074a3 3 0 0 0-.602-3.04z"/></svg>
@@ -103,7 +103,7 @@ function AIMockup() {
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FF5F56' }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#FFBD2E' }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#27C93F' }} />
-        <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-center text-[10px] border"
+        <span className="flex-1 ml-2.5 px-3.5 py-1.5 rounded-full text-center text-[10px] border truncate"
           style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' }}>
           contxt.to/s/aK3mQ (AI Agent)
         </span>
@@ -112,7 +112,7 @@ function AIMockup() {
           AI View
         </span>
       </div>
-      <div className="p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto" style={{ background: '#1a1a2e' }}>
+      <div className="p-4 sm:p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto" style={{ background: '#1a1a2e' }}>
         <div style={{ color: '#6c6c8a' }}>{'─'.repeat(40)}</div>
         <div><span style={{ color: '#FF79C6' }}>name</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>Product Design Sprint Retro — Q1 2026</span></div>
         <div><span style={{ color: '#FF79C6' }}>description</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>&gt; Summary of 3 design sprints this quarter. Key</span></div>
@@ -144,7 +144,7 @@ function DeveloperMockup() {
           Terminal
         </span>
       </div>
-      <div className="p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto" style={{ background: '#1a1a2e' }}>
+      <div className="p-4 sm:p-5 font-mono text-[12px] leading-[1.7] overflow-x-auto" style={{ background: '#1a1a2e' }}>
         <div><span style={{ color: '#50FA7B' }}>$</span> <span style={{ color: '#fff' }}>curl -s https://contxt.to/s/aK3mQ</span></div>
         <div style={{ color: '#6c6c8a', margin: '6px 0' }}>{'─'.repeat(40)}</div>
         <div><span style={{ color: '#FF79C6' }}>name</span><span style={{ color: '#fff' }}>:</span> <span style={{ color: '#F1FA8C' }}>Product Design Sprint Retro — Q1 2026</span></div>
@@ -173,7 +173,7 @@ export function TabbedExperience() {
           The Experience
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-[60px] items-start mt-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-[60px] items-start mt-12">
           {/* Left: static content */}
           <div className="anim-up space-y-6" style={{ '--delay': '0.1s' } as React.CSSProperties}>
             <h2 className="font-heading font-bold leading-tight tracking-[-0.02em]" style={{
@@ -193,13 +193,13 @@ export function TabbedExperience() {
           {/* Right: tabs + mockup */}
           <div className="anim-up space-y-6" style={{ '--delay': '0.2s' } as React.CSSProperties}>
             {/* Tab pills */}
-            <div className="flex items-center gap-1.5 p-1 rounded-full border w-fit"
-              style={{ background: '#FFFFFF', borderColor: C.borderStrong }}>
+            <div className="flex items-center gap-1.5 p-1 rounded-full border overflow-x-auto w-fit max-w-full"
+              style={{ background: '#FFFFFF', borderColor: C.borderStrong, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActive(tab.id)}
-                  className="px-4 py-1.5 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all font-sans"
+                  className="flex-shrink-0 px-3 sm:px-4 py-1.5 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all font-sans whitespace-nowrap"
                   style={active === tab.id
                     ? { background: C.rose, color: '#fff', boxShadow: '0 2px 8px rgba(255,42,109,0.25)' }
                     : { background: 'transparent', color: C.muted }
@@ -225,12 +225,12 @@ export function TabbedExperience() {
 
             {/* Connector */}
             {active !== 'developer' && (
-              <div className="flex items-center justify-center gap-3 text-xs font-medium" style={{ color: C.label }}>
+              <div className="flex items-center justify-center flex-wrap gap-x-2 gap-y-1.5 text-xs font-medium" style={{ color: C.label }}>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
                   style={{ background: 'rgba(255,42,109,0.06)', color: C.rose }}>🌐</span>
-                <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <svg width="40" height="2" className="hidden sm:block"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
                 <span className="font-semibold" style={{ color: C.rose }}>same link</span>
-                <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <svg width="40" height="2" className="hidden sm:block"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
                   style={{ background: 'rgba(255,42,109,0.06)', color: C.rose }}>{'<'}/&gt;</span>
               </div>

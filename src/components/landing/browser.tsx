@@ -435,6 +435,26 @@ function LandingContent() {
             </div>
           </div>
         </div>
+
+        {/* ═══ AI LOGOS ═══ */}
+        <div className="w-full max-w-[1200px] mx-auto mt-16 sm:mt-20">
+          <div className="text-[10px] font-bold uppercase tracking-widest mb-8 text-center" style={{ color: '#C4C0B6', letterSpacing: '0.14em' }}>
+            Works with every major AI
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
+            {[
+              { name: 'ChatGPT', file: 'chatgpt.svg', h: 32 },
+              { name: 'Claude', file: 'claude.svg', h: 20 },
+              { name: 'Gemini', file: 'gemini.svg', h: 26 },
+              { name: 'DeepSeek', file: 'deepseek.svg', h: 26 },
+              { name: 'Grok', file: 'grok.svg', h: 30 },
+            ].map(({ name, file, h }) => (
+              <div key={name} style={{ filter: 'grayscale(1)', opacity: 0.55 }}>
+                <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 130 }} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ═══ RESULT MODAL ═══ */}
@@ -691,15 +711,15 @@ function LandingContent() {
           Context, <span className="italic" style={{ color: '#FF2A6D' }}>everywhere</span> it matters.
         </h2>
         <p className="text-base leading-relaxed max-w-[480px] mb-12" style={{ color: '#4A4A6A' }}>
-          From RFCs to investor updates — whenever the backstory is half the conversation.
+          From research to handoffs — share what matters, not what happened.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-4">
           {[
-            { emoji: '🏗️', title: 'Engineering RFCs', desc: 'Share an architecture decision in a single link. Reviewers see the summary instantly, then discuss with AI — exploring tradeoffs or questioning assumptions.' },
-            { emoji: '📊', title: 'Meeting Recaps', desc: 'After any meeting, drop a Contxt link into Slack. Teammates catch up in ten seconds, then ask AI to dive deeper into any point they missed.' },
-            { emoji: '🤝', title: 'Investor Updates', desc: 'Send a Contxt of your monthly update. Investors get the key metrics in seconds, then drill down with AI — without digging through attachments.' },
-            { emoji: '📝', title: 'Research Briefs', desc: 'Share a competitive analysis or literature review as a link. Colleagues consume the synthesis instantly, then ask AI for deeper context or counter-arguments.' },
+            { emoji: '🤖', title: 'AI Research', desc: 'Turn AI research into a shareable page with executive summaries, key insights, citations, and interactive AI Q&A.' },
+            { emoji: '🎙️', title: 'Meeting Briefs', desc: 'Share meeting context, not recordings — decisions, action items, summaries, and follow-up briefs from any call.' },
+            { emoji: '📚', title: 'Learning Capsules', desc: 'Learn anything through AI-powered context — summaries, structured concepts, and an interactive AI tutor.' },
+            { emoji: '🔄', title: 'Project Handoff', desc: 'Transfer project context instantly — overviews, technical decisions, next steps, and team onboarding in one link.' },
           ].map((item, i) => (
             <div key={i}
               className="anim-up rounded-[20px] border p-7 shadow-sm transition-all"
