@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.41.2",
+    "@auth/prisma-adapter": "^2.11.2",
     "@base-ui/react": "^1.4.1",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.17.3",
