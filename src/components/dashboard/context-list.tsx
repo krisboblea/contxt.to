@@ -32,20 +32,29 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
     : contexts
 
   return (
-    <div className="flex w-[300px] shrink-0 flex-col border-r border-[#F0EDE4] bg-white">
+    <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
       <div className="shrink-0 border-b border-[#F0EDE4] p-3">
-        <div className="relative">
-          <Search
-            size={13}
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8]"
-          />
-          <input
-            type="search"
-            placeholder="Search your contexts…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-1.5 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search
+              size={13}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8]"
+            />
+            <input
+              type="search"
+              placeholder="Search your contexts…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-1.5 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
+            />
+          </div>
+          <Link
+            href="/dashboard/contexts/new"
+            className="md:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] hover:text-[#FF2A6D] transition-all no-underline"
+            aria-label="New context"
+          >
+            <Plus size={16} />
+          </Link>
         </div>
       </div>
 
@@ -83,9 +92,9 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
                 <li key={ctx.id}>
                   <Link
                     href={`?slug=${ctx.slug}`}
-                    className={`block px-4 py-3 transition-colors hover:bg-[#F5F0E6] ${
+                    className={`block px-3 sm:px-4 py-3.5 sm:py-3 transition-colors hover:bg-[#F5F0E6] ${
                       isSelected
-                        ? "border-l-2 border-l-[#FF2A6D] bg-[rgba(255,42,109,0.04)] pl-[14px]"
+                        ? "border-l-2 border-l-[#FF2A6D] bg-[rgba(255,42,109,0.04)] pl-[11px] sm:pl-[14px]"
                         : "border-l-2 border-l-transparent"
                     }`}
                   >

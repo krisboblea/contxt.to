@@ -114,9 +114,9 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
           <h2 className="min-w-0 flex-1 text-base font-semibold text-[#16163D] leading-snug">
             {context.title}
           </h2>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex flex-col sm:flex-row shrink-0 items-stretch sm:items-center gap-1.5 sm:gap-2">
             <Link href={`/dashboard/contexts/${context.id}/edit`}>
-              <Button variant="outline" size="sm" className="gap-1 text-xs">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto gap-1 text-xs">
                 <Pencil size={11} />
                 Edit
               </Button>
@@ -124,7 +124,7 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
             <Button
               variant="destructive"
               size="sm"
-              className="gap-1 text-xs"
+              className="w-full sm:w-auto gap-1 text-xs"
               onClick={() => setDeleteOpen(true)}
             >
               <Trash2 size={11} />
