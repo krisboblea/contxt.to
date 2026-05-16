@@ -702,7 +702,6 @@ function LandingContent() {
               tagline: 'Turn AI research into a shareable page',
               upload: ['ChatGPT deep research', 'Claude analysis', 'PDFs', 'Web research'],
               generate: ['Executive summaries', 'Key insights', 'Citations', 'Interactive AI Q&A', 'Shareable links'],
-              example: 'context.so/ai-agents-market-map',
             },
             {
               emoji: '🎙️',
@@ -710,7 +709,6 @@ function LandingContent() {
               tagline: 'Share meeting context, not recordings',
               upload: ['Zoom transcripts', 'Sales calls', 'Founder syncs', 'Client meetings'],
               generate: ['Decisions', 'Action items', 'Meeting summaries', 'Stakeholder context', 'Follow-up briefs'],
-              example: 'context.so/q2-sales-review',
             },
             {
               emoji: '📚',
@@ -718,7 +716,6 @@ function LandingContent() {
               tagline: 'Learn anything through AI-powered context',
               upload: ['YouTube videos', 'Documentation', 'Articles', 'AI explanations'],
               generate: ['Beginner-friendly summaries', 'Structured concepts', 'Interactive AI tutor', 'Key takeaways'],
-              example: 'context.so/learn-kubernetes-fast',
             },
             {
               emoji: '🔄',
@@ -726,7 +723,6 @@ function LandingContent() {
               tagline: 'Transfer project context instantly',
               upload: ['Cursor chats', 'Specs', 'GitHub discussions', 'Architecture decisions'],
               generate: ['Project overviews', 'Technical decisions', 'Next steps', 'AI Q&A', 'Team onboarding context'],
-              example: 'context.so/project-handoff',
             },
           ].map((item, i) => (
             <div key={i}
@@ -753,7 +749,7 @@ function LandingContent() {
 
               <p className="text-[13px] leading-relaxed mb-4" style={{ color: '#4A4A6A' }}>{item.tagline}</p>
 
-              <div className="flex gap-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                 <div className="flex-1 min-w-0">
                   <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8B8BA8', letterSpacing: '0.08em' }}>Upload</div>
                   <ul className="space-y-1 list-none p-0 m-0">
@@ -777,14 +773,6 @@ function LandingContent() {
                   </ul>
                 </div>
               </div>
-
-              <a href={`https://${item.example}`} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 mt-4 pt-3 border-t text-[11px] font-medium no-underline transition-colors w-full"
-                style={{ borderColor: '#F0EDE4', color: '#FF2A6D' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = '#E61D5C' }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = '#FF2A6D' }}>
-                {item.example} →
-              </a>
             </div>
           ))}
         </div>

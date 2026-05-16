@@ -173,7 +173,7 @@ export function TabbedExperience() {
           The Experience
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-[60px] items-start mt-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-[60px] items-start mt-12">
           {/* Left: static content */}
           <div className="anim-up space-y-6" style={{ '--delay': '0.1s' } as React.CSSProperties}>
             <h2 className="font-heading font-bold leading-tight tracking-[-0.02em]" style={{
@@ -193,13 +193,13 @@ export function TabbedExperience() {
           {/* Right: tabs + mockup */}
           <div className="anim-up space-y-6" style={{ '--delay': '0.2s' } as React.CSSProperties}>
             {/* Tab pills */}
-            <div className="flex items-center gap-1.5 p-1 rounded-full border w-fit"
-              style={{ background: '#FFFFFF', borderColor: C.borderStrong }}>
+            <div className="flex items-center gap-1.5 p-1 rounded-full border overflow-x-auto w-full sm:w-fit"
+              style={{ background: '#FFFFFF', borderColor: C.borderStrong, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActive(tab.id)}
-                  className="px-4 py-1.5 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all font-sans"
+                  className="flex-shrink-0 px-3 sm:px-4 py-1.5 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all font-sans whitespace-nowrap"
                   style={active === tab.id
                     ? { background: C.rose, color: '#fff', boxShadow: '0 2px 8px rgba(255,42,109,0.25)' }
                     : { background: 'transparent', color: C.muted }
@@ -225,12 +225,12 @@ export function TabbedExperience() {
 
             {/* Connector */}
             {active !== 'developer' && (
-              <div className="flex items-center justify-center gap-3 text-xs font-medium" style={{ color: C.label }}>
+              <div className="flex items-center justify-center flex-wrap gap-x-2 gap-y-1.5 text-xs font-medium" style={{ color: C.label }}>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
                   style={{ background: 'rgba(255,42,109,0.06)', color: C.rose }}>🌐</span>
-                <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <svg width="40" height="2" className="hidden sm:block"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
                 <span className="font-semibold" style={{ color: C.rose }}>same link</span>
-                <svg width="40" height="2"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
+                <svg width="40" height="2" className="hidden sm:block"><line x1="0" y1="1" x2="40" y2="1" stroke={C.borderStrong} strokeWidth="1" strokeDasharray="4 3"/></svg>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
                   style={{ background: 'rgba(255,42,109,0.06)', color: C.rose }}>{'<'}/&gt;</span>
               </div>
