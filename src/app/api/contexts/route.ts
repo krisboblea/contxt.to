@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
+import { auth } from "@/auth"
 import { getPrismaClient } from "@/lib/prisma"
 import { generateSlug, shortCode } from "@/lib/utils"
 import { randomBytes } from "crypto"
@@ -69,23 +70,37 @@ export async function POST(request: NextRequest) {
 
   try {
     const slug = await findUniqueSlug(db, title)
-    const claimToken = randomBytes(16).toString("hex")
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
       || `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "contxt.to"}`
 
-    await db.context.create({
-      data: {
-        title,
-        slug,
-        summary,
-        content,
-        tags: normalizeTags(tags),
-        claimToken,
-        creatorIp: request.headers.get("x-forwarded-for") ?? null,
-      },
-    })
+    // If user is logged in, link context directly (no claim token needed)
+    const session = await auth()
+    const userId = session?.user?.id ?? null
+    const userEmail = session?.user?.email ?? null
 
-    return NextResponse.json({ slug, claimToken, url: `${baseUrl}/s/${slug}` }, { status: 201 })
+    const data: Record<string, any> = {
+      title,
+      slug,
+      summary,
+      content,
+      tags: normalizeTags(tags),
+      creatorIp: request.headers.get("x-forwarded-for") ?? null,
+    }
+
+    if (userId && userEmail) {
+      data.userId = userId
+      data.creatorEmail = userEmail
+    } else {
+      data.claimToken = randomBytes(16).toString("hex")
+    }
+
+    await db.context.create({ data })
+
+    return NextResponse.json({
+      slug,
+      claimToken: data.claimToken ?? null,
+      url: `${baseUrl}/s/${slug}`,
+    }, { status: 201 })
   } catch (e) {
     console.error('[contexts] DB error:', e)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

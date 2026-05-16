@@ -590,8 +590,21 @@ function LandingContent() {
                 </div>
               </div>
 
-              {/* Email claim */}
-              {!emailSent ? (
+              {/* Email claim — only for guests */}
+              {loggedIn ? (
+                <div className="p-5 rounded-[10px] border text-center"
+                  style={{ background: 'rgba(255,42,109,0.03)', borderColor: '#F0EDE4' }}>
+                  <span className="text-[14px] font-medium" style={{ color: '#4A4A6A' }}>
+                    ✅ Saved to your account —{' '}
+                    <a href="/dashboard" className="font-semibold no-underline transition-colors"
+                      style={{ color: '#FF2A6D' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#E61D5C' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = '#FF2A6D' }}>
+                      manage in Dashboard →
+                    </a>
+                  </span>
+                </div>
+              ) : !emailSent ? (
                 <form onSubmit={handleClaim} className="p-5 rounded-[10px] border"
                   style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
                   <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>

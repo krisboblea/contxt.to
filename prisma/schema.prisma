@@ -61,9 +61,10 @@ model Context {
   summary    String
   content    String
   tags       String   @default("[]")
-  creatorIp  String?
-  claimToken String?
-  userId     String?
+  creatorEmail String?
+  creatorIp    String?
+  claimToken   String?
+  userId       String?
   user       User?    @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

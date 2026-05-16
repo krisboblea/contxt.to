@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId: user.id,
         claimToken: null,
+        creatorEmail: email,
       },
     })
 

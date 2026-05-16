@@ -38,5 +38,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = user.id
       return session
     },
+    async signIn({ user }) {
+      // Auto-claim guest contexts by matching email
+      if (user.email) {
+        try {
+          await prisma.context.updateMany({
+            where: {
+              creatorEmail: user.email,
+              userId: null,
+            },
+            data: { userId: user.id },
+          })
+        } catch (e) {
+          console.error("[auth] auto-claim error:", e)
+        }
+      }
+      return true
+    },
   },
 })

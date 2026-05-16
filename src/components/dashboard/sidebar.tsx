@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, FolderOpen, BarChart2 } from "lucide-react"
+import { BookOpen, FolderOpen, BarChart2, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Sheet,
@@ -74,6 +74,17 @@ function SidebarInner() {
       <LogoMark />
       <div className="border-t border-[#F0EDE4] pt-3">
         <NavItems />
+        {/* New Context button */}
+        <div className="px-3 mt-3">
+          <Link
+            href="/dashboard/contexts/new"
+            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white no-underline transition-all hover:opacity-90"
+            style={{ background: '#FF2A6D' }}
+          >
+            <Plus size={16} />
+            New Context
+          </Link>
+        </div>
       </div>
     </div>
   )

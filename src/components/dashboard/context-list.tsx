@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Search } from "lucide-react"
+import { Search, Plus } from "lucide-react"
 import type { DashboardContext } from "@/actions/dashboard-context"
 
 function relativeTime(iso: string): string {
@@ -51,10 +51,29 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
 
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="flex h-40 items-center justify-center">
-            <p className="text-sm text-[#8B8BA8]">
-              {query ? "No matching contexts" : "No contexts yet"}
-            </p>
+          <div className="flex flex-col items-center justify-center h-60 px-6 text-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B8BA8" strokeWidth="1.5" strokeLinecap="round" className="mb-3">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="12" y1="18" x2="12" y2="12" />
+              <line x1="9" y1="15" x2="15" y2="15" />
+            </svg>
+            {query ? (
+              <p className="text-sm text-[#8B8BA8]">No matching contexts</p>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-[#4A4A6A] mb-1">No contexts yet</p>
+                <p className="text-xs text-[#8B8BA8] mb-3">Create your first shareable link</p>
+                <Link
+                  href="/dashboard/contexts/new"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-white no-underline transition-all hover:opacity-90"
+                  style={{ background: '#FF2A6D' }}
+                >
+                  <Plus size={13} />
+                  New Context
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <ul className="divide-y divide-[#F0EDE4]">
