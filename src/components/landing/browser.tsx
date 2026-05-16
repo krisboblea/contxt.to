@@ -437,24 +437,20 @@ function LandingContent() {
         </div>
 
         {/* ═══ AI LOGOS ═══ */}
-        <div className="w-full max-w-[1200px] mx-auto mt-12 sm:mt-16 px-0">
-          <div className="text-[11px] font-bold uppercase tracking-widest mb-6 text-center" style={{ color: '#8B8BA8', letterSpacing: '0.12em' }}>
+        <div className="w-full max-w-[1200px] mx-auto mt-16 sm:mt-20">
+          <div className="text-[10px] font-bold uppercase tracking-widest mb-8 text-center" style={{ color: '#C4C0B6', letterSpacing: '0.14em' }}>
             Works with every major AI
           </div>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
             {[
               { name: 'ChatGPT', file: 'chatgpt.svg', h: 32 },
-              { name: 'Claude', file: 'claude.svg', h: 24 },
-              { name: 'Gemini', file: 'gemini.svg', h: 28 },
-              { name: 'DeepSeek', file: 'deepseek.svg', h: 28 },
-              { name: 'Grok', file: 'grok.svg', h: 32 },
+              { name: 'Claude', file: 'claude.svg', h: 20 },
+              { name: 'Gemini', file: 'gemini.svg', h: 26 },
+              { name: 'DeepSeek', file: 'deepseek.svg', h: 26 },
+              { name: 'Grok', file: 'grok.svg', h: 30 },
             ].map(({ name, file, h }) => (
-              <div key={name}
-                className="flex items-center justify-center px-6 py-4 rounded-[14px] border transition-all"
-                style={{ background: '#FFFFFF', borderColor: '#EDE9E0', minHeight: 60, minWidth: 120, filter: 'grayscale(1)', opacity: 0.7 }}
-                onMouseEnter={(e) => { e.currentTarget.style.filter = 'grayscale(0)'; e.currentTarget.style.opacity = '1'; e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,42,109,0.08)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.filter = 'grayscale(1)'; e.currentTarget.style.opacity = '0.7'; e.currentTarget.style.borderColor = '#EDE9E0'; e.currentTarget.style.boxShadow = 'none' }}>
-                <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 120 }} loading="lazy" />
+              <div key={name} style={{ filter: 'grayscale(1)', opacity: 0.55 }}>
+                <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 130 }} loading="lazy" />
               </div>
             ))}
           </div>
