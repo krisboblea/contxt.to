@@ -282,6 +282,22 @@ function LandingContent() {
                 Private by default
               </div>
             </div>
+
+            {/* AI logos bar */}
+            <div className="mt-8 pt-6 border-t" style={{ borderColor: '#E8E3D8' }}>
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-3.5" style={{ color: '#8B8BA8', letterSpacing: '0.1em' }}>
+                Works with every major AI
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['ChatGPT', 'Claude', 'Gemini', 'DeepSeek', 'Grok'].map((name) => (
+                  <span key={name}
+                    className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold border whitespace-nowrap"
+                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right: Tool Card */}
