@@ -214,6 +214,15 @@ function LandingContent() {
               onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }) }}>
               Use Cases
             </a>
+            {!loggedIn && (
+              <a href="/api/auth/signin"
+                className="text-sm font-medium no-underline transition-colors"
+                style={{ color: '#8B8BA8' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#FF2A6D' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#8B8BA8' }}>
+                Sign in
+              </a>
+            )}
             {loggedIn ? (
               <a href="/dashboard"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
