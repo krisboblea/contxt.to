@@ -107,8 +107,13 @@ export function EditContextForm({ context }: EditContextFormProps) {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <div className="flex items-center gap-3">
-        <Button type="submit" size="lg" disabled={pending}>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <Button
+          type="submit"
+          className="flex-1"
+          size="lg"
+          disabled={pending}
+        >
           {pending ? "Saving…" : "Save Changes"}
         </Button>
         <Button
