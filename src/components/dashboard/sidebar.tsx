@@ -6,6 +6,7 @@ import { BookOpen, FolderOpen, BarChart2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet"
@@ -92,22 +93,39 @@ export function MobileSidebarSheet() {
       <SheetTrigger
         render={
           <button
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors md:hidden"
-            aria-label="Open navigation"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FF2A6D] hover:text-white hover:border-[#FF2A6D] transition-all duration-200 md:hidden"
+            aria-label="Open navigation menu"
           />
         }
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M2 4h12M2 8h12M2 12h12"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </SheetTrigger>
-      <SheetContent side="left" showCloseButton className="p-0 w-[240px]">
-        <SidebarInner />
+      <SheetContent
+        side="left"
+        showCloseButton={false}
+        className="!w-[280px] p-0 bg-white border-r border-[#F0EDE4]"
+      >
+        <div className="flex items-center justify-between border-b border-[#F0EDE4] px-5 py-4">
+          <LogoMark />
+          <SheetClose
+            render={
+              <button
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] hover:bg-[#F5F0E6] hover:text-[#4A4A6A] transition-colors"
+                aria-label="Close navigation"
+              />
+            }
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </SheetClose>
+        </div>
+        <div className="px-3 pt-4">
+          <NavItems />
+        </div>
       </SheetContent>
     </Sheet>
   )
