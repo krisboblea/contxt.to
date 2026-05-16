@@ -19,7 +19,11 @@ export default async function DashboardPage({
       </div>
       {/* Desktop: always show detail panel. Mobile: only show when slug selected */}
       <div className={`${!slug ? 'hidden md:flex' : 'flex'} flex-1 flex-col overflow-hidden bg-[#FCF9F2]`}>
-        <ContextDetail context={selected} slugParam={slug ?? null} />
+        <ContextDetail
+          contexts={contexts}
+          initialContext={selected}
+          initialSlug={slug ?? null}
+        />
       </div>
     </div>
   )

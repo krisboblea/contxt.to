@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, Plus, Copy } from "lucide-react"
+import { Search, Plus, Copy, FileText } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { parseAsString } from "nuqs"
 import { toast } from "sonner"
@@ -28,16 +28,8 @@ interface ContextListProps {
 export function ContextList({ contexts, selectedSlug, searchQuery }: ContextListProps) {
   const router = useRouter()
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
+  const [, setSlug] = useQueryState("slug", parseAsString)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const initialRef = useRef(true)
-
-  // Sync URL query into state on initial load
-  useEffect(() => {
-    if (initialRef.current) {
-      initialRef.current = false
-      return
-    }
-  }, [])
 
   const handleSearch = useCallback(
     (value: string) => {
@@ -48,6 +40,13 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
       }, 300)
     },
     [setQ, router]
+  )
+
+  const handleSelect = useCallback(
+    (slug: string) => {
+      setSlug(slug)
+    },
+    [setSlug]
   )
 
   async function copyLink(slug: string) {
@@ -65,8 +64,21 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
     toast.success("Link copied!", { duration: 1500 })
   }
 
+  // Stats
+  const totalCount = contexts.length
+  const todayCount = useMemo(
+    () =>
+      contexts.filter((c) => {
+        const d = new Date(c.createdAt)
+        const now = new Date()
+        return d.toDateString() === now.toDateString()
+      }).length,
+    [contexts]
+  )
+
   return (
     <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
+      {/* Search header */}
       <div className="shrink-0 border-b border-[#F0EDE4] p-3">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -97,6 +109,22 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
         )}
       </div>
 
+      {/* Mini stats bar */}
+      <div className="shrink-0 flex items-center gap-4 border-b border-[#F0EDE4] bg-[#FCF9F2] px-3 py-2">
+        <div className="flex items-center gap-1.5 text-[11px] text-[#4A4A6A]">
+          <FileText size={12} className="text-[#8B8BA8]" />
+          <span className="font-semibold">{totalCount}</span>
+          <span className="text-[#8B8BA8]">total</span>
+        </div>
+        {todayCount > 0 && (
+          <div className="flex items-center gap-1.5 text-[11px] text-[#4A4A6A]">
+            <span className="font-semibold text-[#FF2A6D]">+{todayCount}</span>
+            <span className="text-[#8B8BA8]">today</span>
+          </div>
+        )}
+      </div>
+
+      {/* Context list */}
       <div className="flex-1 overflow-y-auto">
         {contexts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 px-6 text-center">
@@ -137,9 +165,9 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
               const isSelected = ctx.slug === selectedSlug
               return (
                 <li key={ctx.id}>
-                  <Link
-                    href={`?slug=${ctx.slug}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
-                    className={`block px-3 sm:px-4 py-3 sm:py-2.5 transition-colors hover:bg-[#F5F0E6] ${
+                  <button
+                    onClick={() => handleSelect(ctx.slug)}
+                    className={`w-full text-left block px-3 sm:px-4 py-3 sm:py-2.5 transition-colors hover:bg-[#F5F0E6] ${
                       isSelected
                         ? "border-l-2 border-l-[#FF2A6D] bg-[rgba(255,42,109,0.04)] pl-[11px] sm:pl-[14px]"
                         : "border-l-2 border-l-transparent"
@@ -172,7 +200,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                     <div className="flex items-center gap-2 text-[10px] text-[#8B8BA8]">
                       <span>{relativeTime(ctx.createdAt)}</span>
                     </div>
-                  </Link>
+                  </button>
                 </li>
               )
             })}

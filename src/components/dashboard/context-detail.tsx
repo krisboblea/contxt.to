@@ -3,7 +3,9 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Copy, Pencil, Trash2 } from "lucide-react"
+import { Copy, Pencil, Trash2, ArrowLeft } from "lucide-react"
+import { useQueryState } from "nuqs"
+import { parseAsString } from "nuqs"
 import { toast } from "sonner"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -40,28 +42,33 @@ function fullDate(iso: string): string {
 }
 
 interface ContextDetailProps {
-  context: DashboardContext | null
-  slugParam: string | null
+  contexts: DashboardContext[]
+  initialContext: DashboardContext | null
+  initialSlug: string | null
 }
 
-export function ContextDetail({ context, slugParam }: ContextDetailProps) {
+export function ContextDetail({ contexts, initialContext, initialSlug }: ContextDetailProps) {
   const router = useRouter()
+  const [slug] = useQueryState("slug", parseAsString.withDefault(initialSlug ?? ""))
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  // Find context from full list using nuqs slug, fall back to initial
+  const context = slug ? (contexts.find((c) => c.slug === slug) ?? null) : (initialContext ?? null)
 
   if (!context) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <p className="text-sm text-[#8B8BA8]">
-          {slugParam ? "Loading…" : "Select a context to preview"}
+          {slug ? "Loading…" : "Select a context to preview"}
         </p>
       </div>
     )
   }
 
-  const publicUrl = `contxt.to/s/${context.slug}`
-  const fullUrl = `https://${publicUrl}`
+  const shortLink = `${context.slug}`
+  const fullUrl = `https://contxt.to/s/${context.slug}`
 
   async function handleCopy() {
     try {
@@ -101,10 +108,7 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
         onClick={() => router.push("/dashboard")}
         className="md:hidden flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#4A4A6A] hover:text-[#FF2A6D] transition-colors border-b border-[#F0EDE4] bg-white"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline points="12 19 5 12 12 5" />
-        </svg>
+        <ArrowLeft size={14} />
         Back to contexts
       </button>
 
@@ -133,7 +137,7 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="truncate text-xs text-[#8B8BA8]">{publicUrl}</span>
+          <span className="truncate text-[11px] font-mono text-[#8B8BA8]">contxt.to/s/{shortLink}</span>
           <button
             onClick={handleCopy}
             className="shrink-0 flex items-center gap-1 text-xs font-medium text-[#FF2A6D] hover:opacity-70 transition-opacity"
@@ -146,14 +150,18 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
 
       {/* Stats */}
       <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 py-2.5">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">
-            Created
-          </p>
-          <p className="text-sm font-semibold text-[#16163D]">
-            {relativeTime(context.createdAt)}
-          </p>
-          <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.createdAt)}</p>
+        <div className="flex items-center gap-6">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">Created</p>
+            <p className="text-sm font-semibold text-[#16163D]">{relativeTime(context.createdAt)}</p>
+            <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.createdAt)}</p>
+          </div>
+          <div className="w-px self-stretch bg-[#F0EDE4]" />
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">Updated</p>
+            <p className="text-sm font-semibold text-[#16163D]">{relativeTime(context.updatedAt)}</p>
+            <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.updatedAt)}</p>
+          </div>
         </div>
       </div>
 
