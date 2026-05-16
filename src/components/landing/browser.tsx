@@ -32,11 +32,18 @@ function LandingContent() {
   const [claimError, setClaimError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const [baseUrl, setBaseUrl] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => { setBaseUrl(window.location.origin) }, [])
+  useEffect(() => {
+    fetch('/api/auth/session')
+      .then(r => r.json())
+      .then(session => { if (session?.user) setLoggedIn(true) })
+      .catch(() => {})
+  }, [])
 
   // Scroll observer for animations
   useEffect(() => {
@@ -207,27 +214,56 @@ function LandingContent() {
               onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }) }}>
               Use Cases
             </a>
+            {loggedIn ? (
+              <a href="/dashboard"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
+                style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                Dashboard
+              </a>
+            ) : (
+              <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
+                style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Create
+              </a>
+            )}
+          </div>
+          {/* Mobile: compact button */}
+          {loggedIn ? (
+            <a href="/dashboard"
+              className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
+              style={{ background: '#FF2A6D', color: '#fff' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </a>
+          ) : (
             <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
-              style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
+              style={{ background: '#FF2A6D', color: '#fff' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              Create
             </a>
-          </div>
-          {/* Mobile: compact create button */}
-          <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
-            className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
-            style={{ background: '#FF2A6D', color: '#fff' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </a>
+          )}
         </div>
       </nav>
 
