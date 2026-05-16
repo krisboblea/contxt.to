@@ -2,35 +2,50 @@ import { NextResponse } from "next/server"
 
 export const dynamic = "force-dynamic"
 
-const MIGRATION_SQL = `
-CREATE TABLE IF NOT EXISTS "User" (
+const FULL_MIGRATION_SQL = `
+-- Account table
+CREATE TABLE IF NOT EXISTS "Account" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "email" TEXT NOT NULL,
-    "name" TEXT,
-    "avatarUrl" TEXT,
-    "plan" TEXT NOT NULL DEFAULT 'FREE',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "userId" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "providerAccountId" TEXT NOT NULL,
+    "refresh_token" TEXT,
+    "access_token" TEXT,
+    "expires_at" INTEGER,
+    "token_type" TEXT,
+    "scope" TEXT,
+    "id_token" TEXT,
+    "session_state" TEXT
 );
-CREATE TABLE IF NOT EXISTS "Context" (
+
+-- Session table
+CREATE TABLE IF NOT EXISTS "Session" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "title" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
-    "summary" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "tags" TEXT NOT NULL DEFAULT '[]',
-    "creatorIp" TEXT,
-    "claimToken" TEXT,
-    "userId" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Context_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    "sessionToken" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL
 );
-CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
-CREATE UNIQUE INDEX IF NOT EXISTS "Context_slug_key" ON "Context"("slug");
-CREATE INDEX IF NOT EXISTS "Context_slug_idx" ON "Context"("slug");
-CREATE INDEX IF NOT EXISTS "Context_claimToken_idx" ON "Context"("claimToken");
-CREATE INDEX IF NOT EXISTS "Context_userId_idx" ON "Context"("userId");
+
+-- VerificationToken table
+CREATE TABLE IF NOT EXISTS "VerificationToken" (
+    "identifier" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "expires" DATETIME NOT NULL
+);
+
+-- Unique indexes for auth tables
+CREATE UNIQUE INDEX IF NOT EXISTS "Account_provider_providerAccountId_key" ON "Account"("provider", "providerAccountId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Session_sessionToken_key" ON "Session"("sessionToken");
+CREATE UNIQUE INDEX IF NOT EXISTS "VerificationToken_token_key" ON "VerificationToken"("token");
+CREATE UNIQUE INDEX IF NOT EXISTS "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
+
+-- Add emailVerified + image columns to User (safe to run if already added)
+ALTER TABLE "User" ADD COLUMN "emailVerified" DATETIME;
+ALTER TABLE "User" ADD COLUMN "image" TEXT;
+
+-- Add creatorEmail to Context
+ALTER TABLE "Context" ADD COLUMN "creatorEmail" TEXT;
 `
 
 export async function POST(request: Request) {
@@ -52,15 +67,21 @@ export async function POST(request: Request) {
     const { createClient } = await import("@libsql/client")
     const client = createClient({ url: url as string, authToken: authToken as string })
 
-    const statements = MIGRATION_SQL
+    const statements = FULL_MIGRATION_SQL
       .split(";")
       .map(s => s.trim())
       .filter(s => s.length > 0 && !s.startsWith("--"))
 
     let executed = 0
+    let errors: string[] = []
+
     for (const stmt of statements) {
-      await client.execute(stmt + ";")
-      executed++
+      try {
+        await client.execute(stmt + ";")
+        executed++
+      } catch (e: any) {
+        errors.push(`${stmt.substring(0, 60)}... → ${e.message}`)
+      }
     }
 
     const tables = await client.execute(
@@ -70,6 +91,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       executed,
+      errors: errors.length > 0 ? errors : undefined,
       tables: tables.rows.map(r => r.name),
     })
   } catch (e: any) {

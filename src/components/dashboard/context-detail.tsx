@@ -41,9 +41,10 @@ function fullDate(iso: string): string {
 
 interface ContextDetailProps {
   context: DashboardContext | null
+  slugParam: string | null
 }
 
-export function ContextDetail({ context }: ContextDetailProps) {
+export function ContextDetail({ context, slugParam }: ContextDetailProps) {
   const router = useRouter()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -52,7 +53,9 @@ export function ContextDetail({ context }: ContextDetailProps) {
   if (!context) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-[#8B8BA8]">Select a context to preview</p>
+        <p className="text-sm text-[#8B8BA8]">
+          {slugParam ? "Loading…" : "Select a context to preview"}
+        </p>
       </div>
     )
   }
@@ -93,6 +96,18 @@ export function ContextDetail({ context }: ContextDetailProps) {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden bg-[#FCF9F2]">
+      {/* Mobile back button */}
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="md:hidden flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#4A4A6A] hover:text-[#FF2A6D] transition-colors border-b border-[#F0EDE4] bg-white"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Back to contexts
+      </button>
+
       {/* Header bar */}
       <div className="shrink-0 border-b border-[#F0EDE4] bg-white p-4">
         <div className="mb-2 flex items-start justify-between gap-4">
