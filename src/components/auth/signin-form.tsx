@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 
 export function SignInForm() {
   const [email, setEmail] = useState('')
@@ -14,17 +15,12 @@ export function SignInForm() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/auth/signin/nodemailer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          email,
-          csrfToken: await getCsrfToken(),
-          callbackUrl: '/dashboard',
-          json: 'true',
-        }),
+      const res = await signIn('nodemailer', {
+        email,
+        redirect: false,
+        callbackUrl: '/dashboard',
       })
-      if (!res.ok) throw new Error('Failed to send magic link')
+      if (res?.error) throw new Error(res.error)
       setSent(true)
     } catch {
       setError('Could not send link — check your email and try again.')
@@ -114,14 +110,4 @@ export function SignInForm() {
       </form>
     </div>
   )
-}
-
-async function getCsrfToken(): Promise<string> {
-  try {
-    const res = await fetch('/api/auth/csrf')
-    const data = await res.json()
-    return data.csrfToken ?? ''
-  } catch {
-    return ''
-  }
 }
