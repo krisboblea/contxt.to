@@ -691,39 +691,15 @@ function LandingContent() {
           Context, <span className="italic" style={{ color: '#FF2A6D' }}>everywhere</span> it matters.
         </h2>
         <p className="text-base leading-relaxed max-w-[480px] mb-12" style={{ color: '#4A4A6A' }}>
-          From AI research to project handoffs — share what matters, not what happened.
+          From research to handoffs — share what matters, not what happened.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-5">
+        <div className="grid sm:grid-cols-2 gap-4">
           {[
-            {
-              emoji: '🤖',
-              title: 'AI Research',
-              tagline: 'Turn AI research into a shareable page',
-              upload: ['ChatGPT deep research', 'Claude analysis', 'PDFs', 'Web research'],
-              generate: ['Executive summaries', 'Key insights', 'Citations', 'Interactive AI Q&A', 'Shareable links'],
-            },
-            {
-              emoji: '🎙️',
-              title: 'Meeting Briefs',
-              tagline: 'Share meeting context, not recordings',
-              upload: ['Zoom transcripts', 'Sales calls', 'Founder syncs', 'Client meetings'],
-              generate: ['Decisions', 'Action items', 'Meeting summaries', 'Stakeholder context', 'Follow-up briefs'],
-            },
-            {
-              emoji: '📚',
-              title: 'Learning Capsules',
-              tagline: 'Learn anything through AI-powered context',
-              upload: ['YouTube videos', 'Documentation', 'Articles', 'AI explanations'],
-              generate: ['Beginner-friendly summaries', 'Structured concepts', 'Interactive AI tutor', 'Key takeaways'],
-            },
-            {
-              emoji: '🔄',
-              title: 'Project Handoff',
-              tagline: 'Transfer project context instantly',
-              upload: ['Cursor chats', 'Specs', 'GitHub discussions', 'Architecture decisions'],
-              generate: ['Project overviews', 'Technical decisions', 'Next steps', 'AI Q&A', 'Team onboarding context'],
-            },
+            { emoji: '🤖', title: 'AI Research', desc: 'Turn AI research into a shareable page with executive summaries, key insights, citations, and interactive AI Q&A.' },
+            { emoji: '🎙️', title: 'Meeting Briefs', desc: 'Share meeting context, not recordings — decisions, action items, summaries, and follow-up briefs from any call.' },
+            { emoji: '📚', title: 'Learning Capsules', desc: 'Learn anything through AI-powered context — summaries, structured concepts, and an interactive AI tutor.' },
+            { emoji: '🔄', title: 'Project Handoff', desc: 'Transfer project context instantly — overviews, technical decisions, next steps, and team onboarding in one link.' },
           ].map((item, i) => (
             <div key={i}
               className="anim-up rounded-[20px] border p-7 shadow-sm transition-all"
@@ -742,37 +718,9 @@ function LandingContent() {
                 e.currentTarget.style.transform = 'none'
               }}
             >
-              <div className="flex items-center gap-2.5 mb-3">
-                <span className="text-[24px]">{item.emoji}</span>
-                <h3 className="text-base font-bold" style={{ color: '#16163D' }}>{item.title}</h3>
-              </div>
-
-              <p className="text-[13px] leading-relaxed mb-4" style={{ color: '#4A4A6A' }}>{item.tagline}</p>
-
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8B8BA8', letterSpacing: '0.08em' }}>Upload</div>
-                  <ul className="space-y-1 list-none p-0 m-0">
-                    {item.upload.map((u, j) => (
-                      <li key={j} className="flex gap-1.5 text-[12px] leading-relaxed" style={{ color: '#4A4A6A' }}>
-                        <span style={{ color: '#8B8BA8' }}>·</span>
-                        <span>{u}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#FF2A6D', letterSpacing: '0.08em' }}>Generate</div>
-                  <ul className="space-y-1 list-none p-0 m-0">
-                    {item.generate.map((g, j) => (
-                      <li key={j} className="flex gap-1.5 text-[12px] leading-relaxed" style={{ color: '#4A4A6A' }}>
-                        <span style={{ color: '#FF2A6D' }}>+</span>
-                        <span>{g}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <div className="text-2xl mb-3.5">{item.emoji}</div>
+              <h3 className="text-base font-bold mb-1.5" style={{ color: '#16163D' }}>{item.title}</h3>
+              <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>{item.desc}</p>
             </div>
           ))}
         </div>
