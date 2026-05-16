@@ -34,15 +34,25 @@ async function getSession() {
   return session
 }
 
-export async function getUserContexts(): Promise<DashboardContext[]> {
+export async function getUserContexts(q?: string): Promise<DashboardContext[]> {
   const session = await auth()
   if (!session?.user?.id) return []
 
   const db = await getPrismaClient()
   if (!db) return []
 
+  const where: Record<string, unknown> = { userId: session.user.id }
+  if (q && q.trim()) {
+    const search = q.trim()
+    where.OR = [
+      { title: { contains: search } },
+      { summary: { contains: search } },
+      { content: { contains: search } },
+    ]
+  }
+
   const rows = await db.context.findMany({
-    where: { userId: session.user.id },
+    where,
     orderBy: { createdAt: "desc" },
     select: {
       id: true,

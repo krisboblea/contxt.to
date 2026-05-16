@@ -1,8 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Copy } from "lucide-react"
+import { useQueryState } from "nuqs"
+import { parseAsString } from "nuqs"
+import { toast } from "sonner"
 import type { DashboardContext } from "@/actions/dashboard-context"
 
 function relativeTime(iso: string): string {
@@ -18,18 +22,48 @@ function relativeTime(iso: string): string {
 interface ContextListProps {
   contexts: DashboardContext[]
   selectedSlug: string | null
+  searchQuery: string
 }
 
-export function ContextList({ contexts, selectedSlug }: ContextListProps) {
-  const [query, setQuery] = useState("")
+export function ContextList({ contexts, selectedSlug, searchQuery }: ContextListProps) {
+  const router = useRouter()
+  const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const initialRef = useRef(true)
 
-  const filtered = query
-    ? contexts.filter(
-        (c) =>
-          c.title.toLowerCase().includes(query.toLowerCase()) ||
-          c.summary.toLowerCase().includes(query.toLowerCase())
-      )
-    : contexts
+  // Sync URL query into state on initial load
+  useEffect(() => {
+    if (initialRef.current) {
+      initialRef.current = false
+      return
+    }
+  }, [])
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      setQ(value || null)
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        router.refresh()
+      }, 300)
+    },
+    [setQ, router]
+  )
+
+  async function copyLink(slug: string) {
+    const url = `https://contxt.to/s/${slug}`
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      const ta = document.createElement("textarea")
+      ta.value = url
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand("copy")
+      document.body.removeChild(ta)
+    }
+    toast.success("Link copied!", { duration: 1500 })
+  }
 
   return (
     <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
@@ -38,13 +72,13 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
           <div className="relative flex-1">
             <Search
               size={13}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8]"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8] pointer-events-none"
             />
             <input
               type="search"
               placeholder="Search your contexts…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={q}
+              onChange={(e) => handleSearch(e.target.value)}
               className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-1.5 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
             />
           </div>
@@ -56,10 +90,15 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
             <Plus size={16} />
           </Link>
         </div>
+        {q && (
+          <p className="mt-1.5 text-[11px] text-[#8B8BA8]">
+            {contexts.length} result{contexts.length !== 1 ? "s" : ""} for &ldquo;{q}&rdquo;
+          </p>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {filtered.length === 0 ? (
+        {contexts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 px-6 text-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B8BA8" strokeWidth="1.5" strokeLinecap="round" className="mb-3">
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -67,8 +106,16 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
               <line x1="12" y1="18" x2="12" y2="12" />
               <line x1="9" y1="15" x2="15" y2="15" />
             </svg>
-            {query ? (
-              <p className="text-sm text-[#8B8BA8]">No matching contexts</p>
+            {q ? (
+              <>
+                <p className="text-sm text-[#8B8BA8] mb-1">No matching contexts</p>
+                <button
+                  onClick={() => handleSearch("")}
+                  className="text-xs font-medium text-[#FF2A6D] hover:opacity-80 transition-opacity"
+                >
+                  Clear search
+                </button>
+              </>
             ) : (
               <>
                 <p className="text-sm font-semibold text-[#4A4A6A] mb-1">No contexts yet</p>
@@ -86,27 +133,43 @@ export function ContextList({ contexts, selectedSlug }: ContextListProps) {
           </div>
         ) : (
           <ul className="divide-y divide-[#F0EDE4]">
-            {filtered.map((ctx) => {
+            {contexts.map((ctx) => {
               const isSelected = ctx.slug === selectedSlug
               return (
                 <li key={ctx.id}>
                   <Link
-                    href={`?slug=${ctx.slug}`}
-                    className={`block px-3 sm:px-4 py-3.5 sm:py-3 transition-colors hover:bg-[#F5F0E6] ${
+                    href={`?slug=${ctx.slug}${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+                    className={`block px-3 sm:px-4 py-3 sm:py-2.5 transition-colors hover:bg-[#F5F0E6] ${
                       isSelected
                         ? "border-l-2 border-l-[#FF2A6D] bg-[rgba(255,42,109,0.04)] pl-[11px] sm:pl-[14px]"
                         : "border-l-2 border-l-transparent"
                     }`}
                   >
-                    <p className="mb-1 line-clamp-1 text-sm font-semibold text-[#16163D]">
+                    <p className="mb-0.5 line-clamp-1 text-sm font-semibold text-[#16163D]">
                       {ctx.title}
                     </p>
-                    <p className="mb-2 line-clamp-2 text-xs text-[#4A4A6A]">
+                    <p className="mb-1.5 line-clamp-2 text-xs text-[#4A4A6A] leading-relaxed">
                       {ctx.summary}
                     </p>
+                    {/* Short link row */}
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className="text-[11px] font-mono text-[#8B8BA8] truncate">
+                        contxt.to/s/{ctx.slug}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          copyLink(ctx.slug)
+                        }}
+                        className="shrink-0 flex items-center justify-center text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors p-0.5"
+                        aria-label="Copy link"
+                      >
+                        <Copy size={10} />
+                      </button>
+                    </div>
+                    {/* Meta row */}
                     <div className="flex items-center gap-2 text-[10px] text-[#8B8BA8]">
-                      <span>0 views</span>
-                      <span>·</span>
                       <span>{relativeTime(ctx.createdAt)}</span>
                     </div>
                   </Link>

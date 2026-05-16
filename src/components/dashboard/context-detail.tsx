@@ -145,13 +145,7 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
       </div>
 
       {/* Stats */}
-      <div className="shrink-0 flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-1 border-b border-[#F0EDE4] bg-white px-4 py-2.5">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">
-            Views
-          </p>
-          <p className="text-sm font-semibold text-[#16163D]">0</p>
-        </div>
+      <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 py-2.5">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">
             Created
@@ -160,12 +154,6 @@ export function ContextDetail({ context, slugParam }: ContextDetailProps) {
             {relativeTime(context.createdAt)}
           </p>
           <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.createdAt)}</p>
-        </div>
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">
-            AI Continuations
-          </p>
-          <p className="text-sm font-semibold text-[#16163D]">0</p>
         </div>
       </div>
 
