@@ -32,7 +32,7 @@ const emailProvider = Nodemailer({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [emailProvider, Google],
-  pages: { signIn: "/" },
+  pages: { signIn: "/auth/signin" },
   callbacks: {
     session({ session, user }) {
       session.user.id = user.id

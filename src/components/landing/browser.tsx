@@ -215,7 +215,7 @@ function LandingContent() {
               Use Cases
             </a>
             {!loggedIn && (
-              <a href="/api/auth/signin"
+              <a href="/auth/signin"
                 className="text-sm font-medium no-underline transition-colors"
                 style={{ color: '#8B8BA8' }}
                 onMouseEnter={(e) => { e.currentTarget.style.color = '#FF2A6D' }}

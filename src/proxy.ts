@@ -7,7 +7,9 @@ export default auth(function proxy(req: NextAuthRequest) {
   const { pathname } = req.nextUrl
 
   if (pathname.startsWith("/dashboard") && !req.auth) {
-    return NextResponse.redirect(new URL("/", req.url))
+    const signin = new URL("/auth/signin", req.url)
+    signin.searchParams.set("callbackUrl", pathname)
+    return NextResponse.redirect(signin)
   }
 
   const ua = req.headers.get("user-agent") ?? ""
