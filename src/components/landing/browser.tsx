@@ -284,17 +284,25 @@ function LandingContent() {
             </div>
 
             {/* AI logos bar */}
-            <div className="mt-8 pt-6 border-t" style={{ borderColor: '#E8E3D8' }}>
-              <div className="text-[10px] font-bold uppercase tracking-widest mb-3.5" style={{ color: '#8B8BA8', letterSpacing: '0.1em' }}>
+            <div className="mt-10 pt-7 border-t" style={{ borderColor: '#E8E3D8' }}>
+              <div className="text-[11px] font-bold uppercase tracking-widest mb-5 text-center lg:text-left" style={{ color: '#8B8BA8', letterSpacing: '0.1em' }}>
                 Works with every major AI
               </div>
-              <div className="flex flex-wrap gap-2">
-                {['ChatGPT', 'Claude', 'Gemini', 'DeepSeek', 'Grok'].map((name) => (
-                  <span key={name}
-                    className="px-3.5 py-1.5 rounded-full text-[12px] font-semibold border whitespace-nowrap"
-                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}>
-                    {name}
-                  </span>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                {[
+                  { name: 'ChatGPT', file: 'chatgpt.svg', h: 28 },
+                  { name: 'Claude', file: 'claude.svg', h: 16 },
+                  { name: 'Gemini', file: 'gemini.svg', h: 22 },
+                  { name: 'DeepSeek', file: 'deepseek.svg', h: 22 },
+                  { name: 'Grok', file: 'grok.svg', h: 26 },
+                ].map(({ name, file, h }) => (
+                  <div key={name}
+                    className="flex items-center justify-center px-5 py-3 rounded-[14px] border transition-all"
+                    style={{ background: '#FFFFFF', borderColor: '#E8E3D8', minHeight: 52, minWidth: 100 }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,42,109,0.1)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.boxShadow = 'none' }}>
+                    <img src={`/logos/${file}`} alt={name} style={{ height: h, width: 'auto', maxWidth: 100 }} loading="lazy" />
+                  </div>
                 ))}
               </div>
             </div>
