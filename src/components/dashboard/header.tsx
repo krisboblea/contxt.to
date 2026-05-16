@@ -68,7 +68,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <div ref={menuRef} className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#16163D] text-white text-xs font-semibold leading-none hover:opacity-80 transition-opacity"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#16163D] text-white text-sm font-semibold leading-none hover:opacity-80 transition-opacity"
             aria-label="User menu"
           >
             {initials}

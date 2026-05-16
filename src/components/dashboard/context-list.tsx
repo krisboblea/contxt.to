@@ -91,7 +91,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
               placeholder="Search your contexts…"
               value={q}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-1.5 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
+              className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-2 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
             />
           </div>
           <Link

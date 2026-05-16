@@ -78,7 +78,7 @@ function SidebarInner() {
         <div className="px-3 mt-3">
           <Link
             href="/dashboard/contexts/new"
-            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white no-underline transition-all hover:opacity-90"
+            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white no-underline transition-all hover:opacity-90 min-h-9"
             style={{ background: '#FF2A6D' }}
           >
             <Plus size={16} />

@@ -52,7 +52,7 @@ export function SignInForm() {
       {/* Google */}
       <a
         href="/api/auth/signin/google?callbackUrl=/dashboard"
-        className="flex items-center justify-center gap-2.5 w-full px-4 py-2.5 rounded-[10px] border text-[14px] font-medium no-underline transition-all"
+        className="flex items-center justify-center gap-2.5 w-full px-4 py-2 rounded-[10px] border text-[14px] font-medium no-underline transition-all"
         style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255,42,109,0.04)' }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}
@@ -81,7 +81,7 @@ export function SignInForm() {
           onChange={(e) => { setEmail(e.target.value); setError(null) }}
           placeholder="you@example.com"
           required
-          className="w-full px-4 py-2.5 rounded-[10px] border text-[14px] outline-none transition-all font-inherit mb-3"
+          className="w-full px-4 py-2 rounded-[10px] border text-[14px] outline-none transition-all font-inherit mb-3"
           style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
           onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255,42,109,0.10)' }}
           onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.boxShadow = 'none' }}
@@ -90,7 +90,7 @@ export function SignInForm() {
         <button
           type="submit"
           disabled={loading || !email.trim()}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[10px] border-none text-[14px] font-semibold cursor-pointer transition-all font-inherit disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-[10px] border-none text-[14px] font-semibold cursor-pointer transition-all font-inherit disabled:cursor-not-allowed"
           style={{
             background: '#FF2A6D',
             color: '#fff',
