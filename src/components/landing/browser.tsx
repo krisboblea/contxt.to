@@ -691,15 +691,43 @@ function LandingContent() {
           Context, <span className="italic" style={{ color: '#FF2A6D' }}>everywhere</span> it matters.
         </h2>
         <p className="text-base leading-relaxed max-w-[480px] mb-12" style={{ color: '#4A4A6A' }}>
-          From RFCs to investor updates — whenever the backstory is half the conversation.
+          From AI research to project handoffs — share what matters, not what happened.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-5">
           {[
-            { emoji: '🏗️', title: 'Engineering RFCs', desc: 'Share an architecture decision in a single link. Reviewers see the summary instantly, then discuss with AI — exploring tradeoffs or questioning assumptions.' },
-            { emoji: '📊', title: 'Meeting Recaps', desc: 'After any meeting, drop a Contxt link into Slack. Teammates catch up in ten seconds, then ask AI to dive deeper into any point they missed.' },
-            { emoji: '🤝', title: 'Investor Updates', desc: 'Send a Contxt of your monthly update. Investors get the key metrics in seconds, then drill down with AI — without digging through attachments.' },
-            { emoji: '📝', title: 'Research Briefs', desc: 'Share a competitive analysis or literature review as a link. Colleagues consume the synthesis instantly, then ask AI for deeper context or counter-arguments.' },
+            {
+              emoji: '🤖',
+              title: 'AI Research',
+              tagline: 'Turn AI research into a shareable page',
+              upload: ['ChatGPT deep research', 'Claude analysis', 'PDFs', 'Web research'],
+              generate: ['Executive summaries', 'Key insights', 'Citations', 'Interactive AI Q&A', 'Shareable links'],
+              example: 'context.so/ai-agents-market-map',
+            },
+            {
+              emoji: '🎙️',
+              title: 'Meeting Briefs',
+              tagline: 'Share meeting context, not recordings',
+              upload: ['Zoom transcripts', 'Sales calls', 'Founder syncs', 'Client meetings'],
+              generate: ['Decisions', 'Action items', 'Meeting summaries', 'Stakeholder context', 'Follow-up briefs'],
+              example: 'context.so/q2-sales-review',
+            },
+            {
+              emoji: '📚',
+              title: 'Learning Capsules',
+              tagline: 'Learn anything through AI-powered context',
+              upload: ['YouTube videos', 'Documentation', 'Articles', 'AI explanations'],
+              generate: ['Beginner-friendly summaries', 'Structured concepts', 'Interactive AI tutor', 'Key takeaways'],
+              example: 'context.so/learn-kubernetes-fast',
+            },
+            {
+              emoji: '🔄',
+              title: 'Project Handoff',
+              tagline: 'Transfer project context instantly',
+              upload: ['Cursor chats', 'Specs', 'GitHub discussions', 'Architecture decisions'],
+              generate: ['Project overviews', 'Technical decisions', 'Next steps', 'AI Q&A', 'Team onboarding context'],
+              example: 'context.so/project-handoff',
+            },
           ].map((item, i) => (
             <div key={i}
               className="anim-up rounded-[20px] border p-7 shadow-sm transition-all"
@@ -718,9 +746,45 @@ function LandingContent() {
                 e.currentTarget.style.transform = 'none'
               }}
             >
-              <div className="text-2xl mb-3.5">{item.emoji}</div>
-              <h3 className="text-base font-bold mb-1.5" style={{ color: '#16163D' }}>{item.title}</h3>
-              <p className="text-[13px] leading-relaxed" style={{ color: '#4A4A6A' }}>{item.desc}</p>
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="text-[24px]">{item.emoji}</span>
+                <h3 className="text-base font-bold" style={{ color: '#16163D' }}>{item.title}</h3>
+              </div>
+
+              <p className="text-[13px] leading-relaxed mb-4" style={{ color: '#4A4A6A' }}>{item.tagline}</p>
+
+              <div className="flex gap-6">
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#8B8BA8', letterSpacing: '0.08em' }}>Upload</div>
+                  <ul className="space-y-1 list-none p-0 m-0">
+                    {item.upload.map((u, j) => (
+                      <li key={j} className="flex gap-1.5 text-[12px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                        <span style={{ color: '#8B8BA8' }}>·</span>
+                        <span>{u}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#FF2A6D', letterSpacing: '0.08em' }}>Generate</div>
+                  <ul className="space-y-1 list-none p-0 m-0">
+                    {item.generate.map((g, j) => (
+                      <li key={j} className="flex gap-1.5 text-[12px] leading-relaxed" style={{ color: '#4A4A6A' }}>
+                        <span style={{ color: '#FF2A6D' }}>+</span>
+                        <span>{g}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <a href={`https://${item.example}`} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 mt-4 pt-3 border-t text-[11px] font-medium no-underline transition-colors w-full"
+                style={{ borderColor: '#F0EDE4', color: '#FF2A6D' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#E61D5C' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#FF2A6D' }}>
+                {item.example} →
+              </a>
             </div>
           ))}
         </div>
