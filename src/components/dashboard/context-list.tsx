@@ -37,8 +37,6 @@ interface ContextListProps {
 export function ContextList({ contexts, selectedSlug, searchQuery }: ContextListProps) {
   const router = useRouter()
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
-  const [, setSlug] = useQueryState("slug", parseAsString)
-  const [, setAct] = useQueryState("act", parseAsString)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSearch = useCallback(
@@ -54,10 +52,9 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
 
   const handleSelect = useCallback(
     (slug: string) => {
-      setSlug(slug)
-      setAct("view")
+      router.push(`/dashboard?act=view&slug=${slug}`)
     },
-    [setSlug, setAct]
+    [router]
   )
 
   async function copyLink(slug: string) {
