@@ -155,7 +155,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                 <p className="text-sm text-[#8B8BA8] mb-1">No matching contexts</p>
                 <button
                   onClick={() => handleSearch("")}
-                  className="text-xs font-medium text-[#FF2A6D] hover:opacity-80 transition-opacity"
+                  className="text-xs font-medium text-[#FF2A6D] hover:opacity-80 transition-opacity cursor-pointer"
                 >
                   Clear search
                 </button>
@@ -216,7 +216,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                           e.stopPropagation()
                           copyLink(ctx.slug)
                         }}
-                        className="flex items-center gap-1 text-[10px] font-medium text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors"
+                        className="flex items-center gap-1 text-[10px] font-medium text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors cursor-pointer"
                         aria-label="Copy link"
                       >
                         <Copy size={9} />

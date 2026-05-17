@@ -291,7 +291,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
       {/* Mobile back button */}
       <button
         onClick={() => router.push("/dashboard")}
-        className="md:hidden flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#4A4A6A] hover:text-[#FF2A6D] transition-colors border-b border-[#F0EDE4] bg-white"
+        className="md:hidden flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#4A4A6A] hover:text-[#FF2A6D] transition-colors border-b border-[#F0EDE4] bg-white cursor-pointer"
       >
         <ArrowLeft size={14} />
         Back to contexts

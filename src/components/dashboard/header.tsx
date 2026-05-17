@@ -102,7 +102,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
       {/* Right: notification + user */}
       <div className="flex items-center gap-3">
         <button
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors"
+          className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors cursor-pointer"
           aria-label="Notifications"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -123,7 +123,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <div ref={menuRef} className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#16163D] text-white text-xs font-semibold leading-none hover:opacity-80 transition-opacity"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#16163D] text-white text-xs font-semibold leading-none hover:opacity-80 transition-opacity cursor-pointer"
             aria-label="User menu"
           >
             {initials}
@@ -156,7 +156,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               </Link>
               <button
                 onClick={() => { signOut({ callbackUrl: "/" }) }}
-                className="w-full text-left px-3 py-2 text-xs text-[#FF2A6D] hover:bg-[#F5F0E6] transition-colors"
+                className="w-full text-left px-3 py-2 text-xs text-[#FF2A6D] hover:bg-[#F5F0E6] transition-colors cursor-pointer"
               >
                 Sign out
               </button>
@@ -178,7 +178,7 @@ function MobileNavSheet({ user }: DashboardHeaderProps) {
       <SheetTrigger
         render={
           <button
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FF2A6D] hover:text-white hover:border-[#FF2A6D] transition-all duration-200 md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FF2A6D] hover:text-white hover:border-[#FF2A6D] transition-all duration-200 md:hidden cursor-pointer"
             aria-label="Open navigation menu"
           />
         }
@@ -207,7 +207,7 @@ function MobileNavSheet({ user }: DashboardHeaderProps) {
           <SheetClose
             render={
               <button
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] hover:bg-[#F5F0E6] hover:text-[#4A4A6A] transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] hover:bg-[#F5F0E6] hover:text-[#4A4A6A] transition-colors cursor-pointer"
                 aria-label="Close navigation"
               />
             }
@@ -256,7 +256,7 @@ function MobileNavSheet({ user }: DashboardHeaderProps) {
             </div>
             <button
               onClick={() => { signOut({ callbackUrl: "/" }) }}
-              className="w-full text-left mt-2 px-3 py-2 rounded-lg text-xs font-medium text-[#FF2A6D] hover:bg-[#F5F0E6] transition-colors"
+              className="w-full text-left mt-2 px-3 py-2 rounded-lg text-xs font-medium text-[#FF2A6D] hover:bg-[#F5F0E6] transition-colors cursor-pointer"
             >
               Sign out
             </button>
