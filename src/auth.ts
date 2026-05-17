@@ -39,6 +39,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     session({ session, user }) {
       session.user.id = user.id
+      session.user.name = user.name ?? session.user.name
+      session.user.email = user.email ?? session.user.email
+      session.user.image = user.image ?? session.user.image
       return session
     },
     async signIn({ user }) {

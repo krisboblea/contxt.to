@@ -11,8 +11,10 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import rehypeHighlight from "rehype-highlight"
 import rehypeSanitize from "rehype-sanitize"
-import { deleteContext } from "@/actions/dashboard-context"
+import { deleteContext, updateContext } from "@/actions/dashboard-context"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
   DialogContent,
@@ -47,14 +49,20 @@ interface ContextDetailProps {
   initialContext: DashboardContext | null
   initialSlug: string | null
   isCreating: boolean
+  editContext: DashboardContext | null
 }
 
-export function ContextDetail({ contexts, initialContext, initialSlug, isCreating }: ContextDetailProps) {
+export function ContextDetail({ contexts, initialContext, initialSlug, isCreating, editContext }: ContextDetailProps) {
   const router = useRouter()
   const [slug] = useQueryState("slug", parseAsString.withDefault(initialSlug ?? ""))
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [editPending, setEditPending] = useState(false)
+  const [editTitle, setEditTitle] = useState(editContext?.title ?? "")
+  const [editSummary, setEditSummary] = useState(editContext?.summary ?? "")
+  const [editContent, setEditContent] = useState(editContext?.content ?? "")
+  const [editError, setEditError] = useState<string | null>(null)
 
   // Find context from full list using nuqs slug, fall back to initial
   const context = slug ? (contexts.find((c) => c.slug === slug) ?? null) : (initialContext ?? null)
@@ -91,6 +99,143 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
             style={{ boxShadow: "0 1px 2px rgba(22,22,61,0.05)" }}
           >
             <NewContextForm />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show edit form when in edit mode
+  if (editContext) {
+    const editingId = editContext.id
+    const editingTags = (() => {
+      try {
+        const parsed = JSON.parse(editContext.tags)
+        return Array.isArray(parsed) ? parsed.join(", ") : ""
+      } catch { return "" }
+    })()
+
+    async function handleEditSubmit(e: React.FormEvent) {
+      e.preventDefault()
+      if (!editTitle.trim() || editTitle.length < 2) {
+        setEditError("Title must be at least 2 characters")
+        return
+      }
+      if (!editSummary.trim() || editSummary.length < 10) {
+        setEditError("Summary must be at least 10 characters")
+        return
+      }
+      if (!editContent.trim() || editContent.length < 10) {
+        setEditError("Content must be at least 10 characters")
+        return
+      }
+
+      setEditPending(true)
+      setEditError(null)
+
+      try {
+        const result = await updateContext(editingId, {
+          title: editTitle,
+          summary: editSummary,
+          content: editContent,
+          tags: editingTags,
+        })
+        router.push(`/dashboard?slug=${result.slug}`)
+        router.refresh()
+      } catch (e) {
+        setEditError(e instanceof Error ? e.message : "Failed to save changes")
+        setEditPending(false)
+      }
+    }
+
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#FCF9F2]">
+        <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 sm:px-7 py-3 sm:py-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg shrink-0"
+              style={{ background: "rgba(255,42,109,0.06)" }}
+            >
+              <Pencil size={15} style={{ color: "#FF2A6D" }} />
+            </div>
+            <div>
+              <h2
+                className="text-base font-semibold leading-tight"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "#16163D",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                Edit Context
+              </h2>
+              <p className="text-[11px] text-[#8B8BA8] mt-0.5">
+                Changes will update the public link immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-7">
+          <div
+            className="mx-auto max-w-[680px] rounded-xl border border-[#F0EDE4] bg-white p-5 sm:p-6"
+            style={{ boxShadow: "0 1px 2px rgba(22,22,61,0.05)" }}
+          >
+            <form onSubmit={handleEditSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#16163D]">Title</label>
+                <Input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Context title"
+                  disabled={editPending}
+                  className="h-9"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#16163D]">Summary</label>
+                <Textarea
+                  value={editSummary}
+                  onChange={(e) => setEditSummary(e.target.value)}
+                  placeholder="A short summary of the context"
+                  rows={3}
+                  disabled={editPending}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[#16163D]">Content</label>
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  placeholder="Full context content (markdown supported)"
+                  rows={10}
+                  disabled={editPending}
+                />
+              </div>
+
+              {editError && <p className="text-sm text-destructive">{editError}</p>}
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  size="lg"
+                  disabled={editPending}
+                >
+                  {editPending ? "Saving…" : "Save Changes"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  onClick={() => router.push("/dashboard")}
+                  disabled={editPending}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -193,7 +338,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
             >
               <Copy size={13} />
             </button>
-            <Link href={`/dashboard/contexts/${context.id}/edit`}>
+            <Link href={`/dashboard?edit=${context.id}`}>
               <button
                 className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all"
                 title="Edit"
