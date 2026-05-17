@@ -55,7 +55,7 @@ export function LegalPage({ title, content }: LegalPageProps) {
       </nav>
 
       {/* Content */}
-      <article className="flex-1 w-full max-w-3xl mx-auto px-6 pt-[100px] pb-24">
+      <article className="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 pt-[100px] pb-24">
         <h1
           style={{
             fontFamily: "'Playfair Display', Georgia, serif",
@@ -73,7 +73,7 @@ export function LegalPage({ title, content }: LegalPageProps) {
           Last updated: May 2026
         </p>
 
-        <div className="legal-content">
+        <div className="legal-content" style={{ overflowWrap: "break-word", wordBreak: "break-word" }}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -117,6 +117,8 @@ export function LegalPage({ title, content }: LegalPageProps) {
                     color: "#4A4A6A",
                     marginBottom: 16,
                     maxWidth: 680,
+                    overflowWrap: "break-word",
+                    wordBreak: "break-word",
                   }}
                   {...props}
                 >
@@ -191,6 +193,8 @@ export function LegalPage({ title, content }: LegalPageProps) {
                     borderBottom: "1px solid #F0EDE4",
                     color: "#4A4A6A",
                     verticalAlign: "top",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
                   }}
                   {...props}
                 >
@@ -217,6 +221,8 @@ export function LegalPage({ title, content }: LegalPageProps) {
                     padding: "0.15em 0.4em",
                     borderRadius: 4,
                     color: "#FF2A6D",
+                    wordBreak: "break-all",
+                    overflowWrap: "break-word",
                   }}
                   {...props}
                 >
@@ -226,7 +232,7 @@ export function LegalPage({ title, content }: LegalPageProps) {
               a: ({ children, href, ...props }) => (
                 <a
                   href={href}
-                  style={{ color: "#FF2A6D", textDecoration: "none", fontWeight: 500 }}
+                  style={{ color: "#FF2A6D", textDecoration: "none", fontWeight: 500, wordBreak: "break-all", overflowWrap: "break-word" }}
                   onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
                   onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
                   {...props}
