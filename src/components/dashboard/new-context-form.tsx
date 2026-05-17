@@ -42,7 +42,7 @@ export function NewContextForm() {
       })
 
       if (res.success) {
-        router.push(`/dashboard?slug=${res.slug}`)
+        router.push(`/dashboard?act=view&slug=${res.slug}`)
       } else {
         setError(res.error)
       }

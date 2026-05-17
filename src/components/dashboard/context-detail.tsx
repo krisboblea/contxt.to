@@ -140,7 +140,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
           content: editContent,
           tags: editingTags,
         })
-        router.push(`/dashboard?slug=${result.slug}`)
+        router.push(`/dashboard?act=view&slug=${result.slug}`)
         router.refresh()
       } catch (e) {
         setEditError(e instanceof Error ? e.message : "Failed to save changes")
@@ -229,7 +229,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
                   type="button"
                   variant="outline"
                   size="lg"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() => router.push(`/dashboard?act=view&slug=${editContext.slug}`)}
                   disabled={editPending}
                 >
                   Cancel
@@ -333,14 +333,14 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               onClick={handleCopy}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all"
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all cursor-pointer"
               title={copied ? "Copied!" : "Copy link"}
             >
               <Copy size={13} />
             </button>
-            <Link href={`/dashboard?edit=${context.id}`}>
+            <Link href={`/dashboard?act=edit&slug=${context.slug}`}>
               <button
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all"
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all cursor-pointer"
                 title="Edit"
               >
                 <Pencil size={13} />
@@ -348,7 +348,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
             </Link>
             <button
               onClick={() => setDeleteOpen(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#ef4444] hover:bg-[#FCF9F2] hover:border-[#fca5a5] transition-all"
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#ef4444] hover:bg-[#FCF9F2] hover:border-[#fca5a5] transition-all cursor-pointer"
               title="Delete"
             >
               <Trash2 size={13} />

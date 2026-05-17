@@ -38,6 +38,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
   const router = useRouter()
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
   const [, setSlug] = useQueryState("slug", parseAsString)
+  const [, setAct] = useQueryState("act", parseAsString)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSearch = useCallback(
@@ -54,8 +55,9 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
   const handleSelect = useCallback(
     (slug: string) => {
       setSlug(slug)
+      setAct("view")
     },
-    [setSlug]
+    [setSlug, setAct]
   )
 
   async function copyLink(slug: string) {
@@ -107,7 +109,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
             </p>
           </div>
           <Link
-            href="/dashboard?create=1"
+            href="/dashboard?act=create"
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#FCF9F2] hover:text-[#FF2A6D] hover:border-[#FF2A6D] transition-all no-underline"
             aria-label="New context"
           >
@@ -163,7 +165,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                 <p className="text-sm font-semibold text-[#4A4A6A] mb-1">No contexts yet</p>
                 <p className="text-xs text-[#8B8BA8] mb-3">Create your first shareable link</p>
                 <Link
-                  href="/dashboard?create=1"
+                  href="/dashboard?act=create"
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-white no-underline transition-all hover:opacity-90"
                   style={{ background: '#FF2A6D' }}
                 >
