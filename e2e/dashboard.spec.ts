@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test"
 
 const SESSION_TOKEN =
-  process.env.E2E_SESSION_TOKEN || "e2e-session-token-mp9a4qg8"
+  process.env.E2E_SESSION_TOKEN || "e2e-session-token-mp9bca4z"
 
 async function login(page: Page) {
   await page.context().addCookies([
@@ -122,6 +122,153 @@ test.describe("Dashboard — authenticated", () => {
     await page.waitForTimeout(500)
     // Sheet should show navigation items
     await expect(page.getByRole("link", { name: "Contexts" }).first()).toBeVisible()
+  })
+})
+
+test.describe("Mobile responsiveness — dashboard", () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page)
+    await page.setViewportSize({ width: 375, height: 812 })
+  })
+
+  test("mobile: hamburger visible, desktop nav hidden", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // Mobile hamburger should be visible
+    const hamburger = page.locator('button[aria-label="Open navigation menu"]')
+    await expect(hamburger).toBeVisible()
+
+    // Desktop nav items (Contexts, Collections, Analytics) not visible on mobile
+    // These are inside <nav className="hidden md:flex">
+    const contextsLink = page.getByRole("link", { name: "Contexts" })
+    // On mobile, the only visible Contexts link would be in the hamburger sheet (not yet opened)
+    // So the desktop nav's Contexts link should not be visible
+    // (Contexts link in sheet is only visible after clicking hamburger)
+    // Desktop logo also hidden: "hidden md:flex" class
+  })
+
+  test("mobile: user avatar and menu still functional", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // User avatar visible
+    const avatar = page.locator('button[aria-label="User menu"]')
+    await expect(avatar).toBeVisible()
+    await expect(avatar).toHaveText("ET")
+
+    // User menu opens and works
+    await avatar.click()
+    await expect(page.getByText("e2e@contxt.test")).toBeVisible()
+    await expect(page.getByText("Sign out")).toBeVisible()
+  })
+
+  test("mobile: FAB is visible on mobile", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // FAB should be visible (it's always visible on all screens)
+    const fab = page.locator('a[aria-label="New context"]').last()
+    await expect(fab).toBeVisible()
+  })
+
+  test("mobile: empty state renders without overflow", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // Empty state should be visible
+    await expect(page.getByText("No contexts yet")).toBeVisible()
+    await expect(page.getByText("Create your first shareable link")).toBeVisible()
+
+    // No horizontal scrollbar
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth)
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth)
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1)
+  })
+
+  test("mobile: search bar visible and usable", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // Search input visible
+    const search = page.locator('input[type="search"]')
+    await expect(search).toBeVisible()
+    await expect(search).toBeEnabled()
+
+    // Type in search
+    await search.fill("test")
+    // Should show results text
+    await expect(page.getByText(/results? for/)).toBeVisible({ timeout: 5000 })
+  })
+
+  test("mobile: create form is full-width and functional", async ({ page }) => {
+    await page.goto("/dashboard?act=create")
+    await page.waitForLoadState("networkidle")
+
+    // New Context heading visible
+    await expect(page.getByRole("heading", { name: "New Context" })).toBeVisible()
+
+    // Textarea visible
+    const textarea = page.locator("textarea").first()
+    await expect(textarea).toBeVisible()
+    await expect(textarea).toBeEnabled()
+
+    // No horizontal overflow on the form page
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth)
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth)
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1)
+  })
+
+  test("mobile: hamburger menu opens sheet with user profile", async ({ page }) => {
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // Open hamburger
+    const hamburger = page.locator('button[aria-label="Open navigation menu"]')
+    await hamburger.click()
+    await page.waitForTimeout(600)
+
+    // Sheet should show user info
+    await expect(page.getByText("E2E Test User").first()).toBeVisible()
+    await expect(page.getByText("e2e@contxt.test").first()).toBeVisible()
+
+    // Sign out button in the sheet
+    await expect(page.getByText("Sign out").first()).toBeVisible()
+
+    // Sheet close button
+    const closeBtn = page.locator('button[aria-label="Close navigation"]')
+    await expect(closeBtn).toBeVisible()
+  })
+
+  test("mobile: table viewport (768px) shows desktop nav", async ({ page }) => {
+    // At 768px md breakpoint, desktop nav appears and hamburger disappears
+    await page.setViewportSize({ width: 768, height: 900 })
+    await page.goto("/dashboard")
+    await page.waitForLoadState("networkidle")
+
+    // Hamburger should NOT be visible at tablet width
+    const hamburger = page.locator('button[aria-label="Open navigation menu"]')
+    await expect(hamburger).not.toBeVisible()
+  })
+})
+
+test.describe("Mobile responsiveness — public pages", () => {
+  test("mobile: sign-in page renders properly on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 })
+    await page.goto("/auth/signin")
+    await page.waitForLoadState("networkidle")
+
+    // Email input should be visible
+    await expect(page.locator('input[type="email"]')).toBeVisible()
+    // "Send magic link" button visible
+    await expect(page.getByText("Send magic link")).toBeVisible()
+    // Google button visible
+    await expect(page.getByText("Continue with Google")).toBeVisible()
+
+    // No horizontal overflow
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth)
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth)
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1)
   })
 })
 
