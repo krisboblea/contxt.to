@@ -50,9 +50,9 @@ export function SignInForm() {
   return (
     <div>
       {/* Google */}
-      <a
-        href="/api/auth/signin/google?callbackUrl=/dashboard"
-        className="flex items-center justify-center gap-2.5 w-full px-4 py-2 rounded-[10px] border text-[14px] font-medium no-underline transition-all"
+      <button
+        onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+        className="flex items-center justify-center gap-2.5 w-full px-4 py-2 rounded-[10px] border text-[14px] font-medium cursor-pointer transition-all font-inherit"
         style={{ background: '#FFFFFF', borderColor: '#E8E3D8', color: '#4A4A6A' }}
         onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#FF2A6D'; e.currentTarget.style.color = '#FF2A6D'; e.currentTarget.style.background = 'rgba(255,42,109,0.04)' }}
         onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E8E3D8'; e.currentTarget.style.color = '#4A4A6A'; e.currentTarget.style.background = '#FFFFFF' }}
@@ -64,7 +64,7 @@ export function SignInForm() {
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
         </svg>
         Continue with Google
-      </a>
+      </button>
 
       {/* Divider */}
       <div className="flex items-center gap-3 my-5">
