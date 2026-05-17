@@ -101,7 +101,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 
       {/* Right: notification + user */}
       <div className="flex items-center gap-3">
-        <button
+        {/* Notifications — hidden until implemented */}
+        <div className="hidden">
+          <button
           className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors cursor-pointer"
           aria-label="Notifications"
         >
@@ -118,6 +120,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
             2
           </span>
         </button>
+        </div>
 
         {/* User initials */}
         <div ref={menuRef} className="relative">

@@ -5,3 +5,8 @@ out/
 .env.local
 test-results/
 playwright-report/
+*.tsbuildinfo
+next-env.d.ts
+prisma/dev.db
+.vercel/.env.development.local
+.vercel/README.txt
