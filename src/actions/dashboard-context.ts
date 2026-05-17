@@ -171,3 +171,19 @@ export async function deleteContext(id: string): Promise<void> {
   await db.context.delete({ where: { id } })
   revalidatePath("/dashboard")
 }
+
+export async function bulkDeleteContexts(ids: string[]): Promise<{ deleted: number }> {
+  const session = await getSession()
+  const db = await getPrismaClient()
+  if (!db) throw new Error("Database unavailable")
+
+  const result = await db.context.deleteMany({
+    where: {
+      id: { in: ids },
+      userId: session.user.id,
+    },
+  })
+
+  revalidatePath("/dashboard")
+  return { deleted: result.count }
+}

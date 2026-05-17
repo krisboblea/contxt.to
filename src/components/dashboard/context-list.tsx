@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useMemo } from "react"
+import { useCallback, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, Plus, Copy, FileText, Link2 } from "lucide-react"
+import { Search, Plus, Copy, Link2 } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { parseAsString } from "nuqs"
 import { toast } from "sonner"
@@ -19,22 +19,15 @@ function relativeTime(iso: string): string {
   return `${Math.floor(h / 24)}d ago`
 }
 
-function parseTags(tags: string): string[] {
-  try {
-    const parsed = JSON.parse(tags)
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : []
-  }
-}
-
 interface ContextListProps {
   contexts: DashboardContext[]
   selectedSlug: string | null
   searchQuery: string
+  selectedIds: Set<string>
+  onSelectionChange: (ids: Set<string>) => void
 }
 
-export function ContextList({ contexts, selectedSlug, searchQuery }: ContextListProps) {
+export function ContextList({ contexts, selectedSlug, searchQuery, selectedIds, onSelectionChange }: ContextListProps) {
   const router = useRouter()
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
   const [activeSlug] = useQueryState("slug", parseAsString.withDefault(selectedSlug ?? ""))
@@ -53,9 +46,20 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
 
   const handleSelect = useCallback(
     (slug: string) => {
+      if (selectedIds.size > 0) return
       router.push(`/dashboard?act=view&slug=${slug}`)
     },
-    [router]
+    [router, selectedIds.size]
+  )
+
+  const toggleSelect = useCallback(
+    (id: string) => {
+      const next = new Set(selectedIds)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      onSelectionChange(next)
+    },
+    [selectedIds, onSelectionChange]
   )
 
   async function copyLink(slug: string) {
@@ -83,9 +87,42 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
     [contexts]
   )
 
+  function Checkbox({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+    return (
+      <div
+        onClick={(e) => {
+          e.stopPropagation()
+          onChange()
+        }}
+        className="shrink-0 cursor-pointer"
+        style={{
+          width: "16px",
+          height: "16px",
+          borderRadius: "4px",
+          borderWidth: "1.5px",
+          borderStyle: "solid",
+          position: "relative",
+          transition: "all 0.12s",
+          background: checked ? "#FF2A6D" : "transparent",
+          borderColor: checked ? "#FF2A6D" : "#E8E3D8",
+        }}
+      >
+        {checked && (
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+          >
+            <path d="M4 8l3 3 5-6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
-      {/* Header: "Contexts N" + "+" button — matching mockup */}
+      {/* Header — original style, no select-all */}
       <div className="shrink-0 border-b border-[#E8E3D8] px-5 py-4">
         <div className="flex items-center justify-between gap-2">
           <div>
@@ -116,7 +153,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
         </div>
       </div>
 
-      {/* Search — matching mockup */}
+      {/* Search — original style */}
       <div className="shrink-0 px-5 py-2.5">
         <div className="relative">
           <Search
@@ -138,8 +175,8 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
         )}
       </div>
 
-      {/* Context list — card-style items with icons matching mockup */}
-      <div className="flex-1 overflow-y-auto px-3 pb-3">
+      {/* Context list — original active indicator, checkbox on the right */}
+      <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#E8E3D8 transparent' }}>
         {contexts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 px-6 text-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B8BA8" strokeWidth="1.5" strokeLinecap="round" className="mb-3">
@@ -174,55 +211,60 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
             )}
           </div>
         ) : (
-          <div className="space-y-0.5">
+          <div className="px-3 py-1 space-y-0.5">
             {contexts.map((ctx) => {
               const isSelected = ctx.slug === (activeSlug || selectedSlug)
-              const tags = parseTags(ctx.tags)
+              const isChecked = selectedIds.has(ctx.id)
               return (
-                <button
+                <div
                   key={ctx.id}
-                  onClick={() => handleSelect(ctx.slug)}
-                  className={`w-full text-left flex items-start gap-3 px-3 py-2.5 rounded-md transition-all cursor-pointer border-l-3 ${
+                  className={`flex items-start gap-2.5 px-3 py-2.5 rounded-md transition-all ${
                     isSelected
                       ? "bg-[rgba(255,42,109,0.04)] border-l-[#FF2A6D]"
                       : "hover:bg-[#FCF9F2] border-l-transparent"
                   }`}
+                  style={{ borderLeftWidth: "3px" }}
                 >
-                  {/* Icon — matching mockup */}
-                  <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5 ${
-                      isSelected ? "bg-[rgba(255,42,109,0.08)]" : "bg-[#FCF9F2]"
-                    }`}
+                  {/* Card body — clickable to view */}
+                  <button
+                    onClick={() => handleSelect(ctx.slug)}
+                    className="flex-1 flex items-start gap-3 text-left min-w-0 cursor-pointer"
                   >
-                    <Link2 size={14} className={isSelected ? "text-[#FF2A6D]" : "text-[#4A4A6A]"} />
-                  </div>
-
-                  {/* Body */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-[#16163D] truncate leading-snug">
-                      {ctx.title}
-                    </p>
-                    <p className="text-[11px] text-[#8B8BA8] truncate mt-0.5 leading-relaxed">
-                      {ctx.summary}
-                    </p>
-                    {/* Meta row — matching mockup */}
-                    <div className="flex items-center gap-3 mt-1.5">
-                      <span className="text-[10px] text-[#8B8BA8]">{relativeTime(ctx.createdAt)}</span>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          copyLink(ctx.slug)
-                        }}
-                        className="flex items-center gap-1 text-[10px] font-medium text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors cursor-pointer"
-                        aria-label="Copy link"
-                      >
-                        <Copy size={9} />
-                        Copy
-                      </button>
+                    {/* Icon */}
+                    <div
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5 ${
+                        isSelected ? "bg-[rgba(255,42,109,0.08)]" : "bg-[#FCF9F2]"
+                      }`}
+                    >
+                      <Link2 size={14} className={isSelected ? "text-[#FF2A6D]" : "text-[#4A4A6A]"} />
                     </div>
-                  </div>
-                </button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-[#16163D] truncate leading-snug">
+                        {ctx.title}
+                      </p>
+                      <p className="text-[11px] text-[#8B8BA8] truncate mt-0.5 leading-relaxed">
+                        {ctx.summary}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1.5">
+                        <span className="text-[10px] text-[#8B8BA8]">{relativeTime(ctx.createdAt)}</span>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            copyLink(ctx.slug)
+                          }}
+                          className="flex items-center gap-1 text-[10px] font-medium text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors cursor-pointer"
+                          aria-label="Copy link"
+                        >
+                          <Copy size={9} />
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  </button>
+                  {/* Checkbox on the right */}
+                  <Checkbox checked={isChecked} onChange={() => toggleSelect(ctx.id)} />
+                </div>
               )
             })}
           </div>
