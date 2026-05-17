@@ -19,6 +19,15 @@ function relativeTime(iso: string): string {
   return `${Math.floor(h / 24)}d ago`
 }
 
+function parseTags(tags: string): string[] {
+  try {
+    const parsed = JSON.parse(tags)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : []
+  }
+}
+
 interface ContextListProps {
   contexts: DashboardContext[]
   selectedSlug: string | null
@@ -64,8 +73,6 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
     toast.success("Link copied!", { duration: 1500 })
   }
 
-  // Stats
-  const totalCount = contexts.length
   const todayCount = useMemo(
     () =>
       contexts.filter((c) => {
@@ -78,49 +85,46 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
 
   return (
     <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
-      {/* Search header */}
-      <div className="shrink-0 border-b border-[#F0EDE4] p-3">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search
-              size={13}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8] pointer-events-none"
-            />
-            <input
-              type="search"
-              placeholder="Search your contexts…"
-              value={q}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-2 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
-            />
+      {/* Header: "Contexts N" + "+" button */}
+      <div className="shrink-0 border-b border-[#F0EDE4] px-3 sm:px-4 py-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-[#16163D] leading-tight">
+              Contexts
+            </h2>
+            <p className="text-[11px] text-[#8B8BA8] mt-0.5">
+              {contexts.length} total{todayCount > 0 && ` · +${todayCount} today`}
+            </p>
           </div>
           <Link
             href="/dashboard/contexts/new"
-            className="md:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] hover:text-[#FF2A6D] transition-all no-underline"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] hover:text-[#FF2A6D] hover:border-[#FF2A6D] transition-all no-underline"
             aria-label="New context"
           >
             <Plus size={16} />
           </Link>
         </div>
+      </div>
+
+      {/* Search */}
+      <div className="shrink-0 border-b border-[#F0EDE4] px-3 sm:px-4 py-2.5">
+        <div className="relative">
+          <Search
+            size={13}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#8B8BA8] pointer-events-none"
+          />
+          <input
+            type="search"
+            placeholder="Search your contexts…"
+            value={q}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-2 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
+          />
+        </div>
         {q && (
           <p className="mt-1.5 text-[11px] text-[#8B8BA8]">
             {contexts.length} result{contexts.length !== 1 ? "s" : ""} for &ldquo;{q}&rdquo;
           </p>
-        )}
-      </div>
-
-      {/* Mini stats bar */}
-      <div className="shrink-0 flex items-center gap-4 border-b border-[#F0EDE4] bg-[#FCF9F2] px-3 py-2">
-        <div className="flex items-center gap-1.5 text-[11px] text-[#4A4A6A]">
-          <FileText size={12} className="text-[#8B8BA8]" />
-          <span className="font-semibold">{totalCount}</span>
-          <span className="text-[#8B8BA8]">total</span>
-        </div>
-        {todayCount > 0 && (
-          <div className="flex items-center gap-1.5 text-[11px] text-[#4A4A6A]">
-            <span className="font-semibold text-[#FF2A6D]">+{todayCount}</span>
-            <span className="text-[#8B8BA8]">today</span>
-          </div>
         )}
       </div>
 
@@ -163,6 +167,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
           <ul className="divide-y divide-[#F0EDE4]">
             {contexts.map((ctx) => {
               const isSelected = ctx.slug === selectedSlug
+              const tags = parseTags(ctx.tags)
               return (
                 <li key={ctx.id}>
                   <button
@@ -179,6 +184,23 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                     <p className="mb-1.5 line-clamp-2 text-xs text-[#4A4A6A] leading-relaxed">
                       {ctx.summary}
                     </p>
+                    {/* Tags */}
+                    {tags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                        {tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+                            style={{
+                              background: 'rgba(255,42,109,0.06)',
+                              color: '#FF2A6D',
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     {/* Short link row */}
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <span className="text-[11px] font-mono text-[#8B8BA8] truncate">

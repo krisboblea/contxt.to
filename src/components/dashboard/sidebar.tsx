@@ -1,9 +1,11 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, FolderOpen, BarChart2, Plus } from "lucide-react"
+import { BookOpen, FolderOpen, BarChart2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { signOut } from "next-auth/react"
 import {
   Sheet,
   SheetClose,
@@ -16,6 +18,19 @@ const navItems = [
   { href: "/dashboard/collections", label: "Collections", icon: FolderOpen, disabled: true },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart2, disabled: true },
 ]
+
+function getInitials(name?: string | null, email?: string | null): string {
+  if (name) {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase()
+  }
+  if (email) return email[0].toUpperCase()
+  return "?"
+}
 
 function LogoMark() {
   return (
@@ -68,37 +83,108 @@ function NavItems() {
   )
 }
 
-function SidebarInner() {
+interface SidebarUserProps {
+  user: {
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  }
+}
+
+function SidebarUser({ user }: SidebarUserProps) {
+  const initials = getInitials(user.name, user.email)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    if (menuOpen) document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [menuOpen])
+
   return (
-    <div className="flex h-full flex-col border-r border-[#F0EDE4] bg-white">
-      <LogoMark />
-      <div className="border-t border-[#F0EDE4] pt-3">
-        <NavItems />
-        {/* New Context button */}
-        <div className="px-3 mt-3">
+    <div ref={menuRef} className="relative border-t border-[#F0EDE4] px-3 py-3">
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors"
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#16163D] text-white text-xs font-semibold leading-none">
+          {initials}
+        </span>
+        <span className="truncate text-left">
+          <span className="block text-xs font-semibold text-[#16163D] truncate leading-tight">
+            {user.name || "User"}
+          </span>
+          <span className="block text-[10px] text-[#8B8BA8] truncate leading-tight">
+            {user.email}
+          </span>
+        </span>
+      </button>
+
+      {menuOpen && (
+        <div
+          className="absolute bottom-full left-3 right-3 mb-1.5 rounded-lg border border-[#F0EDE4] bg-white py-1 shadow-lg z-50"
+          style={{ boxShadow: "0 8px 24px rgba(22, 22, 61, 0.1)" }}
+        >
           <Link
-            href="/dashboard/contexts/new"
-            className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-white no-underline transition-all hover:opacity-90 min-h-9"
-            style={{ background: '#FF2A6D' }}
+            href="/"
+            className="block px-3 py-2 text-xs text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors no-underline"
+            onClick={() => setMenuOpen(false)}
           >
-            <Plus size={16} />
-            New Context
+            Home
           </Link>
+          <Link
+            href="/dashboard"
+            className="block px-3 py-2 text-xs text-[#4A4A6A] hover:bg-[#F5F0E6] transition-colors no-underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <button
+            onClick={() => { signOut({ callbackUrl: "/" }) }}
+            className="w-full text-left px-3 py-2 text-xs text-[#FF2A6D] hover:bg-[#F5F0E6] transition-colors"
+          >
+            Sign out
+          </button>
         </div>
-      </div>
+      )}
     </div>
   )
 }
 
-export function DashboardSidebar() {
+function SidebarInner({ user }: SidebarUserProps) {
+  return (
+    <div className="flex h-full flex-col border-r border-[#F0EDE4] bg-white">
+      <LogoMark />
+      <div className="flex-1 border-t border-[#F0EDE4] pt-3">
+        <NavItems />
+      </div>
+      <SidebarUser user={user} />
+    </div>
+  )
+}
+
+interface DashboardSidebarProps {
+  user: {
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  }
+}
+
+export function DashboardSidebar({ user }: DashboardSidebarProps) {
   return (
     <aside className="hidden md:flex w-[240px] shrink-0 flex-col">
-      <SidebarInner />
+      <SidebarInner user={user} />
     </aside>
   )
 }
 
-export function MobileSidebarSheet() {
+export function MobileSidebarSheet({ user }: DashboardSidebarProps) {
   return (
     <Sheet>
       <SheetTrigger
@@ -134,8 +220,11 @@ export function MobileSidebarSheet() {
             </svg>
           </SheetClose>
         </div>
-        <div className="px-3 pt-4">
-          <NavItems />
+        <div className="flex h-[calc(100%-73px)] flex-col">
+          <div className="px-3 pt-4 flex-1">
+            <NavItems />
+          </div>
+          <SidebarUser user={user} />
         </div>
       </SheetContent>
     </Sheet>
