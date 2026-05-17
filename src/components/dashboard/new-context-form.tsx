@@ -62,7 +62,7 @@ export function NewContextForm() {
         </label>
         <Textarea
           placeholder="Paste or write your content here. Supports **markdown**, lists, code blocks, etc."
-          rows={14}
+          rows={10}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           disabled={pending}

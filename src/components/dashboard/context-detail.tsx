@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Copy, Pencil, Trash2, ArrowLeft } from "lucide-react"
+import { Copy, Pencil, Trash2, ArrowLeft, Link2, Plus } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { parseAsString } from "nuqs"
 import { toast } from "sonner"
@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import type { DashboardContext } from "@/actions/dashboard-context"
+import { NewContextForm } from "./new-context-form"
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
@@ -45,9 +46,10 @@ interface ContextDetailProps {
   contexts: DashboardContext[]
   initialContext: DashboardContext | null
   initialSlug: string | null
+  isCreating: boolean
 }
 
-export function ContextDetail({ contexts, initialContext, initialSlug }: ContextDetailProps) {
+export function ContextDetail({ contexts, initialContext, initialSlug, isCreating }: ContextDetailProps) {
   const router = useRouter()
   const [slug] = useQueryState("slug", parseAsString.withDefault(initialSlug ?? ""))
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -56,6 +58,44 @@ export function ContextDetail({ contexts, initialContext, initialSlug }: Context
 
   // Find context from full list using nuqs slug, fall back to initial
   const context = slug ? (contexts.find((c) => c.slug === slug) ?? null) : (initialContext ?? null)
+
+  // Show new context form when in create mode
+  if (isCreating) {
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#FCF9F2]">
+        <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 sm:px-7 py-3 sm:py-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-lg shrink-0"
+              style={{ background: "rgba(255,42,109,0.06)" }}
+            >
+              <Plus size={15} style={{ color: "#FF2A6D" }} />
+            </div>
+            <div>
+              <h2
+                className="text-base font-semibold leading-tight"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "#16163D",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                New Context
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-7">
+          <div
+            className="mx-auto max-w-[680px] rounded-xl border border-[#F0EDE4] bg-white p-5 sm:p-6"
+            style={{ boxShadow: "0 1px 2px rgba(22,22,61,0.05)" }}
+          >
+            <NewContextForm />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!context) {
     return (
@@ -112,68 +152,125 @@ export function ContextDetail({ contexts, initialContext, initialSlug }: Context
         Back to contexts
       </button>
 
-      {/* Header bar */}
-      <div className="shrink-0 border-b border-[#F0EDE4] bg-white p-4">
-        <div className="mb-2 flex items-start justify-between gap-4">
-          <h2 className="min-w-0 flex-1 text-base font-semibold text-[#16163D] leading-snug">
-            {context.title}
-          </h2>
-          <div className="flex flex-col sm:flex-row shrink-0 items-stretch sm:items-center gap-1.5 sm:gap-2">
-            <Link href={`/dashboard/contexts/${context.id}/edit`}>
-              <Button variant="outline" size="sm" className="w-full sm:w-auto gap-1 text-xs">
-                <Pencil size={11} />
-                Edit
-              </Button>
-            </Link>
-            <Button
-              variant="destructive"
-              size="sm"
-              className="w-full sm:w-auto gap-1 text-xs"
-              onClick={() => setDeleteOpen(true)}
+      {/* Header bar — matching mockup: icon + Playfair title + icon-only actions */}
+      <div className="shrink-0 border-b border-[#E8E3D8] bg-white px-4 sm:px-7 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-lg shrink-0"
+              style={{ background: "rgba(255,42,109,0.06)" }}
             >
-              <Trash2 size={11} />
-              Delete
-            </Button>
+              <Link2 size={16} style={{ color: "#FF2A6D" }} />
+            </div>
+            <div className="min-w-0">
+              <h2
+                className="text-base sm:text-[17px] font-semibold leading-snug truncate"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "#16163D",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {context.title}
+              </h2>
+              <a
+                href={fullUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] font-mono font-medium no-underline hover:underline"
+                style={{ color: "#FF2A6D" }}
+              >
+                contxt.to/s/{shortLink}
+              </a>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="truncate text-[11px] font-mono text-[#8B8BA8]">contxt.to/s/{shortLink}</span>
-          <button
-            onClick={handleCopy}
-            className="shrink-0 flex items-center gap-1 text-xs font-medium text-[#FF2A6D] hover:opacity-70 transition-opacity"
-          >
-            <Copy size={11} />
-            {copied ? "Copied!" : "Copy"}
-          </button>
+          {/* Icon-only action buttons — matching mockup */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={handleCopy}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all"
+              title={copied ? "Copied!" : "Copy link"}
+            >
+              <Copy size={13} />
+            </button>
+            <Link href={`/dashboard/contexts/${context.id}/edit`}>
+              <button
+                className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#4A4A6A] hover:bg-[#FCF9F2] hover:border-[#d4cfc0] transition-all"
+                title="Edit"
+              >
+                <Pencil size={13} />
+              </button>
+            </Link>
+            <button
+              onClick={() => setDeleteOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-[#F0EDE4] bg-white text-[#ef4444] hover:bg-[#FCF9F2] hover:border-[#fca5a5] transition-all"
+              title="Delete"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 py-2.5">
-        <div className="flex items-center gap-6">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">Created</p>
-            <p className="text-sm font-semibold text-[#16163D]">{relativeTime(context.createdAt)}</p>
-            <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.createdAt)}</p>
+      {/* Scrollable body with card wrapper — matching mockup */}
+      <div className="flex-1 overflow-y-auto p-4 sm:p-7">
+        <div
+          className="mx-auto max-w-[680px] rounded-xl border border-[#F0EDE4] bg-white p-5 sm:p-6"
+          style={{ boxShadow: "0 1px 2px rgba(22,22,61,0.05)" }}
+        >
+          {/* Stats row */}
+          <div className="flex items-center gap-6 sm:gap-8 pb-5 mb-5 border-b border-[#E8E3D8]">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.05em] text-[#8B8BA8]">
+                Created
+              </p>
+              <p
+                className="text-lg sm:text-xl font-bold leading-tight mt-0.5"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "#16163D",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {relativeTime(context.createdAt)}
+              </p>
+              <p className="text-[11px] text-[#4A4A6A] mt-0.5">{fullDate(context.createdAt)}</p>
+            </div>
+            <div className="w-px self-stretch bg-[#E8E3D8]" />
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.05em] text-[#8B8BA8]">
+                Updated
+              </p>
+              <p
+                className="text-lg sm:text-xl font-bold leading-tight mt-0.5"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "#16163D",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {relativeTime(context.updatedAt)}
+              </p>
+              <p className="text-[11px] text-[#4A4A6A] mt-0.5">{fullDate(context.updatedAt)}</p>
+            </div>
           </div>
-          <div className="w-px self-stretch bg-[#F0EDE4]" />
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#8B8BA8]">Updated</p>
-            <p className="text-sm font-semibold text-[#16163D]">{relativeTime(context.updatedAt)}</p>
-            <p className="text-[10px] text-[#8B8BA8]">{fullDate(context.updatedAt)}</p>
-          </div>
-        </div>
-      </div>
 
-      {/* Markdown content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-        <div className="prose prose-sm max-w-none text-[#16163D]">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight, rehypeSanitize]}
-          >
-            {context.content}
-          </ReactMarkdown>
+          {/* Summary */}
+          {context.summary && (
+            <div className="text-sm leading-relaxed text-[#4A4A6A] mb-5 pb-5 border-b border-[#E8E3D8]">
+              {context.summary}
+            </div>
+          )}
+
+          {/* Markdown content */}
+          <div className="text-sm leading-relaxed text-[#16163D]">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight, rehypeSanitize]}
+            >
+              {context.content}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, Plus, Copy, FileText } from "lucide-react"
+import { Search, Plus, Copy, FileText, Link2 } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { parseAsString } from "nuqs"
 import { toast } from "sonner"
@@ -85,29 +85,39 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
 
   return (
     <div className="flex w-full flex-col border-r border-[#F0EDE4] bg-white">
-      {/* Header: "Contexts N" + "+" button */}
-      <div className="shrink-0 border-b border-[#F0EDE4] px-3 sm:px-4 py-3">
+      {/* Header: "Contexts N" + "+" button — matching mockup */}
+      <div className="shrink-0 border-b border-[#E8E3D8] px-5 py-4">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-base font-semibold text-[#16163D] leading-tight">
-              Contexts
+            <h2
+              className="text-base font-semibold leading-tight"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#16163D",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Contexts{" "}
+              <span style={{ fontSize: "13px", fontWeight: 400, color: "#8B8BA8", marginLeft: "4px" }}>
+                {contexts.length}
+              </span>
             </h2>
             <p className="text-[11px] text-[#8B8BA8] mt-0.5">
-              {contexts.length} total{todayCount > 0 && ` · +${todayCount} today`}
+              {todayCount > 0 && `+${todayCount} today`}
             </p>
           </div>
           <Link
-            href="/dashboard/contexts/new"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] hover:text-[#FF2A6D] hover:border-[#FF2A6D] transition-all no-underline"
+            href="/dashboard?create=1"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#FCF9F2] hover:text-[#FF2A6D] hover:border-[#FF2A6D] transition-all no-underline"
             aria-label="New context"
           >
-            <Plus size={16} />
+            <Plus size={14} />
           </Link>
         </div>
       </div>
 
-      {/* Search */}
-      <div className="shrink-0 border-b border-[#F0EDE4] px-3 sm:px-4 py-2.5">
+      {/* Search — matching mockup */}
+      <div className="shrink-0 px-5 py-2.5">
         <div className="relative">
           <Search
             size={13}
@@ -118,7 +128,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
             placeholder="Search your contexts…"
             value={q}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full rounded-lg border border-[#F0EDE4] bg-[#FCF9F2] py-2 pl-8 pr-3 text-sm text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] focus:ring-2 focus:ring-[rgba(255,42,109,0.1)] transition-colors"
+            className="w-full rounded-md border border-[#F0EDE4] bg-[#FCF9F2] py-[7px] pl-[30px] pr-3 text-xs text-[#16163D] placeholder:text-[#8B8BA8] outline-none focus:border-[#FF2A6D] transition-colors"
           />
         </div>
         {q && (
@@ -128,8 +138,8 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
         )}
       </div>
 
-      {/* Context list */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Context list — card-style items with icons matching mockup */}
+      <div className="flex-1 overflow-y-auto px-3 pb-3">
         {contexts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-60 px-6 text-center">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B8BA8" strokeWidth="1.5" strokeLinecap="round" className="mb-3">
@@ -153,7 +163,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
                 <p className="text-sm font-semibold text-[#4A4A6A] mb-1">No contexts yet</p>
                 <p className="text-xs text-[#8B8BA8] mb-3">Create your first shareable link</p>
                 <Link
-                  href="/dashboard/contexts/new"
+                  href="/dashboard?create=1"
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold text-white no-underline transition-all hover:opacity-90"
                   style={{ background: '#FF2A6D' }}
                 >
@@ -164,69 +174,58 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
             )}
           </div>
         ) : (
-          <ul className="divide-y divide-[#F0EDE4]">
+          <div className="space-y-0.5">
             {contexts.map((ctx) => {
               const isSelected = ctx.slug === selectedSlug
               const tags = parseTags(ctx.tags)
               return (
-                <li key={ctx.id}>
-                  <button
-                    onClick={() => handleSelect(ctx.slug)}
-                    className={`w-full text-left block px-3 sm:px-4 py-3 sm:py-2.5 transition-colors hover:bg-[#F5F0E6] ${
-                      isSelected
-                        ? "border-l-2 border-l-[#FF2A6D] bg-[rgba(255,42,109,0.04)] pl-[11px] sm:pl-[14px]"
-                        : "border-l-2 border-l-transparent"
+                <button
+                  key={ctx.id}
+                  onClick={() => handleSelect(ctx.slug)}
+                  className={`w-full text-left flex items-start gap-3 px-3 py-2.5 rounded-md transition-all cursor-pointer border-l-3 ${
+                    isSelected
+                      ? "bg-[rgba(255,42,109,0.04)] border-l-[#FF2A6D]"
+                      : "hover:bg-[#FCF9F2] border-l-transparent"
+                  }`}
+                >
+                  {/* Icon — matching mockup */}
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg mt-0.5 ${
+                      isSelected ? "bg-[rgba(255,42,109,0.08)]" : "bg-[#FCF9F2]"
                     }`}
                   >
-                    <p className="mb-0.5 line-clamp-1 text-sm font-semibold text-[#16163D]">
+                    <Link2 size={14} className={isSelected ? "text-[#FF2A6D]" : "text-[#4A4A6A]"} />
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-[#16163D] truncate leading-snug">
                       {ctx.title}
                     </p>
-                    <p className="mb-1.5 line-clamp-2 text-xs text-[#4A4A6A] leading-relaxed">
+                    <p className="text-[11px] text-[#8B8BA8] truncate mt-0.5 leading-relaxed">
                       {ctx.summary}
                     </p>
-                    {/* Tags */}
-                    {tags.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
-                        {tags.map((tag, i) => (
-                          <span
-                            key={i}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
-                            style={{
-                              background: 'rgba(255,42,109,0.06)',
-                              color: '#FF2A6D',
-                            }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    {/* Short link row */}
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="text-[11px] font-mono text-[#8B8BA8] truncate">
-                        contxt.to/s/{ctx.slug}
-                      </span>
+                    {/* Meta row — matching mockup */}
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <span className="text-[10px] text-[#8B8BA8]">{relativeTime(ctx.createdAt)}</span>
                       <button
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
                           copyLink(ctx.slug)
                         }}
-                        className="shrink-0 flex items-center justify-center text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors p-0.5"
+                        className="flex items-center gap-1 text-[10px] font-medium text-[#8B8BA8] hover:text-[#FF2A6D] transition-colors"
                         aria-label="Copy link"
                       >
-                        <Copy size={10} />
+                        <Copy size={9} />
+                        Copy
                       </button>
                     </div>
-                    {/* Meta row */}
-                    <div className="flex items-center gap-2 text-[10px] text-[#8B8BA8]">
-                      <span>{relativeTime(ctx.createdAt)}</span>
-                    </div>
-                  </button>
-                </li>
+                  </div>
+                </button>
               )
             })}
-          </ul>
+          </div>
         )}
       </div>
     </div>
