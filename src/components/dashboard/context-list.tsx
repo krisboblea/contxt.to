@@ -37,6 +37,7 @@ interface ContextListProps {
 export function ContextList({ contexts, selectedSlug, searchQuery }: ContextListProps) {
   const router = useRouter()
   const [q, setQ] = useQueryState("q", parseAsString.withDefault(searchQuery))
+  const [activeSlug] = useQueryState("slug", parseAsString.withDefault(selectedSlug ?? ""))
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSearch = useCallback(
@@ -175,7 +176,7 @@ export function ContextList({ contexts, selectedSlug, searchQuery }: ContextList
         ) : (
           <div className="space-y-0.5">
             {contexts.map((ctx) => {
-              const isSelected = ctx.slug === selectedSlug
+              const isSelected = ctx.slug === (activeSlug || selectedSlug)
               const tags = parseTags(ctx.tags)
               return (
                 <button
