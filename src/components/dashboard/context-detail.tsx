@@ -55,20 +55,29 @@ interface ContextDetailProps {
 export function ContextDetail({ contexts, initialContext, initialSlug, isCreating, editContext }: ContextDetailProps) {
   const router = useRouter()
   const [slug] = useQueryState("slug", parseAsString.withDefault(initialSlug ?? ""))
+  const [act] = useQueryState("act", parseAsString.withDefault(""))
+
+  // Derive mode from URL params (client-side reactive — survives router.push)
+  const effectiveAct = act || (isCreating ? "create" : "")
+  const effectiveIsCreating = effectiveAct === "create"
+  const effectiveIsEditing = effectiveAct === "edit"
+
+  // Find context from list by slug (client-side reactive)
+  const context = slug ? (contexts.find((c) => c.slug === slug) ?? null) : (initialContext ?? null)
+  const effectiveEditContext =
+    effectiveIsEditing && slug ? (contexts.find((c) => c.slug === slug) ?? null) : (editContext ?? null)
+
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [copied, setCopied] = useState(false)
   const [editPending, setEditPending] = useState(false)
-  const [editTitle, setEditTitle] = useState(editContext?.title ?? "")
-  const [editSummary, setEditSummary] = useState(editContext?.summary ?? "")
-  const [editContent, setEditContent] = useState(editContext?.content ?? "")
+  const [editTitle, setEditTitle] = useState(effectiveEditContext?.title ?? "")
+  const [editSummary, setEditSummary] = useState(effectiveEditContext?.summary ?? "")
+  const [editContent, setEditContent] = useState(effectiveEditContext?.content ?? "")
   const [editError, setEditError] = useState<string | null>(null)
 
-  // Find context from full list using nuqs slug, fall back to initial
-  const context = slug ? (contexts.find((c) => c.slug === slug) ?? null) : (initialContext ?? null)
-
   // Show new context form when in create mode
-  if (isCreating) {
+  if (effectiveIsCreating) {
     return (
       <div className="flex flex-1 flex-col overflow-hidden bg-[#FCF9F2]">
         <div className="shrink-0 border-b border-[#F0EDE4] bg-white px-4 sm:px-7 py-3 sm:py-4">
@@ -106,11 +115,11 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
   }
 
   // Show edit form when in edit mode
-  if (editContext) {
-    const editingId = editContext.id
+  if (effectiveEditContext) {
+    const editingId = effectiveEditContext.id
     const editingTags = (() => {
       try {
-        const parsed = JSON.parse(editContext.tags)
+        const parsed = JSON.parse(effectiveEditContext.tags)
         return Array.isArray(parsed) ? parsed.join(", ") : ""
       } catch { return "" }
     })()
@@ -229,7 +238,7 @@ export function ContextDetail({ contexts, initialContext, initialSlug, isCreatin
                   type="button"
                   variant="outline"
                   size="lg"
-                  onClick={() => router.push(`/dashboard?act=view&slug=${editContext.slug}`)}
+                  onClick={() => router.push(`/dashboard?act=view&slug=${effectiveEditContext.slug}`)}
                   disabled={editPending}
                 >
                   Cancel
