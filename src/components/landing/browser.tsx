@@ -32,11 +32,19 @@ function LandingContent() {
   const [claimError, setClaimError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
   const [baseUrl, setBaseUrl] = useState('')
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => { setBaseUrl(window.location.origin) }, [])
+  useEffect(() => {
+    fetch('/api/auth/session')
+      .then(r => r.json())
+      .then(session => { if (session?.user) setLoggedIn(true) })
+      .catch(() => {})
+  }, [])
 
   // Scroll observer for animations
   useEffect(() => {
@@ -198,7 +206,8 @@ function LandingContent() {
           Contxt
         </a>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-8 max-sm:hidden">
+          {/* Desktop nav */}
+          <div className="hidden sm:flex items-center gap-8">
             <a href="#how" className="text-sm font-medium no-underline transition-colors" style={{ color: '#4A4A6A' }}
               onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }) }}>
               How It Works
@@ -207,27 +216,114 @@ function LandingContent() {
               onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }) }}>
               Use Cases
             </a>
-            <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
-              style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              Create
-            </a>
+            {!loggedIn && (
+              <a href="/auth/signin"
+                className="text-sm font-medium no-underline transition-colors"
+                style={{ color: '#8B8BA8' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#FF2A6D' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#8B8BA8' }}>
+                Sign in
+              </a>
+            )}
+            {loggedIn && (
+              <a href="/dashboard"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition-all no-underline"
+                style={{ background: '#FF2A6D', color: '#fff', boxShadow: '0 2px 8px rgba(255, 42, 109, 0.2)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 42, 109, 0.3)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 42, 109, 0.2)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+                Dashboard
+              </a>
+            )}
           </div>
-          {/* Mobile: compact create button */}
-          <a href="#tool" onClick={(e) => { e.preventDefault(); areaRef.current?.scrollIntoView({ behavior: 'smooth' }); textareaRef.current?.focus() }}
-            className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
-            style={{ background: '#FF2A6D', color: '#fff' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </a>
+
+          {/* Mobile: hamburger */}
+          <div className="sm:hidden relative">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F0EDE4] text-[#4A4A6A] hover:bg-[#F5F0E6] transition-all cursor-pointer"
+              aria-label="Menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                {mobileOpen ? (
+                  <>
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </>
+                ) : (
+                  <>
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </>
+                )}
+              </svg>
+            </button>
+
+            {mobileOpen && (
+              <div
+                className="absolute right-0 top-full mt-2 w-44 rounded-xl border shadow-lg z-50 overflow-hidden"
+                style={{
+                  background: '#FFFFFF',
+                  borderColor: '#F0EDE4',
+                  boxShadow: '0 12px 40px rgba(22, 22, 61, 0.15)',
+                }}
+              >
+                <a href="#how"
+                  className="block px-4 py-3 text-sm font-medium no-underline transition-colors"
+                  style={{ color: '#4A4A6A', borderBottom: '1px solid #F0EDE4' }}
+                  onClick={(e) => { e.preventDefault(); document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false) }}>
+                  How It Works
+                </a>
+                <a href="#use"
+                  className="block px-4 py-3 text-sm font-medium no-underline transition-colors"
+                  style={{ color: '#4A4A6A', borderBottom: '1px solid #F0EDE4' }}
+                  onClick={(e) => { e.preventDefault(); document.getElementById('use')?.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false) }}>
+                  Use Cases
+                </a>
+                {!loggedIn ? (
+                  <a href="/auth/signin"
+                    className="block px-4 py-3 text-sm font-semibold no-underline transition-colors"
+                    style={{ color: '#FF2A6D' }}
+                    onClick={() => setMobileOpen(false)}>
+                    Sign in
+                  </a>
+                ) : (
+                  <a href="/dashboard"
+                    className="block px-4 py-3 text-sm font-semibold no-underline transition-colors flex items-center gap-2"
+                    style={{ color: '#FF2A6D' }}
+                    onClick={() => setMobileOpen(false)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <rect x="3" y="3" width="7" height="7" rx="1" />
+                      <rect x="14" y="3" width="7" height="7" rx="1" />
+                      <rect x="3" y="14" width="7" height="7" rx="1" />
+                      <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
+                    Dashboard
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile: compact dashboard button when logged in (always visible even with menu) */}
+          {loggedIn && (
+            <a href="/dashboard"
+              className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border-none cursor-pointer transition-all no-underline"
+              style={{ background: '#FF2A6D', color: '#fff' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </a>
+          )}
         </div>
       </nav>
 
@@ -566,32 +662,45 @@ function LandingContent() {
                 </div>
               </div>
 
-              {/* Email claim */}
-              {!emailSent ? (
-                <form onSubmit={handleClaim} className="p-5 rounded-[10px] border"
-                  style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
-                  <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
-                    ✉️ Track visits, manage, and edit your links later
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="email" value={emailValue}
-                      onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
-                      placeholder="your@email.com" required
-                      className="flex-1 px-3.5 py-2.5 rounded-[10px] border text-[13px] outline-none transition-all font-inherit"
-                      style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
-                    />
-                    <button type="submit"
-                      className="px-5 py-2.5 rounded-[12px] border-none text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
-                      style={{ background: '#FF2A6D' }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
-                    >
-                      Save
-                    </button>
-                  </div>
+              {/* Email claim — only for guests */}
+              {loggedIn ? (
+                <div className="p-5 rounded-[10px] border text-center"
+                  style={{ background: 'rgba(255,42,109,0.03)', borderColor: '#F0EDE4' }}>
+                  <span className="text-[14px] font-medium" style={{ color: '#4A4A6A' }}>
+                    ✅ Saved to your account —{' '}
+                    <a href="/dashboard" className="font-semibold no-underline transition-colors"
+                      style={{ color: '#FF2A6D' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = '#E61D5C' }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = '#FF2A6D' }}>
+                      manage in Dashboard →
+                    </a>
+                  </span>
+                </div>
+              ) : !emailSent ? (
+                  <form onSubmit={handleClaim} className="p-5 rounded-[10px] border"
+                    style={{ background: '#FFFFFF', borderColor: '#F0EDE4' }}>
+                    <div className="text-[13px] font-medium mb-3" style={{ color: '#4A4A6A' }}>
+                      ✉️ Track visits, manage, and edit your links later
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <input
+                        type="email" value={emailValue}
+                        onChange={(e) => { setEmailValue(e.target.value); setClaimError(null) }}
+                        placeholder="your@email.com" required
+                        className="flex-1 px-3.5 py-2.5 rounded-[10px] border text-[13px] outline-none transition-all font-inherit"
+                        style={{ background: '#FCF9F2', borderColor: '#E8E3D8', color: '#16163D' }}
+                        onFocus={(e) => { e.currentTarget.style.borderColor = '#FF2A6D' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E8E3D8' }}
+                      />
+                      <button type="submit"
+                        className="px-5 py-2.5 rounded-[12px] border-none text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all font-inherit text-white"
+                        style={{ background: '#FF2A6D' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = '#E61D5C' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = '#FF2A6D' }}
+                      >
+                        Save
+                      </button>
+                    </div>
                   {claimError && <p className="text-[11px] mt-1.5" style={{ color: '#FF2A6D' }}>{claimError}</p>}
                 </form>
               ) : (

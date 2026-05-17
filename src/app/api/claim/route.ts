@@ -53,12 +53,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Already claimed' }, { status: 409 })
     }
 
-    // Mark as claimed
+    // Upsert user by email, then link context
+    const user = await db.user.upsert({
+      where: { email },
+      update: {},
+      create: { email },
+    })
+
     await db.context.update({
       where: { slug },
       data: {
-        userId: email, // Simple email-as-userId for MVP
-        claimToken: null, // Invalidate token after use
+        userId: user.id,
+        claimToken: null,
+        creatorEmail: email,
       },
     })
 

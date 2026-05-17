@@ -29,8 +29,7 @@ src/
 │   └── page.tsx      # Landing page
 ├── components/
 │   ├── context/      # Context page components
-│   ├── landing/      # Landing page components
-│   ├── shared/       # Shared UI (ai-buttons, qr-code)
+│   ├── context/       # s/[slug] pages (browser + AI views)
 │   ├── ui/           # shadcn/ui components
 │   └── legal/        # Legal page layout
 ├── actions/          # Server actions (createContext)

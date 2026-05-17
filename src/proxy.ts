@@ -1,14 +1,22 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 import { classifyUA } from "@/lib/ua"
+import type { NextAuthRequest } from "next-auth"
 
-export function middleware(request: NextRequest) {
-  const ua = request.headers.get("user-agent") ?? ""
+export default auth(function proxy(req: NextAuthRequest) {
+  const { pathname } = req.nextUrl
+
+  if (pathname.startsWith("/dashboard") && !req.auth) {
+    const signin = new URL("/auth/signin", req.url)
+    signin.searchParams.set("callbackUrl", pathname)
+    return NextResponse.redirect(signin)
+  }
+
+  const ua = req.headers.get("user-agent") ?? ""
   const visitorType = classifyUA(ua)
-  const { pathname } = request.nextUrl
 
-  // AI agents get plain text responses
   if (visitorType === "ai_agent") {
-    const url = request.nextUrl.clone()
+    const url = req.nextUrl.clone()
 
     if (pathname === "/") {
       url.pathname = "/api/ai/page"
@@ -24,12 +32,11 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Browser visitors: set header for page components
   const response = NextResponse.next()
   response.headers.set("x-visitor-type", visitorType)
   return response
-}
+})
 
 export const config = {
-  matcher: ["/", "/s/:slug"],
+  matcher: ["/", "/s/:slug", "/dashboard/:path*"],
 }
