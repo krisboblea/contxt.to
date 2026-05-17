@@ -48,22 +48,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid claim token' }, { status: 403 })
     }
 
-    // Check if already claimed
-    if (context.userId) {
-      return NextResponse.json({ error: 'Already claimed' }, { status: 409 })
-    }
-
-    // Upsert user by email, then link context
-    const user = await db.user.upsert({
-      where: { email },
-      update: {},
-      create: { email },
-    })
-
+    // Record email for later auto-link on sign-in
     await db.context.update({
       where: { slug },
       data: {
-        userId: user.id,
         claimToken: null,
         creatorEmail: email,
       },

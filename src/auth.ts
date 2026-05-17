@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 import { PrismaLibSql } from "@prisma/adapter-libsql"
 import type { DefaultSession } from "next-auth"
+import { headers } from "next/headers"
 
 declare module "next-auth" {
   interface Session {
@@ -77,6 +78,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           console.error("[auth] auto-claim error:", e)
         }
       }
+
+      // Auto-claim by IP (guest-created contexts without email, within 3h)
+      try {
+        const headersList = await headers()
+        const forwarded = headersList.get("x-forwarded-for")
+        const ip = forwarded?.split(",")[0]?.trim() ?? headersList.get("x-real-ip")
+        if (ip) {
+          const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000)
+          await prisma.context.updateMany({
+            where: {
+              creatorIp: { contains: ip },
+              userId: null,
+              creatorEmail: null,
+              createdAt: { gte: threeHoursAgo },
+            },
+            data: { userId: user.id },
+          })
+        }
+      } catch (e) {
+        console.error("[auth] auto-claim by IP error:", e)
+      }
+
       return true
     },
   },
