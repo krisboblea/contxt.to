@@ -22,7 +22,7 @@ export default async function DashboardPage({
   return (
     <div className="flex h-full overflow-hidden">
       {/* List panel */}
-      <div className={`${hasDetail && !isEditing && !isCreating ? 'hidden md:flex' : 'flex'} w-full md:w-[380px] shrink-0 flex-col border-r border-[#F0EDE4] bg-white`}>
+      <div className={`${(hasDetail || isCreating) && !isEditing ? 'hidden md:flex' : 'flex'} w-full md:w-[380px] shrink-0 flex-col border-r border-[#F0EDE4] bg-white`}>
         <ContextList contexts={contexts} selectedSlug={slug ?? null} searchQuery={q ?? ""} />
       </div>
       {/* Detail / Create / Edit panel */}
