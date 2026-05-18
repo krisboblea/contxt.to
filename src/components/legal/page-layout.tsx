@@ -3,6 +3,7 @@
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import Link from "next/link"
+import { Logo } from "@/components/shared/logo"
 
 interface LegalPageProps {
   title: string
@@ -25,26 +26,7 @@ export function LegalPage({ title, content }: LegalPageProps) {
           borderColor: "#F0EDE4",
         }}
       >
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 no-underline"
-          style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontStyle: "italic",
-            fontSize: 24,
-            fontWeight: 700,
-            color: "#16163D",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          <span
-            className="w-[30px] h-[30px] flex items-center justify-center text-white text-[14px] font-extrabold not-italic"
-            style={{ background: "#FF2A6D", borderRadius: 8 }}
-          >
-            c
-          </span>
-          Contxt
-        </Link>
+        <Logo href="/" />
         <Link
           href="/"
           className="text-sm font-medium no-underline transition-colors"

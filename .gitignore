@@ -10,3 +10,6 @@ next-env.d.ts
 prisma/dev.db
 .vercel/.env.development.local
 .vercel/README.txt
+.vercel/project.json
+.vercel/repo.json
+.hermes/
