@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
 import { SignInForm } from "@/components/auth/signin-form"
+import { Logo } from "@/components/shared/logo"
 
 export const metadata = {
   title: "Sign in — contxt.to",
@@ -25,14 +26,9 @@ export default async function SignInPage() {
 
       <div className="relative z-10 w-full max-w-[400px]">
         {/* Logo */}
-        <a href="/" className="flex items-center justify-center gap-2.5 mb-8 no-underline"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 22, fontWeight: 700, color: '#16163D' }}>
-          <span className="w-[28px] h-[28px] flex items-center justify-center text-white text-[13px] font-extrabold not-italic"
-            style={{ background: '#FF2A6D', borderRadius: 7 }}>
-            c
-          </span>
-          Contxt
-        </a>
+        <div className="flex justify-center mb-8">
+          <Logo href="/" size="md" />
+        </div>
 
         {/* Card */}
         <div className="rounded-[20px] border shadow-lg overflow-hidden"

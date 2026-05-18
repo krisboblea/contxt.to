@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
+import { Logo } from "@/components/shared/logo"
 import {
   Sheet,
   SheetClose,
@@ -62,17 +63,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <MobileNavSheet user={user} />
 
         {/* Logo (desktop) */}
-        <a href="/" className="hidden md:flex items-center gap-2 no-underline">
-          <span className="flex h-[26px] w-[26px] items-center justify-center rounded-lg bg-[#FF2A6D] text-white text-[12px] font-extrabold leading-none select-none">
-            c
-          </span>
-          <span
-            className="text-[#16163D] text-base font-bold leading-none tracking-[-0.02em] italic select-none"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            Contxt
-          </span>
-        </a>
+        <div className="hidden md:block">
+          <Logo href="/" size="sm" />
+        </div>
 
         {/* Desktop nav tabs */}
         <nav className="hidden md:flex items-center gap-1 ml-6">
@@ -196,17 +189,7 @@ function MobileNavSheet({ user }: DashboardHeaderProps) {
         className="!w-[280px] p-0 bg-white border-r border-[#F0EDE4]"
       >
         <div className="flex items-center justify-between border-b border-[#F0EDE4] px-5 py-4">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-[#FF2A6D] text-white text-[14px] font-extrabold leading-none select-none">
-              c
-            </span>
-            <span
-              className="text-[#16163D] text-xl font-bold leading-none tracking-[-0.02em] italic select-none"
-              style={{ fontFamily: "var(--font-playfair)" }}
-            >
-              Contxt
-            </span>
-          </div>
+          <Logo href="/" size="md" />
           <SheetClose
             render={
               <button

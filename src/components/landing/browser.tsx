@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { TabbedExperience } from './tabbed-experience'
+import { Logo } from '@/components/shared/logo'
 
 export function LandingBrowser() {
   return (
@@ -198,13 +199,7 @@ function LandingContent() {
           WebkitBackdropFilter: 'blur(16px)',
           borderColor: '#F0EDE4',
         }}>
-        <a href="/" className="flex items-center gap-2.5 no-underline" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', fontSize: 24, fontWeight: 700, color: '#16163D', letterSpacing: '-0.02em' }}>
-          <span className="w-[30px] h-[30px] flex items-center justify-center text-white text-[14px] font-extrabold not-italic"
-            style={{ background: '#FF2A6D', borderRadius: 8 }}>
-            c
-          </span>
-          Contxt
-        </a>
+        <Logo href="/" />
         <div className="flex items-center gap-4">
           {/* Desktop nav */}
           <div className="hidden sm:flex items-center gap-8">
