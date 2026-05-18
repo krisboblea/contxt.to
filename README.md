@@ -1,8 +1,8 @@
 <div align="center">
   <br/>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/redirhub/contxt.to/oss/public/logo-dark.svg">
-    <img src="https://raw.githubusercontent.com/redirhub/contxt.to/oss/public/logo-light.svg" width="180" alt="Contxt">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/redirhub/contxt.to/main/public/logo-dark.svg">
+    <img src="https://raw.githubusercontent.com/redirhub/contxt.to/main/public/logo-light.svg" width="180" alt="Contxt">
   </picture>
   <br/>
   <br/>
